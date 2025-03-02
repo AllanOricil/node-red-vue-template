@@ -1,0 +1,148 @@
+<script type="text/html" data-template-name="your-node">
+  <div id="vue-container"></div>
+</script>
+
+<script type="text/javascript">
+  RED.nodes.registerType("your-node", {
+    category: "function",
+    color: "#a6bbcf",
+    defaults: {
+      myProperty: { value: "" },
+      myPropertyType: { value: "msg" },
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: "node.svg",
+    label: function () {
+      return this.name || "Your Node";
+    },
+    oneditprepare: function () {
+      const node = this;
+      this._oldMyProperty = JSON.parse(JSON.stringify(node.myProperty));
+      this._oldMyPropertyType = JSON.parse(JSON.stringify(node.myPropertyType));
+
+      console.log(node);
+
+      if (typeof Vue !== "undefined") {
+        console.log("Vue is already loaded:", Vue.version);
+        initVue();
+        return;
+      }
+
+      const script = document.createElement("script");
+      script.src = "https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js";
+      script.onload = () => {
+        initVue();
+      };
+
+      document.head.appendChild(script);
+
+      function initVue() {
+        Vue.config.devtools = true;
+        $("#vue-container").empty();
+
+        const NodeRedTypedInput = {
+          template: `<div ref="inputContainer"></div>`,
+          props: {
+            value: String,
+            type: String,
+            types: {
+              type: Array,
+              default: () => [
+                "msg",
+                "flow",
+                "global",
+                "str",
+                "num",
+                "bool",
+                "env",
+                "json",
+                "jsonata",
+              ],
+            },
+          },
+          emits: ["update:value", "update:type"],
+          mounted() {
+            $(this.$refs.inputContainer).html(
+              '<input type="text" class="node-red-typed-input" style="flex: 1; width: 100%;"/>'
+            );
+
+            this.$input = $(this.$refs.inputContainer)
+              .find(".node-red-typed-input")
+              .typedInput({
+                default: this.type || this.types[0],
+                types: this.types,
+              });
+
+            this.$input.typedInput("value", this.value || "");
+            this.$input.typedInput("type", this.type || this.types[0]);
+
+            this.$input.on("change", () => {
+              this.$emit("update:value", this.$input.typedInput("value"));
+              this.$emit("update:type", this.$input.typedInput("type"));
+            });
+          },
+          watch: {
+            value(newValue) {
+              if (this.$input) {
+                this.$input.typedInput("value", newValue);
+              }
+            },
+            type(newType) {
+              if (this.$input) {
+                this.$input.typedInput("type", newType);
+              }
+            },
+          },
+        };
+
+        new Vue({
+          el: "#vue-container",
+          data: {
+            get myProperty() {
+              return node.myProperty !== undefined ? node.myProperty : "";
+            },
+            set myProperty(val) {
+              node.changed = true;
+              node.myProperty = val;
+            },
+            get myPropertyType() {
+              return node.myPropertyType !== undefined
+                ? node.myPropertyType
+                : "msg";
+            },
+            set myPropertyType(val) {
+              node.changed = true;
+              node.myPropertyType = val;
+            },
+          },
+          components: { NodeRedTypedInput },
+          template: `
+  <div style="width: 100%;">
+    <label style="display: block; margin-bottom: 5px;">My Property</label>
+    <NodeRedTypedInput 
+      :value.sync="myProperty"
+      :type.sync="myPropertyType"
+      style="width: 100%;"
+    />
+  </div>
+`,
+        });
+      }
+    },
+    oneditsave: function () {
+      const node = this;
+      if (node.changed) {
+        RED.nodes.dirty(node);
+      }
+      this.myProperty = node.myProperty;
+      this.myPropertyType = node.myPropertyType;
+    },
+    oneditcancel: function () {
+      const node = this;
+      node.changed = false;
+      this.myProperty = this._oldMyProperty;
+      this.myPropertyType = this._oldMyPropertyType;
+    },
+  });
+</script>
