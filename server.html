@@ -1,0 +1,26 @@
+<script type="text/html" data-template-name="remote-server">
+  <div class="form-row">
+    <label for="node-config-input-name"><i class="fa"></i> Name</label>
+    <input type="text" id="node-config-input-name" />
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-host"
+      ><i class="fa fa-bookmark"></i> Host</label
+    >
+    <input type="text" id="node-config-input-host" />
+  </div>
+</script>
+
+<script type="text/javascript">
+  RED.nodes.registerType("remote-server", {
+    category: "config",
+    color: "#a6bbcf",
+    defaults: {
+      name: { value: "", required: true },
+      host: { value: "localhost", required: true },
+    },
+    label: function () {
+      return this.name;
+    },
+  });
+</script>

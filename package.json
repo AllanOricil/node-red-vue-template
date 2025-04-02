@@ -10,7 +10,8 @@
   "license": "ISC",
   "node-red": {
     "nodes": {
-      "your-node": "index.js"
+      "your-node": "index.js",
+      "server": "server.js"
     }
   }
 }

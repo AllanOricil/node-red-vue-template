@@ -1,3 +1,3 @@
 # node-red-vue-inputs-experiments
 
-![Image](https://github.com/user-attachments/assets/4e0da26a-cc12-48d8-ba36-44ebaf71421a)
+![Image](https://github.com/user-attachments/assets/be9feacd-edb1-4b74-8c8b-919b888ea218)

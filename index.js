@@ -3,6 +3,11 @@ module.exports = function (RED) {
     RED.nodes.createNode(this, config);
     this.myProperty = config.myProperty || "";
     this.myPropertyType = config.myPropertyType || "msg";
+    this.server = RED.nodes.getNode(config.server);
+
+    console.log("SERVER: ");
+    console.log(this.server);
+
     const node = this;
 
     async function evaluateProperty(value, type, msg) {
