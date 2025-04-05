@@ -13,9 +13,15 @@
         const node = this;
         console.log(node);
 
-        this._old = {};
+        this._old = {
+          credentials: {},
+        };
         Object.keys(editorConfig.defaults).forEach((value) => {
           this._old[value] = node[value];
+        });
+
+        Object.keys(editorConfig.credentials).forEach((value) => {
+          this._old.credentials[value] = node.credentials[value];
         });
 
         if (typeof Vue !== "undefined") {
@@ -339,6 +345,7 @@
                 set username(newValue) {
                   node.changed = true;
                   node.credentials.username = newValue;
+                  node.testingCustomProperty = "afg";
                 },
                 get password() {
                   return node.credentials.has_password ? "*********" : "";
@@ -418,6 +425,10 @@
         node.changed = false;
         Object.keys(editorConfig.defaults).forEach((value) => {
           node[value] = node._old[value];
+        });
+
+        Object.keys(editorConfig.credentials).forEach((value) => {
+          node.credentials[value] = node._old.credentials[value];
         });
       },
       oneditresize: function () {
