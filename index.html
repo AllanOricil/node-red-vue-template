@@ -3,414 +3,426 @@
 </script>
 
 <script type="text/javascript">
-  RED.nodes.registerType("your-node", {
-    category: "function",
-    color: "#a6bbcf",
-    defaults: {
-      myProperty: { value: "" },
-      myPropertyType: { value: "msg" },
-      remoteServer: { value: "", type: "remote-server" },
-      configNode: { value: "", type: "my-config-node" },
-    },
-    inputs: 1,
-    outputs: 1,
-    icon: "node.svg",
-    label: function () {
-      return this.name || "Your Node";
-    },
-    oneditprepare: function () {
-      const node = this;
-      this._oldMyProperty = JSON.parse(JSON.stringify(node.myProperty));
-      this._oldMyPropertyType = JSON.parse(JSON.stringify(node.myPropertyType));
+  $.getJSON("your-node", function (editorConfig) {
+    RED.nodes.registerType("your-node", {
+      ...editorConfig,
+      label: function () {
+        return this.name || "Your Node";
+      },
+      oneditprepare: function () {
+        const node = this;
+        console.log(node);
 
-      console.log(node);
+        this._old = {};
+        Object.keys(editorConfig.defaults).forEach((value) => {
+          this._old[value] = node[value];
+        });
 
-      if (typeof Vue !== "undefined") {
-        console.log("Vue is already loaded:", Vue.version);
-        initVue();
-        return;
-      }
+        if (typeof Vue !== "undefined") {
+          console.log("Vue is already loaded:", Vue.version);
+          initVue();
+          return;
+        }
 
-      const script = document.createElement("script");
-      script.src = "https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js";
-      script.onload = () => {
-        initVue();
-      };
-
-      document.head.appendChild(script);
-
-      function initVue() {
-        Vue.config.devtools = true;
-        $("#app").empty();
-
-        const NodeRedTypedInput = {
-          template: `<input type="text" ref="typedInput" class="node-red-typed-input" style="flex: 1; width: 100%;"/>`,
-          props: {
-            value: String,
-            type: String,
-            types: {
-              type: Array,
-              default: () => [
-                "msg",
-                "flow",
-                "global",
-                "str",
-                "num",
-                "bool",
-                "env",
-                "json",
-                "jsonata",
-              ],
-            },
-          },
-          emits: ["update:value", "update:type"],
-          mounted() {
-            const inputElement = this.$refs.typedInput;
-            this.$input = $(inputElement).typedInput({
-              default: this.type || this.types[0],
-              types: this.types,
-            });
-
-            this.$input.typedInput("value", this.value || "");
-            this.$input.typedInput("type", this.type || this.types[0]);
-
-            this.$input.on("change", () => {
-              this.$emit("update:value", this.$input.typedInput("value"));
-              this.$emit("update:type", this.$input.typedInput("type"));
-            });
-          },
-          watch: {
-            value(newValue) {
-              if (this.$input) {
-                this.$input.typedInput("value", newValue);
-              }
-            },
-            type(newType) {
-              if (this.$input) {
-                this.$input.typedInput("type", newType);
-              }
-            },
-          },
+        const script = document.createElement("script");
+        script.src = "https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js";
+        script.onload = () => {
+          initVue();
         };
 
-        const NodeRedConfigInput = {
-          template: `<input type="text" :id="'node-input-' + value" style="width: 100%"/>`,
-          props: {
-            type: String,
-            value: String,
-          },
-          mounted() {
-            RED.editor.prepareConfigNodeSelect(
-              this,
-              "remoteServer",
-              "remote-server",
-              "node-input"
-            );
-          },
-        };
+        document.head.appendChild(script);
 
-        const NodeRedSelectInput = {
-          template: `<input type="text" ref="selectInput" class="node-input-select" style="width: 100%"/>`,
-          props: {
-            selected: {
-              type: String,
-            },
-            options: {
-              type: Array,
-              required: true,
-              validator: function (value) {
-                if (!Array.isArray(value)) {
-                  console.error("Prop 'options' must be an array.");
-                  return false;
-                }
-                const isValid = value.every((item) => {
-                  const isObject = typeof item === "object" && item !== null;
-                  if (!isObject) return false;
-                  const hasValue = item.hasOwnProperty("value");
-                  const hasLabel = item.hasOwnProperty("label");
-                  return hasValue && hasLabel;
-                });
+        function initVue() {
+          Vue.config.devtools = true;
+          $("#app").empty();
 
-                if (!isValid) {
-                  console.warn(
-                    "Validation failed for prop 'options': Each item must be an object with 'value' and 'label' properties.",
-                    value
-                  );
-                }
-                return isValid;
-              },
-            },
-            multiple: {
-              type: Boolean,
-              default: false,
-            },
-          },
-          watch: {
-            selected: {
-              handler(newValue) {
-                if (
-                  newValue !== null &&
-                  newValue !== undefined &&
-                  this.options &&
-                  this.options.length > 0
-                ) {
-                  const isValid = this.options.some(
-                    (option) => option.value === newValue
-                  );
-
-                  if (!isValid) {
-                    console.warn(
-                      `Validation failed: Prop 'selected' ("${newValue}") does not match any value in the 'options' prop.`,
-                      this.options
-                    );
-                  }
-                }
-              },
-              immediate: true,
-            },
-            options: {
-              handler(newOptions) {
-                if (
-                  this.selected !== null &&
-                  this.selected !== undefined &&
-                  newOptions &&
-                  newOptions.length > 0
-                ) {
-                  const isValid = newOptions.some(
-                    (option) => option.value === this.selected
-                  );
-                  if (!isValid) {
-                    console.warn(
-                      `Validation failed after options changed: Current 'selected' ("${this.selected}") is no longer valid with the new options.`,
-                      newOptions
-                    );
-                  }
-                }
-              },
-            },
-          },
-          mounted() {
-            const inputElement = this.$refs.selectInput;
-            const $selectInput = $(inputElement);
-            $selectInput.typedInput({
-              types: [
-                {
-                  multiple: this.multiple,
-                  options: this.options,
+          const NodeRedCredentialInput = {
+            template: `<input :type="type" :value="value" @input="$emit('input', $event.target.value)" style="flex: 1; width: 100%;" />`,
+            props: {
+              value: String,
+              type: {
+                type: String,
+                default: "text",
+                validator: function (value) {
+                  return ["text", "password"].includes(value);
                 },
-              ],
-            });
-
-            $selectInput.typedInput("value", this.selected);
-            $selectInput.on("change", () => {
-              const newValue = $selectInput.typedInput("value");
-              this.$emit("update:selected", newValue);
-            });
-          },
-        };
-
-        const NodeRedEditorInput = {
-          template: `<div class="node-text-editor-container" ref="containerDiv" style="height: 200px"><div ref="editorDiv" :id="editorId" class="node-text-editor"></div></div>`,
-          props: {
-            value: {
-              type: String,
-              default: "",
-            },
-            language: {
-              type: String,
-              default: "json",
-              validator: function (value) {
-                const allowedLanguages = [
-                  "text",
-                  "json",
-                  "javascript",
-                  "html",
-                  "css",
-                  "markdown",
-                  "sql",
-                  "yaml",
-                ];
-                const isValid = allowedLanguages.includes(value);
-                if (!isValid) {
-                  console.warn(
-                    `[NodeRedEditorComponent] Invalid ACE editor mode prop: "${value}". ` +
-                      `Expected one of: ${allowedLanguages.join(", ")}`
-                  );
-                }
-                return isValid;
               },
             },
-          },
-          data() {
-            return {
-              editorId:
-                "node-red-editor-" + Math.random().toString(36).substring(2, 9),
-              editorInstance: null,
-            };
-          },
-          mounted() {
-            this.mountEditor();
-          },
-          watch: {
-            value(newValue) {
-              if (
-                this.editorInstance &&
-                this.editorInstance.getValue() !== newValue
-              ) {
-                this.editorInstance.session.setValue(newValue || "", -1);
-              }
+          };
+
+          const NodeRedTypedInput = {
+            template: `<input type="text" ref="typedInput" class="node-red-typed-input" style="flex: 1; width: 100%;"/>`,
+            props: {
+              value: String,
+              types: {
+                type: Array,
+                default: () => [
+                  "msg",
+                  "flow",
+                  "global",
+                  "str",
+                  "num",
+                  "bool",
+                  "env",
+                  "json",
+                  "jsonata",
+                ],
+              },
             },
-          },
-          methods: {
-            mountEditor() {
-              this.$nextTick(() => {
-                const containerEl = this.$refs.containerDiv;
-                const editorEl = this.$refs.editorDiv;
+            mounted() {
+              const inputElement = this.$refs.typedInput;
+              this.$input = $(inputElement).typedInput({
+                default: this.value.type || this.types[0],
+                types: this.types,
+              });
 
-                if (containerEl && editorEl) {
-                  try {
-                    const inlineHeight = containerEl.style.height;
-                    const inlineWidth = containerEl.style.width;
-                    if (inlineHeight) {
-                      editorEl.style.height = inlineHeight;
-                    } else {
-                      editorEl.style.height = "200px";
-                    }
+              this.$input.typedInput("value", this.value.value || "");
+              this.$input.typedInput("type", this.value.type || this.types[0]);
 
-                    if (inlineWidth) {
-                      editorEl.style.width = inlineWidth;
-                    } else {
-                      editorEl.style.width = "100%";
-                    }
+              this.$input.on("change", () => {
+                this.$emit("input", {
+                  value: this.$input.typedInput("value"),
+                  type: this.$input.typedInput("type"),
+                });
+              });
+            },
+          };
 
-                    this.createEditorInstance();
-                  } catch (e) {
-                    console.error(
-                      "[NodeRedEditorInput] Error setting initial editor style:",
-                      e
-                    );
-                    this.createEditorInstance();
+          const NodeRedConfigInput = {
+            template: `<input type="text" :id="inputId" style="width: 100%"/>`,
+            props: {
+              value: String,
+              type: String,
+            },
+            data() {
+              return {
+                inputId: "node-input-" + this.value,
+              };
+            },
+            mounted() {
+              RED.editor.prepareConfigNodeSelect(
+                this,
+                this.value,
+                this.type,
+                "node-input"
+              );
+
+              const input = $("#" + this.inputId);
+              input.on("change", () => {
+                this.$emit("input", input.val());
+              });
+
+              input.val(this.value || "_ADD_");
+            },
+          };
+
+          const NodeRedSelectInput = {
+            template: `<input type="text" ref="selectInput" class="node-input-select" style="width: 100%"/>`,
+            props: {
+              value: {
+                type: String,
+              },
+              options: {
+                type: Array,
+                required: true,
+                validator: function (value) {
+                  if (!Array.isArray(value)) {
+                    console.error("Prop 'options' must be an array.");
+                    return false;
                   }
-                } else {
+                  const isValid = value.every((item) => {
+                    const isObject = typeof item === "object" && item !== null;
+                    if (!isObject) return false;
+                    const hasValue = item.hasOwnProperty("value");
+                    const hasLabel = item.hasOwnProperty("label");
+                    return hasValue && hasLabel;
+                  });
+
+                  if (!isValid) {
+                    console.warn(
+                      "Validation failed for prop 'options': Each item must be an object with 'value' and 'label' properties.",
+                      value
+                    );
+                  }
+                  return isValid;
+                },
+              },
+              multiple: {
+                type: Boolean,
+                default: false,
+              },
+            },
+            mounted() {
+              const inputElement = this.$refs.selectInput;
+              const $selectInput = $(inputElement);
+              $selectInput.typedInput({
+                types: [
+                  {
+                    multiple: this.multiple,
+                    options: this.options,
+                  },
+                ],
+              });
+
+              $selectInput.typedInput("value", this.value);
+              $selectInput.on("change", () => {
+                const newValue = $selectInput.typedInput("value");
+                this.$emit("input", newValue);
+              });
+            },
+          };
+
+          const NodeRedEditorInput = {
+            template: `<div class="node-text-editor-container" ref="containerDiv" style="height: 200px"><div ref="editorDiv" :id="editorId" class="node-text-editor"></div></div>`,
+            props: {
+              value: {
+                type: String,
+                default: "",
+              },
+              language: {
+                type: String,
+                default: "json",
+                validator: function (value) {
+                  const allowedLanguages = [
+                    "text",
+                    "json",
+                    "javascript",
+                    "html",
+                    "css",
+                    "markdown",
+                    "sql",
+                    "yaml",
+                  ];
+                  const isValid = allowedLanguages.includes(value);
+                  if (!isValid) {
+                    console.warn(
+                      `[NodeRedEditorComponent] Invalid ACE editor mode prop: "${value}". ` +
+                        `Expected one of: ${allowedLanguages.join(", ")}`
+                    );
+                  }
+                  return isValid;
+                },
+              },
+            },
+            data() {
+              return {
+                editorId:
+                  "node-red-editor-" +
+                  Math.random().toString(36).substring(2, 9),
+                editorInstance: null,
+              };
+            },
+            mounted() {
+              this.mountEditor();
+            },
+            methods: {
+              mountEditor() {
+                this.$nextTick(() => {
+                  const containerEl = this.$refs.containerDiv;
+                  const editorEl = this.$refs.editorDiv;
+
+                  if (containerEl && editorEl) {
+                    try {
+                      const inlineHeight = containerEl.style.height;
+                      const inlineWidth = containerEl.style.width;
+                      if (inlineHeight) {
+                        editorEl.style.height = inlineHeight;
+                      } else {
+                        editorEl.style.height = "200px";
+                      }
+
+                      if (inlineWidth) {
+                        editorEl.style.width = inlineWidth;
+                      } else {
+                        editorEl.style.width = "100%";
+                      }
+
+                      this.createEditorInstance();
+                    } catch (e) {
+                      console.error(
+                        "[NodeRedEditorInput] Error setting initial editor style:",
+                        e
+                      );
+                      this.createEditorInstance();
+                    }
+                  } else {
+                    console.error(
+                      "[NodeRedEditorInput] Container or Editor div refs not found on mount."
+                    );
+                  }
+                });
+              },
+              createEditorInstance() {
+                this.editorInstance = RED.editor.createEditor({
+                  id: this.editorId,
+                  mode: this.language,
+                  value: this.value,
+                });
+                this.editorInstance.getSession().on("change", () => {
+                  if (this.editorInstance) {
+                    const currentValue = this.editorInstance.getValue();
+                    if (currentValue !== this.value) {
+                      this.$emit("input", currentValue);
+                    }
+                  }
+                });
+              },
+            },
+            beforeDestroy() {
+              if (this.editorInstance) {
+                try {
+                  this.editorInstance.destroy();
+                } catch (err) {
                   console.error(
-                    "[NodeRedEditorInput] Container or Editor div refs not found on mount."
+                    `Error destroying editor for ID ${this.editorId}:`,
+                    err
                   );
                 }
-              });
-            },
-            createEditorInstance() {
-              this.editorInstance = RED.editor.createEditor({
-                id: this.editorId,
-                mode: this.language,
-                value: this.value,
-              });
-              this.editorInstance.getSession().on("change", () => {
-                if (this.editorInstance) {
-                  const currentValue = this.editorInstance.getValue();
-                  if (currentValue !== this.value) {
-                    this.$emit("input", currentValue);
-                  }
-                }
-              });
-            },
-          },
-          beforeDestroy() {
-            if (this.editorInstance) {
-              try {
-                this.editorInstance.destroy();
-              } catch (err) {
-                console.error(
-                  `Error destroying editor for ID ${this.editorId}:`,
-                  err
-                );
+                this.editorInstance = null;
               }
-              this.editorInstance = null; // Clear the reference
-            }
-          },
-        };
-        new Vue({
-          el: "#app",
-          data: {
-            get myProperty() {
-              return node.myProperty !== undefined ? node.myProperty : "";
             },
-            set myProperty(val) {
-              node.changed = true;
-              node.myProperty = val;
+          };
+
+          this._app = new Vue({
+            el: "#app",
+            data() {
+              return {
+                get myProperty() {
+                  return node.myProperty
+                    ? node.myProperty
+                    : { value: "", type: "msg" };
+                },
+                set myProperty(newValue) {
+                  node.changed = true;
+                  node.myProperty = newValue;
+                },
+                get remoteServer() {
+                  return node.remoteServer ? node.remoteServer : "";
+                },
+                set remoteServer(newValue) {
+                  node.changed = true;
+                  node.remoteServer = newValue;
+                },
+                get country() {
+                  return node.country ? node.country : "";
+                },
+                set country(newValue) {
+                  node.changed = true;
+                  node.country = newValue;
+                },
+                get fruit() {
+                  return node.fruit ? node.fruit : "";
+                },
+                set fruit(newValue) {
+                  node.changed = true;
+                  node.fruit = newValue;
+                },
+                get jsontest() {
+                  return node.jsontest ? node.jsontest : "";
+                },
+                set jsontest(newValue) {
+                  node.changed = true;
+                  node.jsontest = newValue;
+                },
+                get csstest() {
+                  return node.csstest ? node.csstest : "";
+                },
+                set csstest(newValue) {
+                  node.changed = true;
+                  node.csstest = newValue;
+                },
+                get username() {
+                  return node.credentials.username
+                    ? node.credentials.username
+                    : "";
+                },
+                set username(newValue) {
+                  node.changed = true;
+                  node.credentials.username = newValue;
+                },
+                get password() {
+                  return node.credentials.has_password ? "*********" : "";
+                },
+                set password(newValue) {
+                  node.changed = true;
+                  node.credentials.password = newValue;
+                },
+                countries: [
+                  { value: "usa", label: "usa" },
+                  { value: "argentina", label: "argentina" },
+                  { value: "brasil", label: "brasil" },
+                ],
+                fruits: [
+                  { value: "apple", label: "apple" },
+                  { value: "melon", label: "melon" },
+                  { value: "raspberry", label: "raspberry" },
+                ],
+              };
             },
-            get myPropertyType() {
-              return node.myPropertyType !== undefined
-                ? node.myPropertyType
-                : "msg";
+            components: {
+              NodeRedCredentialInput,
+              NodeRedTypedInput,
+              NodeRedConfigInput,
+              NodeRedSelectInput,
+              NodeRedEditorInput,
             },
-            set myPropertyType(val) {
-              node.changed = true;
-              node.myPropertyType = val;
-            },
-            options: [
-              { value: "usa", label: "usa" },
-              { value: "argentina", label: "argentina" },
-              { value: "brasil", label: "brasil" },
-            ],
-            jsontest: JSON.stringify({ a: "abc" }),
-            csstest: `.docs {
-    background: #FFFFFF
-  }`,
-          },
-          components: {
-            NodeRedTypedInput,
-            NodeRedConfigInput,
-            NodeRedSelectInput,
-            NodeRedEditorInput,
-          },
-          template: `
+            template: `
           <div style="width: 100%;">
               <div class="form-row">
-                <label style="width: 100%">Typed Input</label>
-                <NodeRedTypedInput
-                  :value.sync="myProperty"
-                  :type.sync="myPropertyType"
-                  style="width: 100%;"
-                />
+                  <label><i class="fa fa-tag"></i> Username</label>
+                  <NodeRedCredentialInput v-model="username" type="text"/>
               </div>
               <div class="form-row">
-                <label style="width: 100%">Config Input</label>
-                <NodeRedConfigInput value="remoteServer" type="remote-server"/>
-            </div>
-            <div class="form-row">
-                <label style="width: 100%">Select Input</label>
-                <NodeRedSelectInput selected="brasil" :options="options"/>
-            </div>
-            <div class="form-row">
-                <label style="width: 100%">MultiSelect Input</label>
-                <NodeRedSelectInput selected="brasil" :options="options" multiple="true"/>
-            </div>
-            <div class="form-row">
-                <label style="width: 100%">Editor with default height 200px and JSON</label>
-                <NodeRedEditorInput :value="jsontest" />
-            </div>
-            <div class="form-row">
-              <label style="width: 100%">Editor with custom height and CSS</label>
-              <NodeRedEditorInput :value="csstest" language="css" style="height: 500px;"/>
-            </div>
+                  <label><i class="fa fa-tag"></i> Password</label>
+                  <NodeRedCredentialInput v-model="password" type="password"/>
+              </div>
+              <div class="form-row">
+                  <label style="width: 100%">Typed Input</label>
+                  <NodeRedTypedInput v-model="myProperty"/>
+              </div>
+              <div class="form-row">
+                  <label style="width: 100%">Config Input</label>
+                  <NodeRedConfigInput v-model="remoteServer" type="remote-server"/>
+              </div>
+              <div class="form-row">
+                  <label style="width: 100%">Select Input</label>
+                  <NodeRedSelectInput v-model="country" :options="countries"/>
+              </div>
+              <div class="form-row">
+                  <label style="width: 100%">MultiSelect Input</label>
+                  <NodeRedSelectInput v-model="fruit" :options="fruits" multiple="true"/>
+              </div>
+              <div class="form-row">
+                  <label style="width: 100%">Editor with default height 200px and JSON</label>
+                  <NodeRedEditorInput v-model="jsontest" />
+              </div>
+              <div class="form-row">
+                <label style="width: 100%">Editor with custom height and CSS</label>
+                <NodeRedEditorInput v-model="csstest" language="css" style="height: 500px;"/>
+              </div>
           </div>
     `,
+          });
+        }
+      },
+      oneditsave: function () {
+        const node = this;
+        if (node.changed) {
+          RED.nodes.dirty(node);
+        }
+        console.log("SAVED");
+        console.log(node);
+      },
+      oneditcancel: function () {
+        const node = this;
+        node.changed = false;
+        Object.keys(editorConfig.defaults).forEach((value) => {
+          node[value] = node._old[value];
         });
-      }
-    },
-    oneditsave: function () {
-      const node = this;
-      if (node.changed) {
-        RED.nodes.dirty(node);
-      }
-      this.myProperty = node.myProperty;
-      this.myPropertyType = node.myPropertyType;
-    },
-    oneditcancel: function () {
-      const node = this;
-      node.changed = false;
-      this.myProperty = this._oldMyProperty;
-      this.myPropertyType = this._oldMyPropertyType;
-    },
+      },
+      oneditresize: function () {
+        console.log("hello world");
+      },
+    });
   });
 </script>
