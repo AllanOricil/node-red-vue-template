@@ -9,7 +9,7 @@ import camelCase from "camelcase";
  * @param {object} RED - The Node-RED runtime object. It provides methods to register and manage nodes.
  * @returns {function} - A higher-order function that takes a base class and returns a new class with additional Node-RED functionalities.
  */
-export function createNodeRedNodeMixin(RED) {
+export function createNodeRedNodeFactory(RED) {
   return async function (BaseClass, type) {
     if (!(BaseClass.prototype instanceof NodeRedNode)) {
       throw new Error(`${BaseClass.name} must extend Node`);

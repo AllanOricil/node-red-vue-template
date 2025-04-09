@@ -1,6 +1,6 @@
 import { Config } from "./decorators";
 import { NodeRedConfigNode, NodeRedNode } from "./node";
-import { createNodeRedNodeMixin } from "./helper";
+import { createNodeRedNodeFactory } from "./helper";
 
 export interface RemoteServerNodeProps {
   host: string;
@@ -18,6 +18,5 @@ export class RemoteServerNode extends NodeRedConfigNode {
 }
 
 export default async function (RED: any) {
-  const mixin = createNodeRedNodeMixin(RED);
-  const _RemoteServerNode = await mixin(RemoteServerNode, "remote-server");
+  await createNodeRedNodeFactory(RED)(RemoteServerNode, "remote-server");
 }

@@ -1,7 +1,7 @@
 import { Config, Secret, Editor } from "./decorators";
 import { RemoteServerNode } from "./_server";
 import { NodeRedNode, TypedInput } from "./node";
-import { createNodeRedNodeMixin } from "./helper";
+import { createNodeRedNodeFactory } from "./helper";
 
 interface TypedInput {
   value: any;
@@ -67,6 +67,5 @@ export class YourNode extends NodeRedNode {
 }
 
 export default async function (RED: any) {
-  const mixin = createNodeRedNodeMixin(RED);
-  await mixin(YourNode, "your-node");
+  await createNodeRedNodeFactory(RED)(YourNode, "your-node");
 }
