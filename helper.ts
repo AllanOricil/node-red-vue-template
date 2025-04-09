@@ -87,7 +87,7 @@ export function createNodeRedNodeMixin(RED) {
         const props = ctor.__configProps__ || [];
         for (const { key, options } of props) {
           this[key] = options?.configNode
-            ? NodeRedNode.getNode(this.__config[key])
+            ? RED.nodes.getNode(this.__config[key])
             : options.typedInput
               ? new TypedInput(this, this.__config[key])
               : this.__config[key];

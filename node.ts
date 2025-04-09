@@ -55,10 +55,6 @@ export class NodeRedNode {
     // this.validateConfig();
   }
 
-  static getNode(nodeId: string) {
-    return NodeRedNode.RED.nodes.getNode(nodeId);
-  }
-
   onInput(msg, send, done) {
     console.log("parent on input");
     done();
