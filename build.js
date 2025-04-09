@@ -1,24 +1,29 @@
 const esbuild = require("esbuild");
+const esbuildPluginTsc = require("esbuild-plugin-tsc");
+
+const common = {
+  bundle: true,
+  platform: "node",
+  target: "node18",
+  format: "cjs",
+  plugins: [esbuildPluginTsc()],
+  minify: false,
+  keepNames: true,
+  loader: { ".js": "jsx" },
+};
 
 esbuild
   .build({
     entryPoints: ["_index.ts"],
     outfile: "index.js",
-    bundle: true,
-    platform: "node",
-    target: "node18",
-    format: "cjs",
-    plugins: [],
-    minify: false,
-    loader: { ".js": "jsx" },
-    tsconfigRaw: {
-      compilerOptions: {
-        strict: true,
-        noImplicitAny: true,
-        experimentalDecorators: true,
-        emitDecoratorMetadata: true,
-        useDefineForClassFields: false,
-      },
-    },
+    ...common,
+  })
+  .catch(() => process.exit(1));
+
+esbuild
+  .build({
+    entryPoints: ["_server.ts"],
+    outfile: "server.js",
+    ...common,
   })
   .catch(() => process.exit(1));

@@ -1,228 +1,72 @@
-import { Config, Secret, Editor, isTypedInput } from "./decorators";
+import { Config, Secret, Editor } from "./decorators";
+import { RemoteServerNode } from "./_server";
+import { NodeRedNode, TypedInput } from "./node";
+import { createNodeRedNodeMixin } from "./helper";
 
-// type Config<T = any> = {
-//   value: T;
-//   type?: string;
-//   required?: boolean;
-//   validate?: (value: T) => boolean;
-// };
+interface TypedInput {
+  value: any;
+  type: string;
+  evaluate: (msg: Record<string, any>) => Promise<any>;
+}
 
-// type TypedInput = {
-//   value?: Config;
-//   type: Config;
-// };
+type Credential = string;
 
-// function isTypedInput(value: any): value is TypedInput {
-//   return (
-//     value && typeof value === "object" && "value" in value && "type" in value
-//   );
-// }
+type ConfigNodeId = string;
 
-// function defineNodeConfig<T extends NodeRedConfig>(config: T): T {
-//   const result = { ...config };
+interface YourNodeProps {
+  myProperty: TypedInput;
+  remoteServer: ConfigNodeId;
+  country: string;
+  fruit: string;
+  csstest: string;
+  jsontest: string;
+}
 
-//   for (const key in result) {
-//     const prop = result[key];
+@Editor({
+  category: "function",
+  color: "#000000",
+  inputs: 1,
+  outputs: 1,
+  icon: "node.svg",
+})
+export class YourNode extends NodeRedNode {
+  @Config
+  myProperty: TypedInput;
 
-//     if (isTypedInput(prop)) {
-//       if (prop.value.value === undefined) {
-//         prop.value.value = "";
-//       }
-//       if (prop.type.value === undefined) {
-//         prop.type.value = "msg";
-//       }
-//     }
-//   }
+  @Config
+  remoteServer: RemoteServerNode;
 
-//   return result;
-// }
+  @Secret({ type: "text", required: true })
+  username: Credential;
 
-// interface Test {
-//   name: Config;
-//   delay: Config;
-//   payload: TypedInput;
-// }
+  @Secret({ type: "password" })
+  password: Credential;
 
-class Node {
-  constructor(RED: any, config: any) {
-    RED.nodes.createNode(this, config);
+  async onInput(
+    msg: Record<string, any>,
+    send: Function,
+    done: Function
+  ): void {
+    console.log(this);
+    console.log(msg);
 
-    if (this.constructor.configProperties) {
-      this.constructor.configProperties.forEach(
-        ({ key, default: defaultValue }) => {
-          this[key] = config[key] !== undefined ? config[key] : defaultValue;
-        }
-      );
-    }
+    // NOTE: typedInput props are automatically assigned using TypedInput type
+    console.log(this.myProperty.type);
+    console.log(this.myProperty.value);
+    console.log(await this.myProperty.evaluate(msg));
 
-    this.validateConfig();
-  }
+    // NOTE: config node props are automatically assigned using the config node type
+    console.log(this.remoteServer.type);
+    console.log(this.remoteServer.host);
 
-  validateConfig() {
-    for (const { key, required, validate, type } of this.constructor
-      .configProperties || []) {
-      console.log(type);
-      const value = isTypedInput(type) ? this[key].value : this[key];
-
-      if (required && (value === undefined || value === "")) {
-        throw new Error(`${key} is required.`);
-      }
-
-      if (validate) {
-        const result = validate(value);
-        if (result !== true) {
-          throw new Error(
-            `Validation failed for ${key}:  ${result} [${value}]`
-          );
-        }
-      }
-    }
-  }
-
-  async evaluateProperty(value, type, msg) {
-    return new Promise((resolve, reject) => {
-      RED.util.evaluateNodeProperty(value, type, this, msg, (err, result) => {
-        if (err) return reject(err);
-        resolve(result);
-      });
-    });
+    // NOTE: credentials are automatically assigned
+    console.log(this.username);
+    console.log(this.password);
+    done();
   }
 }
 
-export default function (RED: any) {
-  @Editor({
-    category: "function",
-    color: "#000000",
-    inputs: 1,
-    outputs: 1,
-    icon: "node.svg",
-  })
-  class YourNode extends Node {
-    @Config({
-      value: "abc",
-      type: "str",
-      required: true,
-      validate: function (value) {
-        return value.length > 3 ? true : "Must be at least 4 characters";
-      },
-    })
-    myProperty;
-
-    @Config({ type: "remote-server", required: true })
-    remoteServer;
-
-    @Config({ value: "brasil", required: true })
-    country;
-
-    @Config({ value: "appple", required: true })
-    fruit;
-
-    @Config({ value: JSON.stringify({ a: "abc" }), required: true })
-    jsontest;
-
-    @Config({
-      value: `.docs {
-    background: #FFFFFF
-  }`,
-      required: true,
-    })
-    csstest;
-
-    @Secret({ type: "text", required: true })
-    username;
-
-    @Secret({ type: "password" })
-    password;
-
-    constructor(config) {
-      super(RED, config);
-
-      console.log(config);
-      // this.myProperty = config.myProperty;
-      // this.myPropertyType = config.myPropertyType;
-      // this.server = RED.nodes.getNode(config.server);
-
-      // console.log("SERVER: ", this.server);
-
-      // this.on("input", async (msg, send, done) => {
-      //   try {
-      //     const value = await this.evaluateProperty(
-      //       this.myProperty,
-      //       this.myPropertyType,
-      //       msg
-      //     );
-      //     msg.payload = value;
-      //     send(msg);
-      //     if (done) done();
-      //   } catch (error) {
-      //     this.error(`Failed to evaluate property: ${error.message}`, msg);
-      //     if (done) done(error);
-      //   }
-      // });
-    }
-  }
-
-  RED.nodes.registerType("your-node", YourNode, {
-    credentials: YourNode.secrets.reduce((acc, { key, type, required }) => {
-      acc[key] = {
-        type,
-        required,
-      };
-      return acc;
-    }, {}),
-  });
-
-  RED.httpAdmin.get("/your-node", function (req, res) {
-    let editorConfig = { ...YourNode.editorConfig } || {};
-    editorConfig.defaults = {};
-
-    if (Array.isArray(YourNode.configProperties)) {
-      YourNode.configProperties.forEach(
-        ({ key, value, type, validate, required }) => {
-          editorConfig.defaults[key] = {
-            value,
-            type,
-            validate,
-            required,
-          };
-        }
-      );
-    }
-
-    // editorConfig.defaults.myProperty = {
-    //   value: {
-    //     type: "object",
-    //     properties: {
-    //       myProperty: {
-    //         type: "string",
-    //         default: "defaultVal",
-    //         required: true,
-    //         validate: (val: string) =>
-    //           val.length > 3 ? true : "Must be at least 4 characters",
-    //       },
-    //       myPropertyType: {
-    //         type: "string",
-    //         default: "msg",
-    //         enum: ["msg", "flow", "global"],
-    //       },
-    //       remoteServer: { type: "string", default: "" },
-    //       configNode: { type: "string", default: "" },
-    //     },
-    //     required: ["myProperty"],
-    //   },
-    // };
-
-    editorConfig.credentials = YourNode.secrets.reduce(
-      (acc, { key, type, required }) => {
-        acc[key] = {
-          type,
-          required,
-        };
-        return acc;
-      },
-      {}
-    );
-
-    res.json(editorConfig);
-  });
+export default async function (RED: any) {
+  const mixin = createNodeRedNodeMixin(RED);
+  await mixin(YourNode, "your-node");
 }

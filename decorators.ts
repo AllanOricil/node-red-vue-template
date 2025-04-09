@@ -1,81 +1,58 @@
-function Secret(options: { type?: string; required?: boolean }) {
+import "reflect-metadata";
+import { NodeRedConfigNode, TypedInput } from "./node";
+
+function Secret(options: { type: "text" | "password"; required?: boolean }) {
   return function (target: any, key: string) {
-    if (!target.constructor.secrets) {
-      target.constructor.secrets = [];
+    const ctor = target.constructor;
+    if (!ctor.hasOwnProperty("__secrets__")) {
+      Object.defineProperty(ctor, "__secrets__", {
+        value: [],
+        writable: true,
+        configurable: true,
+      });
     }
 
-    target.constructor.secrets.push({
+    target.constructor.__secrets__.push({
       key,
       type: options.type,
       required: options.required || false,
-      default: undefined,
     });
   };
 }
 
-function isTypedInput(type?: string) {
-  return type
-    ? [
-        "msg",
-        "flow",
-        "global",
-        "str",
-        "num",
-        "bool",
-        "env",
-        "json",
-        "jsonata",
-      ].includes(type)
-    : false;
+function isSubclassOf(child: Function, parent: Function): boolean {
+  if (child === parent) return false;
+
+  let proto = child.prototype;
+  while (proto) {
+    proto = Object.getPrototypeOf(proto);
+    if (proto?.constructor === parent) return true;
+  }
+  return false;
 }
 
-function Config(options: {
-  value: any;
-  type?: string;
-  required?: boolean;
-  validate?: (value: any) => boolean;
-}) {
-  return function (target: any, key: string) {
-    if (!target.constructor.configProperties) {
-      target.constructor.configProperties = [];
-    }
+function Config(target: any, key: string) {
+  const ctor = target.constructor;
+  const type = Reflect.getMetadata("design:type", target, key);
 
-    const config = {
-      key,
-      value: options.value,
-      type: options.type,
-      required: options.required || false,
-      validate: options.validate,
-      default: undefined,
-    };
-
-    if (isTypedInput(options.type)) {
-      config.value = {
-        value: options.value,
-        type: options.type,
-      };
-    }
-
-    target.constructor.configProperties.push(config);
-
-    // Define the property on the instance, not the prototype
-    Object.defineProperty(target, key, {
-      get() {
-        return this[`__${key}`];
-      },
-      set(value) {
-        this[`__${key}`] = value;
-        const config = this.constructor.configProperties.find(
-          (prop: any) => prop.key === key
-        );
-        if (config && config.default === undefined) {
-          config.default = value; // Capture the default from instance
-        }
-      },
-      enumerable: true,
+  if (!ctor.hasOwnProperty("__configProps__")) {
+    Object.defineProperty(ctor, "__configProps__", {
+      value: [],
+      writable: true,
       configurable: true,
     });
+  }
+
+  const config = {
+    key,
+    options: {
+      configNode: isSubclassOf(type, NodeRedConfigNode),
+      typedInput: type === TypedInput,
+    },
   };
+
+  console.log(config);
+  ctor.__configProps__.push(config);
 }
 
 type EditorOptions = {
@@ -89,9 +66,9 @@ type EditorOptions = {
 function Editor(options: EditorOptions) {
   return function <T extends { new (...args: any[]): {} }>(constructor: T) {
     return class extends constructor {
-      static editorConfig = options;
+      static editorProperties = options;
     };
   };
 }
 
-export { Config, Secret, Editor, isTypedInput };
+export { Config, Secret, Editor };
