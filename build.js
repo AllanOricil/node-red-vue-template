@@ -19,11 +19,3 @@ esbuild
     ...common,
   })
   .catch(() => process.exit(1));
-
-esbuild
-  .build({
-    entryPoints: ["_server.ts"],
-    outfile: "server.js",
-    ...common,
-  })
-  .catch(() => process.exit(1));

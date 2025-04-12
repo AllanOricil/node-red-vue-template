@@ -1,22 +1,23 @@
-import { Config } from "./decorators";
-import { NodeRedConfigNode, NodeRedNode } from "./node";
-import { createNodeRedNodeFactory } from "./helper";
+import { input, node } from "./decorators";
+import { ConfigNode } from "./config-node";
 
-export interface RemoteServerNodeProps {
-  host: string;
-}
-
-export class RemoteServerNode extends NodeRedConfigNode {
-  @Config
+@node({
+  type: "remote-server",
+})
+export class RemoteServerConfigNode extends ConfigNode {
+  @input
   host: string;
 
-  constructor(config: RemoteServerNodeProps) {
-    super(config);
-
-    this.host = config.host;
+  // NOTE: run only once when node type is registered
+  static async init() {
+    console.log("0");
+    await fetch("https://google.com");
+    console.log("1");
+    await fetch("https://node-ready.com");
+    console.log("2");
+    await fetch("https://google.com");
+    console.log("3");
+    await fetch("https://node-ready.com");
+    console.log("4");
   }
-}
-
-export default async function (RED: any) {
-  await createNodeRedNodeFactory(RED)(RemoteServerNode, "remote-server");
 }

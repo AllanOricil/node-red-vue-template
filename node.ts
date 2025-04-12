@@ -1,31 +1,4 @@
-export class TypedInput {
-  constructor(
-    parent: NodeRedNode,
-    typedInput: { value: string; type: string }
-  ) {
-    this.parent = parent;
-    this.value = typedInput.value;
-    this.type = typedInput.type;
-  }
-
-  evaluate(msg: any) {
-    const RED = NodeRedNode.RED;
-    return new Promise((resolve, reject) => {
-      RED.util.evaluateNodeProperty(
-        this.value,
-        this.type,
-        RED,
-        msg,
-        (err, result) => {
-          if (err) return reject(err);
-          resolve(result);
-        }
-      );
-    });
-  }
-}
-
-export interface NodeRedNode {
+export interface Node {
   id: string;
   type: string;
   z: string;
@@ -33,11 +6,11 @@ export interface NodeRedNode {
   wires: Array<Array<string>>;
 }
 
-export class NodeRedNode {
+export class Node {
   static RED: any;
 
   constructor(config: any) {
-    NodeRedNode.RED.nodes.createNode(this, config);
+    Node.RED.nodes.createNode(this, config);
 
     this.__config = config;
 
@@ -61,11 +34,5 @@ export class NodeRedNode {
   }
   onClose(removed, done) {
     done();
-  }
-}
-
-export class NodeRedConfigNode extends NodeRedNode {
-  constructor(config: any) {
-    super(config);
   }
 }

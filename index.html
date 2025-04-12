@@ -1,11 +1,40 @@
+<script type="text/html" data-template-name="remote-server">
+  <div class="form-row">
+    <label for="node-config-input-name"><i class="fa"></i> Name</label>
+    <input type="text" id="node-config-input-name" />
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-host"
+      ><i class="fa fa-bookmark"></i> Host</label
+    >
+    <input type="text" id="node-config-input-host" />
+  </div>
+</script>
+
+<script type="text/javascript">
+  RED.nodes.registerType("remote-server", {
+    category: "config",
+    color: "#a6bbcf",
+    defaults: {
+      name: { value: "", required: true },
+      host: { value: "localhost", required: true },
+    },
+    label: function () {
+      return this.name;
+    },
+  });
+</script>
+
 <script type="text/html" data-template-name="your-node">
   <div id="app"></div>
 </script>
 
 <script type="text/javascript">
-  $.getJSON("your-node", function (editorConfig) {
+  $.getJSON("your-node", function (nodeProperties) {
+    console.log("RECEIVED NODE ProPS");
+    console.log(nodeProperties);
     RED.nodes.registerType("your-node", {
-      ...editorConfig,
+      ...nodeProperties,
       label: function () {
         return this.name || "Your Node";
       },
@@ -16,11 +45,11 @@
         this._old = {
           credentials: {},
         };
-        Object.keys(editorConfig.defaults).forEach((value) => {
+        Object.keys(nodeProperties.defaults).forEach((value) => {
           this._old[value] = node[value];
         });
 
-        Object.keys(editorConfig.credentials).forEach((value) => {
+        Object.keys(nodeProperties.credentials).forEach((value) => {
           this._old.credentials[value] = node.credentials[value];
         });
 
@@ -106,6 +135,7 @@
               };
             },
             mounted() {
+              console.log(this);
               RED.editor.prepareConfigNodeSelect(
                 this,
                 this.value,
@@ -374,46 +404,61 @@
               NodeRedEditorInput,
             },
             template: `
-          <div style="width: 100%;">
-              <div class="form-row">
-                  <label><i class="fa fa-tag"></i> Username</label>
-                  <NodeRedCredentialInput v-model="username" type="text"/>
-              </div>
-              <div class="form-row">
-                  <label><i class="fa fa-tag"></i> Password</label>
-                  <NodeRedCredentialInput v-model="password" type="password"/>
-              </div>
-              <div class="form-row">
-                  <label style="width: 100%">Typed Input</label>
-                  <NodeRedTypedInput v-model="myProperty"/>
-              </div>
-              <div class="form-row">
-                  <label style="width: 100%">Config Input</label>
-                  <NodeRedConfigInput v-model="remoteServer" type="remote-server"/>
-              </div>
-              <div class="form-row">
-                  <label style="width: 100%">Select Input</label>
-                  <NodeRedSelectInput v-model="country" :options="countries"/>
-              </div>
-              <div class="form-row">
-                  <label style="width: 100%">MultiSelect Input</label>
-                  <NodeRedSelectInput v-model="fruit" :options="fruits" multiple="true"/>
-              </div>
-              <div class="form-row">
-                  <label style="width: 100%">Editor with default height 200px and JSON</label>
-                  <NodeRedEditorInput v-model="jsontest" />
-              </div>
-              <div class="form-row">
-                <label style="width: 100%">Editor with custom height and CSS</label>
-                <NodeRedEditorInput v-model="csstest" language="css" style="height: 500px;"/>
-              </div>
-          </div>
-    `,
+			<div style="width: 100%;">
+				<div class="form-row">
+					<label><i class="fa fa-tag"></i> Username</label>
+					<NodeRedCredentialInput v-model="username" type="text"/>
+				</div>
+				<div class="form-row">
+					<label><i class="fa fa-tag"></i> Password</label>
+					<NodeRedCredentialInput v-model="password" type="password"/>
+				</div>
+				<div class="form-row">
+					<label style="width: 100%">Typed Input</label>
+					<NodeRedTypedInput v-model="myProperty"/>
+				</div>
+				<div class="form-row">
+					<label style="width: 100%">Config Input</label>
+					<NodeRedConfigInput v-model="remoteServer" type="remote-server"/>
+				</div>
+				<div class="form-row">
+					<label style="width: 100%">Select Input</label>
+					<NodeRedSelectInput v-model="country" :options="countries"/>
+				</div>
+				<div class="form-row">
+					<label style="width: 100%">MultiSelect Input</label>
+					<NodeRedSelectInput v-model="fruit" :options="fruits" multiple="true"/>
+				</div>
+				<div class="form-row">
+					<label style="width: 100%">Editor with default height 200px and JSON</label>
+					<NodeRedEditorInput v-model="jsontest" />
+				</div>
+				<div class="form-row">
+				  <label style="width: 100%">Editor with custom height and CSS</label>
+				  <NodeRedEditorInput v-model="csstest" language="css" style="height: 500px;"/>
+				</div>
+			</div>
+	  `,
           });
         }
       },
       oneditsave: function () {
         const node = this;
+
+        if (node._old["remoteServer"]) {
+          const oldRemoteServer = RED.nodes.node(node._old["remoteServer"]);
+          const parentIndex = oldRemoteServer.users.findIndex(
+            (_node) => _node.id === node.id
+          );
+          if (parentIndex !== -1) {
+            oldRemoteServer.users.splice(parentIndex, 1);
+          }
+        }
+
+        RED.nodes.updateConfigNodeUsers(this, {
+          action: "add",
+          emitEvent: true,
+        });
         if (node.changed) {
           RED.nodes.dirty(node);
         }
@@ -423,11 +468,11 @@
       oneditcancel: function () {
         const node = this;
         node.changed = false;
-        Object.keys(editorConfig.defaults).forEach((value) => {
+        Object.keys(nodeProperties.defaults).forEach((value) => {
           node[value] = node._old[value];
         });
 
-        Object.keys(editorConfig.credentials).forEach((value) => {
+        Object.keys(nodeProperties.credentials).forEach((value) => {
           node.credentials[value] = node._old.credentials[value];
         });
       },

@@ -1,24 +1,7 @@
 import "reflect-metadata";
-import { NodeRedConfigNode, TypedInput } from "./node";
-
-function Secret(options: { type: "text" | "password"; required?: boolean }) {
-  return function (target: any, key: string) {
-    const ctor = target.constructor;
-    if (!ctor.hasOwnProperty("__secrets__")) {
-      Object.defineProperty(ctor, "__secrets__", {
-        value: [],
-        writable: true,
-        configurable: true,
-      });
-    }
-
-    target.constructor.__secrets__.push({
-      key,
-      type: options.type,
-      required: options.required || false,
-    });
-  };
-}
+import { TypedInput } from "./typed-input";
+import { ConfigNode } from "./config-node";
+import * as Credential from "./credential";
 
 function isSubclassOf(child: Function, parent: Function): boolean {
   if (child === parent) return false;
@@ -31,44 +14,51 @@ function isSubclassOf(child: Function, parent: Function): boolean {
   return false;
 }
 
-function Config(target: any, key: string) {
+function input(target: any, key: string) {
   const ctor = target.constructor;
   const type = Reflect.getMetadata("design:type", target, key);
 
-  if (!ctor.hasOwnProperty("__configProps__")) {
-    Object.defineProperty(ctor, "__configProps__", {
+  if (!ctor.hasOwnProperty("__inputs__")) {
+    Object.defineProperty(ctor, "__inputs__", {
       value: [],
       writable: true,
       configurable: true,
     });
   }
 
+  const isConfigNode = isSubclassOf(type, ConfigNode);
+
   const config = {
     key,
     options: {
-      configNode: isSubclassOf(type, NodeRedConfigNode),
-      typedInput: type === TypedInput,
+      ...(isConfigNode
+        ? { configNodeType: type.__nodeProperties___.type }
+        : {}),
+      isTypedInput: type === TypedInput,
+      isPasswordCredential: type === Credential.Password,
+      isTextCredential: type === Credential.Text,
     },
   };
 
   console.log(config);
-  ctor.__configProps__.push(config);
+  ctor.__inputs__.push(config);
 }
 
-type EditorOptions = {
-  category: string;
-  color: string;
-  inputs: number;
-  outputs: number;
-  icon: string;
+type NodeOptions = {
+  type: string;
+  category?: string;
+  color?: string;
+  inputs?: number;
+  outputs?: number;
+  icon?: string;
 };
 
-function Editor(options: EditorOptions) {
+function node(options: NodeOptions) {
   return function <T extends { new (...args: any[]): {} }>(constructor: T) {
     return class extends constructor {
-      static editorProperties = options;
+      static __nodeProperties___ = options;
     };
   };
 }
 
-export { Config, Secret, Editor };
+export { input, node };

@@ -1,4 +1,6 @@
-import { NodeRedNode, TypedInput } from "./node";
+import { Node } from "./node";
+import { TypedInput } from "./typed-input";
+import * as Credential from "./credential";
 import camelCase from "camelcase";
 
 /**
@@ -10,17 +12,20 @@ import camelCase from "camelcase";
  * @returns {function} - A higher-order function that takes a base class and returns a new class with additional Node-RED functionalities.
  */
 export function createNodeRedNodeFactory(RED) {
-  return async function (BaseClass, type) {
-    if (!(BaseClass.prototype instanceof NodeRedNode)) {
+  return async function (BaseClass) {
+    if (!(BaseClass.prototype instanceof Node)) {
       throw new Error(`${BaseClass.name} must extend Node`);
     }
 
+    const type = BaseClass.__nodeProperties___.type;
     if (!type) {
-      throw new Error(`${type} must be provided`);
+      throw new Error(
+        `${type} must be provided with @Node decorator in your class`
+      );
     }
 
-    if (NodeRedNode.RED === undefined) {
-      Object.defineProperty(NodeRedNode, "RED", {
+    if (Node.RED === undefined) {
+      Object.defineProperty(Node, "RED", {
         value: RED,
         writable: false,
         configurable: false,
@@ -43,6 +48,8 @@ export function createNodeRedNodeFactory(RED) {
       });
     }
 
+    console.log("BASECLASS");
+    console.log(BaseClass);
     if (typeof BaseClass.init === "function") {
       const result = BaseClass.init();
 
@@ -84,19 +91,22 @@ export function createNodeRedNodeFactory(RED) {
 
       private assignDecoratedProps() {
         const ctor = this.constructor as any;
-        const props = ctor.__configProps__ || [];
+        const props = ctor.__inputs__ || [];
+        console.log("INSIDE DECORATED PROPS METHOD");
         for (const { key, options } of props) {
-          this[key] = options?.configNode
+          console.log("options");
+          console.log(options);
+          this[key] = options.configNodeType
             ? RED.nodes.getNode(this.__config[key])
-            : options.typedInput
+            : options.isTypedInput
               ? new TypedInput(this, this.__config[key])
-              : this.__config[key];
+              : options.isPasswordCredential
+                ? new Credential.Password(this.credentials[key])
+                : options.isTextCredential
+                  ? new Credential.Text(this.credentials[key])
+                  : this.__config[key];
         }
 
-        const secrets = ctor.__secrets__ || [];
-        for (const { key } of secrets) {
-          this[key] = this.credentials[key];
-        }
         delete this.credentials;
 
         console.log("FINISHED ASSIGNING PROPS");
@@ -104,7 +114,7 @@ export function createNodeRedNodeFactory(RED) {
 
       private validateConfig() {
         for (const { key, required, validate, type } of this.constructor
-          .__configProps__ || []) {
+          .__inputs__ || []) {
           console.log(type);
           const value = isTypedInput(type) ? this[key].value : this[key];
 
@@ -124,38 +134,57 @@ export function createNodeRedNodeFactory(RED) {
       }
     };
 
-    const defaults = classRegistry["_BaseClass"]?.__configProps__
-      ? classRegistry["_BaseClass"].__configProps__.reduce((acc, { key }) => {
-          acc[key] = {
-            value: "",
-          };
-          return acc;
-        }, {})
-      : {};
+    const defaults = function () {
+      return classRegistry["_BaseClass"]?.__inputs__
+        ? classRegistry["_BaseClass"].__inputs__.reduce(
+            (acc, { key, options }) => {
+              if (options.isTextCredential || options.isPasswordCredential)
+                return acc;
+              acc[key] = {
+                value: "",
+                type: options.configNodeType
+                  ? options.configNodeType
+                  : undefined,
+              };
+              return acc;
+            },
+            {}
+          )
+        : {};
+    };
 
-    const credentials = classRegistry["_BaseClass"]?.__secrets__
-      ? classRegistry["_BaseClass"].__secrets__.reduce(
-          (acc, { key, type, required }) => {
-            acc[key] = {
-              type,
-              required,
-            };
-            return acc;
-          },
-          {}
-        )
-      : {};
+    const credentials = function () {
+      return classRegistry["_BaseClass"]?.__inputs__
+        ? classRegistry["_BaseClass"].__inputs__.reduce(
+            (acc, { key, options }) => {
+              if (options.isPasswordCredential) {
+                acc[key] = {
+                  type: "password",
+                };
+              }
+
+              if (options.isTextCredential) {
+                acc[key] = {
+                  type: "text",
+                };
+              }
+              return acc;
+            },
+            {}
+          )
+        : {};
+    };
 
     RED.nodes.registerType(type, classRegistry["_BaseClass"], {
-      credentials,
+      credentials: credentials(),
     });
 
     RED.httpAdmin.get(`/${type}`, function (req, res) {
-      let editorProperties =
-        { ...classRegistry["_BaseClass"].editorProperties } || {};
-      editorProperties.defaults = defaults;
-      editorProperties.credentials = credentials;
-      res.json(editorProperties);
+      let nodeProperties =
+        { ...classRegistry["_BaseClass"].__nodeProperties___ } || {};
+      nodeProperties.defaults = defaults();
+      nodeProperties.credentials = credentials();
+      res.json(nodeProperties);
     });
 
     return classRegistry["_BaseClass"];
