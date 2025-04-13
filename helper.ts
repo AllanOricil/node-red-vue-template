@@ -2,6 +2,8 @@ import { Node } from "./node";
 import { TypedInput } from "./typed-input";
 import * as Credential from "./credential";
 import camelCase from "camelcase";
+import { ConfigNode } from "./config-node";
+import { isSubclassOf, convertToType } from "./utils";
 
 /**
  * Creates a mixin to extend Node-RED's node registration functionality.
@@ -68,12 +70,8 @@ export function createNodeRedNodeFactory(RED) {
       constructor(config) {
         super(config);
 
-        console.log("INSIDE MIXIN");
-        console.log(config);
         this.setupEventHandlers();
         this.assignDecoratedProps();
-
-        console.log(this);
       }
 
       /**
@@ -93,18 +91,15 @@ export function createNodeRedNodeFactory(RED) {
         const ctor = this.constructor as any;
         const props = ctor.__inputs__ || [];
         console.log("INSIDE DECORATED PROPS METHOD");
-        for (const { key, options } of props) {
-          console.log("options");
-          console.log(options);
-          this[key] = options.configNodeType
+        for (const { key, type } of props) {
+          // TODO: try prop acessors
+          this[key] = isSubclassOf(type, ConfigNode)
             ? RED.nodes.getNode(this.__config[key])
-            : options.isTypedInput
+            : type === TypedInput
               ? new TypedInput(this, this.__config[key])
-              : options.isPasswordCredential
-                ? new Credential.Password(this.credentials[key])
-                : options.isTextCredential
-                  ? new Credential.Text(this.credentials[key])
-                  : this.__config[key];
+              : type === Credential.Password || type === Credential.Text
+                ? convertToType(this.credentials[key], type)
+                : convertToType(this.__config[key], type);
         }
 
         delete this.credentials;
@@ -137,13 +132,14 @@ export function createNodeRedNodeFactory(RED) {
     const defaults = function () {
       return classRegistry["_BaseClass"]?.__inputs__
         ? classRegistry["_BaseClass"].__inputs__.reduce(
-            (acc, { key, options }) => {
-              if (options.isTextCredential || options.isPasswordCredential)
+            (acc, { key, type }) => {
+              if (type === Credential.Password || type === Credential.Text)
                 return acc;
+
               acc[key] = {
                 value: "",
-                type: options.configNodeType
-                  ? options.configNodeType
+                type: isSubclassOf(type, ConfigNode)
+                  ? type.__nodeProperties___.type
                   : undefined,
               };
               return acc;
@@ -156,14 +152,14 @@ export function createNodeRedNodeFactory(RED) {
     const credentials = function () {
       return classRegistry["_BaseClass"]?.__inputs__
         ? classRegistry["_BaseClass"].__inputs__.reduce(
-            (acc, { key, options }) => {
-              if (options.isPasswordCredential) {
+            (acc, { key, type }) => {
+              if (type === Credential.Password) {
                 acc[key] = {
                   type: "password",
                 };
               }
 
-              if (options.isTextCredential) {
+              if (type === Credential.Text) {
                 acc[key] = {
                   type: "text",
                 };
