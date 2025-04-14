@@ -407,6 +407,7 @@
                 set password(newValue) {
                   node.changed = true;
                   node.credentials.password = newValue;
+                  node.credentials.has_password = true;
                 },
                 countries: [
                   { value: "usa", label: "usa" },
