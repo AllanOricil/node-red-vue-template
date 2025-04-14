@@ -1,28 +1,42 @@
 import { Node } from "./node";
+import { ConfigNode } from "./config-node";
 import { TypedInput } from "./typed-input";
 import * as Credential from "./credential";
 import camelCase from "camelcase";
-import { ConfigNode } from "./config-node";
 import { isSubclassOf, convertToType } from "./utils";
 
 /**
- * Creates a mixin to extend Node-RED's node registration functionality.
- * This mixin ensures that the RED object is available in the class scope,
- * automatically registers the node and its event handlers.
- *
- * @param {object} RED - The Node-RED runtime object. It provides methods to register and manage nodes.
- * @returns {function} - A higher-order function that takes a base class and returns a new class with additional Node-RED functionalities.
+ * @class NodeFactory
+ * @description Provides a static method to simplify the registration of custom Node-RED
+ * node classes developed using the nrg framework. It handles the
+ * boilerplate integration with the Node-RED runtime, including type registration,
+ * property injection, event handling setup, and admin endpoint creation.
  */
-export function createNodeRedNodeFactory(RED) {
-  return async function (BaseClass) {
-    if (!(BaseClass.prototype instanceof Node)) {
+export class NodeFactory {
+  /**
+   * Registers a custom node built with the nrg framework
+   * @static
+   * @async
+   * @param {object} RED - The Node-RED runtime API object
+   * @param {(Node | ConfigNode)} BaseClass - A node class extending Node or ConfigNode
+   * @returns {Promise<void>} A promise that resolves when the node type registration and setup are complete. It might wait for the `BaseClass.init()` promise if one is returned.
+   * @throws {Error} If BaseClass does not extend `Node` or `ConfigNode`.
+   * @throws {Error} If BaseClass does not provide @node({type: "node-type"})
+   */
+  static async createNode(RED: any, BaseClass: Node | ConfigNode) {
+    if (
+      !(
+        BaseClass.prototype instanceof Node ||
+        BaseClass.prototype instanceof ConfigNode
+      )
+    ) {
       throw new Error(`${BaseClass.name} must extend Node`);
     }
 
     const type = BaseClass.__nodeProperties___.type;
     if (!type) {
       throw new Error(
-        `${type} must be provided with @Node decorator in your class`
+        `${type} must be provided with @node decorator in your class`
       );
     }
 
@@ -31,6 +45,16 @@ export function createNodeRedNodeFactory(RED) {
         value: RED,
         writable: false,
         configurable: false,
+        enumerable: false,
+      });
+    }
+
+    if (ConfigNode.RED === undefined) {
+      Object.defineProperty(ConfigNode, "RED", {
+        value: RED,
+        writable: false,
+        configurable: false,
+        enumerable: false,
       });
     }
 
@@ -39,6 +63,7 @@ export function createNodeRedNodeFactory(RED) {
         value: RED,
         writable: false,
         configurable: false,
+        enumerable: false,
       });
     }
 
@@ -47,6 +72,7 @@ export function createNodeRedNodeFactory(RED) {
         value: type,
         writable: false,
         configurable: false,
+        enumerable: false,
       });
     }
 
@@ -182,7 +208,5 @@ export function createNodeRedNodeFactory(RED) {
       nodeProperties.credentials = credentials();
       res.json(nodeProperties);
     });
-
-    return classRegistry["_BaseClass"];
-  };
+  }
 }
