@@ -1,3 +1,6 @@
+import Ajv, { ValidateFunction } from "ajv";
+import addFormats from "ajv-formats";
+import { deepmerge } from "deepmerge-ts";
 import { Node } from "./node";
 import { ConfigNode } from "./config-node";
 import { TypedInput } from "./typed-input";
@@ -89,6 +92,10 @@ export class NodeFactory {
     // NOTE: if I assign the extended class to a constant the class name becomes the name of the contant. To avoid losing the BaseClass name I'm storing it in a object prop. Somehow js maintains the name of the BaseClass when I do it
     const classRegistry = {};
     classRegistry["_BaseClass"] = class extends BaseClass {
+      private static ajv: Ajv | null = null;
+      private static inputsValidator: ValidateFunction | null = null;
+      private static messageValidator: ValidateFunction | null = null;
+
       /**
        * Creates an instance of a given node class and injects the RED object in it
        * @param {object} config - Configuration object for the node-red node instance.
@@ -96,6 +103,9 @@ export class NodeFactory {
       constructor(config) {
         super(config);
 
+        const inputs = deepmerge(config, this.credentials);
+        console.log(inputs);
+        this.validateInputs(inputs);
         this.setupEventHandlers();
         this.assignDecoratedProps();
       }
@@ -105,12 +115,26 @@ export class NodeFactory {
        * to their corresponding events.
        */
       private setupEventHandlers() {
-        ["onInput", "onClose"].forEach((methodName) => {
-          this.on(
-            methodName.split("on")[1].toLocaleLowerCase(),
-            this[methodName]
-          );
+        // TODO: make this dynamic again?
+        // ["onInput", "onClose"].forEach((methodName) => {
+        //   this.on(
+        //     methodName.split("on")[1].toLocaleLowerCase(),
+        //     this[methodName]
+        //   );
+        // });
+
+        this.on("input", (msg, send, done) => {
+          try {
+            this.validateMessage(msg);
+            this.onInput(msg, send, done);
+          } catch (err) {
+            this.error("Error during input processing: " + err.message, msg);
+            if (done) {
+              done(err);
+            }
+          }
         });
+        this.on("close", this.onClose);
       }
 
       private assignDecoratedProps() {
@@ -133,25 +157,86 @@ export class NodeFactory {
         console.log("FINISHED ASSIGNING PROPS");
       }
 
-      private validateConfig() {
-        for (const { key, required, validate, type } of this.constructor
-          .__inputs__ || []) {
-          console.log(type);
-          const value = isTypedInput(type) ? this[key].value : this[key];
+      private validateInputs(inputs: any) {
+        console.log("INSIDE VALIDATE INPUT SCHEMA");
+        console.log(this.constructor.__nodeProperties___?.schemas?.inputs);
 
-          if (required && (value === undefined || value === "")) {
-            throw new Error(`${key} is required.`);
-          }
+        const schema = this.constructor.__nodeProperties___?.schemas?.inputs;
 
-          if (validate) {
-            const result = validate(value);
-            if (result !== true) {
-              throw new Error(
-                `Validation failed for ${key}:  ${result} [${value}]`
-              );
-            }
-          }
+        if (!schema) {
+          console.log("Nothing to be validated");
+          return;
         }
+
+        if (!this.inputsValidator) {
+          this.ajv = new Ajv({
+            allErrors: true,
+            useDefaults: true,
+            strict: true,
+            coerceTypes: true,
+            verbose: true,
+            validateFormats: true,
+          });
+
+          addFormats(this.ajv);
+
+          this.inputsValidator = this.ajv.compile(schema);
+
+          console.log("COMPILED");
+        }
+
+        const isValid = this.inputsValidator(inputs);
+        if (!isValid) {
+          const errorDetails = this.ajv?.errorsText(
+            this.inputsValidator.errors,
+            {
+              separator: "\n",
+              dataVar: "- inputs",
+            }
+          );
+          console.log(errorDetails);
+          return;
+        }
+        console.log("ALL GOOD");
+      }
+
+      private validateMessage(message: Record<string, any>) {
+        console.log("VALIDATING MESSAGE");
+        const schema = this.constructor.__nodeProperties___?.schemas?.message;
+        if (!schema) {
+          console.log("Nothing to be validated");
+          return;
+        }
+
+        if (!this.messageValidator) {
+          this.ajv = new Ajv({
+            allErrors: true,
+            useDefaults: true,
+            strict: true,
+            coerceTypes: true,
+            verbose: true,
+            validateFormats: true,
+          });
+          addFormats(this.ajv);
+
+          this.messageValidator = this.ajv.compile(schema);
+
+          console.log("COMPILED");
+        }
+
+        const isValid = this.messageValidator(message);
+        if (!isValid) {
+          const errorDetails = this.ajv?.errorsText(
+            this.messageValidator.errors,
+            {
+              separator: "\n",
+              dataVar: "- message",
+            }
+          );
+          console.log(errorDetails);
+          return;
+        }
+        console.log("ALL GOOD WITH MESSAGE");
       }
     };
 

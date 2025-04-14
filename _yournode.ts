@@ -3,6 +3,8 @@ import { RemoteServerConfigNode } from "./_server";
 import { Node } from "./node";
 import { TypedInput } from "./typed-input";
 import * as Credential from "./credential";
+import InputsSchema from "./inputs-schema";
+import MessageSchema from "./message-schema";
 
 @node({
   type: "your-node",
@@ -11,6 +13,10 @@ import * as Credential from "./credential";
   inputs: 1,
   outputs: 1,
   icon: "node.svg",
+  schemas: {
+    inputs: InputsSchema,
+    message: MessageSchema,
+  },
 })
 export class YourNode extends Node {
   @input
