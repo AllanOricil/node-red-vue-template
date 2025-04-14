@@ -16,16 +16,6 @@ export class Node {
 
     console.log("INSIDE PARENT CONSTRUCTOR");
     console.log(this);
-
-    // if (this.constructor.configProperties) {
-    //   this.constructor.configProperties.forEach(
-    //     ({ key, default: defaultValue }) => {
-    //       this[key] = config[key] !== undefined ? config[key] : defaultValue;
-    //     }
-    //   );
-    // }
-
-    // this.validateConfig();
   }
 
   onInput(msg, send, done) {

@@ -26,6 +26,15 @@ export class YourNode extends Node {
   country: string;
 
   @input
+  number: number;
+
+  @input
+  object: object;
+
+  @input
+  array: Array;
+
+  @input
   jsontest: string;
 
   @input
@@ -63,6 +72,17 @@ export class YourNode extends Node {
     // NOTE: credentials are automatically assigned
     console.log(this.username);
     console.log(this.password);
+
+    console.log(this.number);
+    console.log(this.object);
+    console.log(this.object.test);
+    console.log(this.array);
+    console.log(this.array[0]);
+
+    console.log(typeof this.number);
+    console.log(typeof this.object);
+    console.log(Array.isArray(this.array));
+
     done();
   }
 }

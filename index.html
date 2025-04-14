@@ -346,6 +346,30 @@
                   node.changed = true;
                   node.country = newValue;
                 },
+
+                get number() {
+                  return node.number ? node.number : "";
+                },
+                set number(newValue) {
+                  node.changed = true;
+                  node.number = newValue;
+                },
+
+                get object() {
+                  return node.object ? node.object : "";
+                },
+                set object(newValue) {
+                  node.changed = true;
+                  node.object = newValue;
+                },
+
+                get array() {
+                  return node.array ? node.array : "";
+                },
+                set array(newValue) {
+                  node.changed = true;
+                  node.array = newValue;
+                },
                 get fruit() {
                   return node.fruit ? node.fruit : "";
                 },
@@ -394,6 +418,21 @@
                   { value: "melon", label: "melon" },
                   { value: "raspberry", label: "raspberry" },
                 ],
+                numbers: [
+                  { value: 1, label: "1" },
+                  { value: 2, label: "2" },
+                  { value: 3, label: "3" },
+                ],
+                objects: [
+                  { value: JSON.stringify({ test: "a" }), label: "a" },
+                  { value: JSON.stringify({ test: "b" }), label: "b" },
+                  { value: JSON.stringify({ test: "c" }), label: "c" },
+                ],
+                arrays: [
+                  { value: JSON.stringify(["a"]), label: "a" },
+                  { value: JSON.stringify(["b"]), label: "b" },
+                  { value: JSON.stringify(["c"]), label: "c" },
+                ],
               };
             },
             components: {
@@ -429,6 +468,18 @@
 					<label style="width: 100%">MultiSelect Input</label>
 					<NodeRedSelectInput v-model="fruit" :options="fruits" multiple="true"/>
 				</div>
+        <div class="form-row">
+					<label style="width: 100%">Select Input</label>
+					<NodeRedSelectInput v-model="number" :options="numbers"/>
+				</div>
+        <div class="form-row">
+					<label style="width: 100%">Select Input</label>
+					<NodeRedSelectInput v-model="object" :options="objects"/>
+				</div>
+        <div class="form-row">
+					<label style="width: 100%">Select Input</label>
+					<NodeRedSelectInput v-model="array" :options="arrays"/>
+				</div>
 				<div class="form-row">
 					<label style="width: 100%">Editor with default height 200px and JSON</label>
 					<NodeRedEditorInput v-model="jsontest" />
@@ -462,6 +513,8 @@
         if (node.changed) {
           RED.nodes.dirty(node);
         }
+
+        node.outputs = node.outputs++;
         console.log("SAVED");
         console.log(node);
       },

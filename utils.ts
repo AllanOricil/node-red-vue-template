@@ -25,6 +25,15 @@ function convertToType(value: any, type: any): any {
       return !["false", "0", ""].includes(value.toLowerCase());
     }
     return Boolean(value);
+  } else if (type === BigInt) {
+    if (typeof value === "bigint") {
+      return value;
+    }
+    try {
+      return BigInt(value);
+    } catch (e) {
+      return 0n;
+    }
   } else if (type === Date) {
     const date = new Date(value);
     return isNaN(date.getTime()) ? null : date;
