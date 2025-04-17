@@ -1,8 +1,12 @@
 import { input, node } from "./decorators";
 import { ConfigNode } from "./config-node";
+import InputsSchema from "./remote-server-inputs-schema";
 
 @node({
   type: "remote-server",
+  validation: {
+    inputs: InputsSchema,
+  },
 })
 export class RemoteServerConfigNode extends ConfigNode {
   @input

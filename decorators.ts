@@ -35,9 +35,9 @@ type NodeOptions = {
   inputs?: number;
   outputs?: number;
   icon?: string;
-  schema?: {
-    inputs?: JSONSchema7;
-    message?: JSONSchema7;
+  validation: {
+    inputs: JSONSchema7;
+    message: JSONSchema7;
   };
 };
 

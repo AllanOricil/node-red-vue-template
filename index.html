@@ -30,6 +30,10 @@
 </script>
 
 <script type="text/javascript">
+  RED.events.on("editor:open", function () {
+    alert("OPENED");
+  });
+
   $.getJSON("your-node", function (nodeProperties) {
     console.log("RECEIVED NODE ProPS");
     console.log(nodeProperties);
@@ -38,7 +42,7 @@
       label: function () {
         return this.name || "Your Node";
       },
-      oneditprepare: function () {
+      oneditprepare: function (abc) {
         const node = this;
         console.log(node);
 
@@ -98,9 +102,14 @@
                   "str",
                   "num",
                   "bool",
-                  "env",
                   "json",
+                  "bin",
+                  "re",
                   "jsonata",
+                  "date",
+                  "env",
+                  "node",
+                  "cred",
                 ],
               },
             },
@@ -346,7 +355,6 @@
                   node.changed = true;
                   node.country = newValue;
                 },
-
                 get number() {
                   return node.number ? node.number : "";
                 },
@@ -354,7 +362,6 @@
                   node.changed = true;
                   node.number = newValue;
                 },
-
                 get object() {
                   return node.object ? node.object : "";
                 },
@@ -362,7 +369,6 @@
                   node.changed = true;
                   node.object = newValue;
                 },
-
                 get array() {
                   return node.array ? node.array : "";
                 },

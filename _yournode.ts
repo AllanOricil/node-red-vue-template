@@ -13,7 +13,7 @@ import MessageSchema from "./message-schema";
   inputs: 1,
   outputs: 1,
   icon: "node.svg",
-  schemas: {
+  validation: {
     inputs: InputsSchema,
     message: MessageSchema,
   },

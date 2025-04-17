@@ -27,7 +27,7 @@ const TypedInputSchema: JSONSchema7 = {
         "env",
         "bin",
         "date",
-        // "jsonata",
+        "jsonata",
       ],
       default: "msg",
     },

@@ -8,6 +8,16 @@ import * as Credential from "./credential";
 import camelCase from "camelcase";
 import { isSubclassOf, convertToType } from "./utils";
 
+const ajv = new Ajv({
+  allErrors: true,
+  useDefaults: true,
+  strict: true,
+  coerceTypes: true,
+  verbose: true,
+  validateFormats: true,
+});
+addFormats(ajv);
+
 /**
  * @class NodeFactory
  * @description Provides a static method to simplify the registration of custom Node-RED
@@ -21,22 +31,22 @@ export class NodeFactory {
    * @static
    * @async
    * @param {object} RED - The Node-RED runtime API object
-   * @param {(Node | ConfigNode)} BaseClass - A node class extending Node or ConfigNode
-   * @returns {Promise<void>} A promise that resolves when the node type registration and setup are complete. It might wait for the `BaseClass.init()` promise if one is returned.
-   * @throws {Error} If BaseClass does not extend `Node` or `ConfigNode`.
-   * @throws {Error} If BaseClass does not provide @node({type: "node-type"})
+   * @param {(Node | ConfigNode)} NodeClass - A node class extending Node or ConfigNode
+   * @returns {Promise<void>} A promise that resolves when the node type registration and setup are complete. It might wait for the `NodeClass.init()` promise if one is returned.
+   * @throws {Error} If NodeClass does not extend `Node` or `ConfigNode`.
+   * @throws {Error} If NodeClass does not provide @node({type: "node-type"})
    */
-  static async createNode(RED: any, BaseClass: Node | ConfigNode) {
+  static async registerType(RED: any, NodeClass: Node | ConfigNode) {
     if (
       !(
-        BaseClass.prototype instanceof Node ||
-        BaseClass.prototype instanceof ConfigNode
+        NodeClass.prototype instanceof Node ||
+        NodeClass.prototype instanceof ConfigNode
       )
     ) {
-      throw new Error(`${BaseClass.name} must extend Node`);
+      throw new Error(`${NodeClass.name} must extend Node or ConfigNode`);
     }
 
-    const type = BaseClass.__nodeProperties___.type;
+    const type = NodeClass.__nodeProperties___.type;
     if (!type) {
       throw new Error(
         `${type} must be provided with @node decorator in your class`
@@ -61,8 +71,8 @@ export class NodeFactory {
       });
     }
 
-    if (BaseClass.RED === undefined) {
-      Object.defineProperty(BaseClass, "RED", {
+    if (NodeClass.RED === undefined) {
+      Object.defineProperty(NodeClass, "RED", {
         value: RED,
         writable: false,
         configurable: false,
@@ -70,8 +80,8 @@ export class NodeFactory {
       });
     }
 
-    if (BaseClass.type === undefined) {
-      Object.defineProperty(BaseClass, "type", {
+    if (NodeClass.type === undefined) {
+      Object.defineProperty(NodeClass, "type", {
         value: type,
         writable: false,
         configurable: false,
@@ -79,23 +89,58 @@ export class NodeFactory {
       });
     }
 
-    console.log("BASECLASS");
-    console.log(BaseClass);
-    if (typeof BaseClass.init === "function") {
-      const result = BaseClass.init();
+    console.log("NodeClass");
+    console.log(NodeClass);
+    if (typeof NodeClass.init === "function") {
+      const result = NodeClass.init();
 
       if (result instanceof Promise) {
         await result;
       }
     }
 
-    // NOTE: if I assign the extended class to a constant the class name becomes the name of the contant. To avoid losing the BaseClass name I'm storing it in a object prop. Somehow js maintains the name of the BaseClass when I do it
-    const classRegistry = {};
-    classRegistry["_BaseClass"] = class extends BaseClass {
-      private static ajv: Ajv | null = null;
-      private static inputsValidator: ValidateFunction | null = null;
-      private static messageValidator: ValidateFunction | null = null;
+    console.log(`CREATING SCHEMAS FOR ${NodeClass}`);
+    const inputsValidator: ValidateFunction | null = ajv.compile(
+      NodeClass.__nodeProperties___.validation.inputs
+    );
+    const messageValidator: ValidateFunction | null = NodeClass
+      .__nodeProperties___?.validation?.message
+      ? ajv.compile(NodeClass.__nodeProperties___.validation.message)
+      : undefined;
+    console.log(inputsValidator);
+    console.log(messageValidator);
 
+    function validateInputs(inputs: any) {
+      console.log("VALIDATING INPUTS");
+      const isValid = inputsValidator(inputs);
+      if (!isValid) {
+        const errorDetails = ajv.errorsText(inputsValidator.errors, {
+          separator: "\n",
+          dataVar: "- inputs",
+        });
+        console.log(errorDetails);
+        return;
+      }
+      console.log("ALL GOOD");
+    }
+
+    function validateMessage(message: Record<string, any>) {
+      console.log("VALIDATING MESSAGE");
+      const isValid = messageValidator(message);
+      if (!isValid) {
+        const errorDetails = ajv.errorsText(messageValidator.errors, {
+          separator: "\n",
+          dataVar: "- message",
+        });
+        console.log(errorDetails);
+        return;
+      }
+      console.log("ALL GOOD WITH MESSAGE");
+    }
+
+    // NOTE: if I assign the extended class to a constant the class name becomes the name of the contant. To avoid losing the NodeClass name I'm storing it in a object prop. Somehow js maintains the name of the NodeClass when I do it
+    const classRegistry = {};
+    classRegistry["_NodeClass"] = class extends NodeClass {
       /**
        * Creates an instance of a given node class and injects the RED object in it
        * @param {object} config - Configuration object for the node-red node instance.
@@ -103,9 +148,7 @@ export class NodeFactory {
       constructor(config) {
         super(config);
 
-        const inputs = deepmerge(config, this.credentials);
-        console.log(inputs);
-        this.validateInputs(inputs);
+        validateInputs(deepmerge(config, this.credentials));
         this.setupEventHandlers();
         this.assignDecoratedProps();
       }
@@ -125,7 +168,7 @@ export class NodeFactory {
 
         this.on("input", (msg, send, done) => {
           try {
-            this.validateMessage(msg);
+            validateMessage(msg);
             this.onInput(msg, send, done);
           } catch (err) {
             this.error("Error during input processing: " + err.message, msg);
@@ -156,139 +199,51 @@ export class NodeFactory {
 
         console.log("FINISHED ASSIGNING PROPS");
       }
-
-      private validateInputs(inputs: any) {
-        console.log("INSIDE VALIDATE INPUT SCHEMA");
-        console.log(this.constructor.__nodeProperties___?.schemas?.inputs);
-
-        const schema = this.constructor.__nodeProperties___?.schemas?.inputs;
-
-        if (!schema) {
-          console.log("Nothing to be validated");
-          return;
-        }
-
-        if (!this.inputsValidator) {
-          this.ajv = new Ajv({
-            allErrors: true,
-            useDefaults: true,
-            strict: true,
-            coerceTypes: true,
-            verbose: true,
-            validateFormats: true,
-          });
-
-          addFormats(this.ajv);
-
-          this.inputsValidator = this.ajv.compile(schema);
-
-          console.log("COMPILED");
-        }
-
-        const isValid = this.inputsValidator(inputs);
-        if (!isValid) {
-          const errorDetails = this.ajv?.errorsText(
-            this.inputsValidator.errors,
-            {
-              separator: "\n",
-              dataVar: "- inputs",
-            }
-          );
-          console.log(errorDetails);
-          return;
-        }
-        console.log("ALL GOOD");
-      }
-
-      private validateMessage(message: Record<string, any>) {
-        console.log("VALIDATING MESSAGE");
-        const schema = this.constructor.__nodeProperties___?.schemas?.message;
-        if (!schema) {
-          console.log("Nothing to be validated");
-          return;
-        }
-
-        if (!this.messageValidator) {
-          this.ajv = new Ajv({
-            allErrors: true,
-            useDefaults: true,
-            strict: true,
-            coerceTypes: true,
-            verbose: true,
-            validateFormats: true,
-          });
-          addFormats(this.ajv);
-
-          this.messageValidator = this.ajv.compile(schema);
-
-          console.log("COMPILED");
-        }
-
-        const isValid = this.messageValidator(message);
-        if (!isValid) {
-          const errorDetails = this.ajv?.errorsText(
-            this.messageValidator.errors,
-            {
-              separator: "\n",
-              dataVar: "- message",
-            }
-          );
-          console.log(errorDetails);
-          return;
-        }
-        console.log("ALL GOOD WITH MESSAGE");
-      }
     };
 
     const defaults = function () {
-      return classRegistry["_BaseClass"]?.__inputs__
-        ? classRegistry["_BaseClass"].__inputs__.reduce(
-            (acc, { key, type }) => {
-              if (type === Credential.Password || type === Credential.Text)
-                return acc;
-
-              acc[key] = {
-                value: "",
-                type: isSubclassOf(type, ConfigNode)
-                  ? type.__nodeProperties___.type
-                  : undefined,
-              };
+      return NodeClass?.__inputs__
+        ? NodeClass.__inputs__.reduce((acc, { key, type }) => {
+            if (type === Credential.Password || type === Credential.Text)
               return acc;
-            },
-            {}
-          )
+
+            acc[key] = {
+              value: "",
+              type: isSubclassOf(type, ConfigNode)
+                ? type.__nodeProperties___.type
+                : undefined,
+            };
+            return acc;
+          }, {})
         : {};
     };
 
     const credentials = function () {
-      return classRegistry["_BaseClass"]?.__inputs__
-        ? classRegistry["_BaseClass"].__inputs__.reduce(
-            (acc, { key, type }) => {
-              if (type === Credential.Password) {
-                acc[key] = {
-                  type: "password",
-                };
-              }
+      return NodeClass?.__inputs__
+        ? NodeClass.__inputs__.reduce((acc, { key, type }) => {
+            if (type === Credential.Password) {
+              acc[key] = {
+                type: "password",
+              };
+            }
 
-              if (type === Credential.Text) {
-                acc[key] = {
-                  type: "text",
-                };
-              }
-              return acc;
-            },
-            {}
-          )
+            if (type === Credential.Text) {
+              acc[key] = {
+                type: "text",
+              };
+            }
+            return acc;
+          }, {})
         : {};
     };
 
-    RED.nodes.registerType(type, classRegistry["_BaseClass"], {
+    RED.nodes.registerType(type, classRegistry["_NodeClass"], {
       credentials: credentials(),
     });
 
     RED.httpAdmin.get(`/${type}`, function (req, res) {
       let nodeProperties =
-        { ...classRegistry["_BaseClass"].__nodeProperties___ } || {};
+        { ...classRegistry["_NodeClass"].__nodeProperties___ } || {};
       nodeProperties.defaults = defaults();
       nodeProperties.credentials = credentials();
       res.json(nodeProperties);
