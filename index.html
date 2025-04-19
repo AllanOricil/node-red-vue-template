@@ -64,7 +64,7 @@
         }
 
         const script = document.createElement("script");
-        script.src = "https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js";
+        script.src = "https://unpkg.com/vue@3/dist/vue.global.js";
         script.onload = () => {
           initVue();
         };
@@ -72,7 +72,6 @@
         document.head.appendChild(script);
 
         function initVue() {
-          Vue.config.devtools = true;
           $("#app").empty();
 
           const NodeRedCredentialInput = {
@@ -124,7 +123,7 @@
               this.$input.typedInput("type", this.value.type || this.types[0]);
 
               this.$input.on("change", () => {
-                this.$emit("input", {
+                this.$emit("update:value", {
                   value: this.$input.typedInput("value"),
                   type: this.$input.typedInput("type"),
                 });
@@ -154,7 +153,7 @@
 
               const input = $("#" + this.inputId);
               input.on("change", () => {
-                this.$emit("input", input.val());
+                this.$emit("update:value", input.val());
               });
 
               input.val(this.value || "_ADD_");
@@ -164,9 +163,7 @@
           const NodeRedSelectInput = {
             template: `<input type="text" ref="selectInput" class="node-input-select" style="width: 100%"/>`,
             props: {
-              value: {
-                type: String,
-              },
+              value: String,
               options: {
                 type: Array,
                 required: true,
@@ -212,7 +209,7 @@
               $selectInput.typedInput("value", this.value);
               $selectInput.on("change", () => {
                 const newValue = $selectInput.typedInput("value");
-                this.$emit("input", newValue);
+                this.$emit("update:value", newValue);
               });
             },
           };
@@ -220,10 +217,7 @@
           const NodeRedEditorInput = {
             template: `<div class="node-text-editor-container" ref="containerDiv" style="height: 200px"><div ref="editorDiv" :id="editorId" class="node-text-editor"></div></div>`,
             props: {
-              value: {
-                type: String,
-                default: "",
-              },
+              value: String,
               language: {
                 type: String,
                 default: "json",
@@ -307,7 +301,7 @@
                   if (this.editorInstance) {
                     const currentValue = this.editorInstance.getValue();
                     if (currentValue !== this.value) {
-                      this.$emit("input", currentValue);
+                      this.$emit("update:value", currentValue);
                     }
                   }
                 });
@@ -328,8 +322,8 @@
             },
           };
 
-          this._app = new Vue({
-            el: "#app",
+          const { createApp } = Vue;
+          this._app = createApp({
             data() {
               return {
                 get myProperty() {
@@ -450,54 +444,57 @@
               NodeRedEditorInput,
             },
             template: `
-			<div style="width: 100%;">
-				<div class="form-row">
-					<label><i class="fa fa-tag"></i> Username</label>
-					<NodeRedCredentialInput v-model="username" type="text"/>
-				</div>
-				<div class="form-row">
-					<label><i class="fa fa-tag"></i> Password</label>
-					<NodeRedCredentialInput v-model="password" type="password"/>
-				</div>
-				<div class="form-row">
-					<label style="width: 100%">Typed Input</label>
-					<NodeRedTypedInput v-model="myProperty"/>
-				</div>
-				<div class="form-row">
-					<label style="width: 100%">Config Input</label>
-					<NodeRedConfigInput v-model="remoteServer" type="remote-server"/>
-				</div>
-				<div class="form-row">
-					<label style="width: 100%">Select Input</label>
-					<NodeRedSelectInput v-model="country" :options="countries"/>
-				</div>
-				<div class="form-row">
-					<label style="width: 100%">MultiSelect Input</label>
-					<NodeRedSelectInput v-model="fruit" :options="fruits" multiple="true"/>
-				</div>
+  	<div style="width: 100%;">
+  		<div class="form-row">
+  			<label><i class="fa fa-tag"></i> Username</label>
+  			<NodeRedCredentialInput v-model:value="username" type="text"/>
+  		</div>
+  		<div class="form-row">
+  			<label><i class="fa fa-tag"></i> Password</label>
+  			<NodeRedCredentialInput v-model:value="password" type="password"/>
+  		</div>
+  		<div class="form-row">
+  			<label style="width: 100%">Typed Input</label>
+  			<NodeRedTypedInput v-model:value="myProperty"/>
+  		</div>
+  		<div class="form-row">
+  			<label style="width: 100%">Config Input</label>
+  			<NodeRedConfigInput v-model:value="remoteServer" type="remote-server"/>
+  		</div>
+  		<div class="form-row">
+  			<label style="width: 100%">Select Input</label>
+  			<NodeRedSelectInput v-model:value="country" :options="countries"/>
+  		</div>
+  		<div class="form-row">
+  			<label style="width: 100%">MultiSelect Input</label>
+  			<NodeRedSelectInput v-model:value="fruit" :options="fruits" multiple="true"/>
+  		</div>
         <div class="form-row">
-					<label style="width: 100%">Select Input</label>
-					<NodeRedSelectInput v-model="number" :options="numbers"/>
-				</div>
+  			<label style="width: 100%">Select Input</label>
+  			<NodeRedSelectInput v-model:value="number" :options="numbers"/>
+  		</div>
         <div class="form-row">
-					<label style="width: 100%">Select Input</label>
-					<NodeRedSelectInput v-model="object" :options="objects"/>
-				</div>
+  			<label style="width: 100%">Select Input</label>
+  			<NodeRedSelectInput v-model:value="object" :options="objects"/>
+  		</div>
         <div class="form-row">
-					<label style="width: 100%">Select Input</label>
-					<NodeRedSelectInput v-model="array" :options="arrays"/>
-				</div>
-				<div class="form-row">
-					<label style="width: 100%">Editor with default height 200px and JSON</label>
-					<NodeRedEditorInput v-model="jsontest" />
-				</div>
-				<div class="form-row">
-				  <label style="width: 100%">Editor with custom height and CSS</label>
-				  <NodeRedEditorInput v-model="csstest" language="css" style="height: 500px;"/>
-				</div>
-			</div>
-	  `,
+  			<label style="width: 100%">Select Input</label>
+  			<NodeRedSelectInput v-model:value="array" :options="arrays"/>
+  		</div>
+  		<div class="form-row">
+  			<label style="width: 100%">Editor with default height 200px and JSON</label>
+  			<NodeRedEditorInput v-model:value="jsontest" />
+  		</div>
+  		<div class="form-row">
+  		  <label style="width: 100%">Editor with custom height and CSS</label>
+  		  <NodeRedEditorInput v-model:value="csstest" language="css" style="height: 500px;"/>
+  		</div>
+  	</div>
+   `,
           });
+
+          this._app.config.performance = true;
+          this._app.mount("#app");
         }
       },
       oneditsave: function () {
