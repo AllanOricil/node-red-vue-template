@@ -30,15 +30,22 @@
 </script>
 
 <script type="text/javascript">
-  RED.events.on("editor:open", function () {
-    alert("OPENED");
+  // RED.events.on("editor:open", function () {
+  //   alert("OPENED");
+  // });
+
+  RED.events.on("deploy", () => {
+    RED.nodes.eachNode(function (node) {
+      console.log("RESET INITIAL STATE");
+      node._initial_state = null;
+    });
   });
 
   function mountApp(node) {
     $("#app").empty();
 
     const NodeRedCredentialInput = {
-      template: `<input :type="type" :value="value" @input="$emit('input', $event.target.value)" style="flex: 1; width: 100%;" />`,
+      template: `<input :type="type" :value="internalValue" @input="onInput" style="flex: 1; width: 100%;" />`,
       props: {
         value: String,
         type: {
@@ -47,6 +54,33 @@
           validator: function (value) {
             return ["text", "password"].includes(value);
           },
+        },
+        hasPassword: {
+          type: Boolean,
+          default: false,
+        },
+      },
+      data() {
+        return {
+          internalValue: "",
+        };
+      },
+      mounted() {
+        if (this.type === "text") {
+          this.hasPassword = false;
+        }
+
+        if (this.hasPassword) {
+          this.internalValue = "*************";
+        } else {
+          this.internalValue = this.value;
+        }
+      },
+      methods: {
+        onInput(event) {
+          this.internalValue = event.target.value;
+          this.$emit("update:value", this.internalValue);
+          this.$emit("update:hasPassword", !!this.internalValue);
         },
       },
     };
@@ -230,11 +264,11 @@
           },
         },
       },
+      editor: null,
       data() {
         return {
           editorId:
             "node-red-editor-" + Math.random().toString(36).substring(2, 9),
-          editorInstance: null,
         };
       },
       mounted() {
@@ -284,16 +318,14 @@
             value: this.value,
           });
           this.editorInstance.getSession().on("change", () => {
-            if (this.editorInstance) {
-              const currentValue = this.editorInstance.getValue();
-              if (currentValue !== this.value) {
-                this.$emit("update:value", currentValue);
-              }
+            const currentValue = this.editorInstance.getValue();
+            if (currentValue !== this.value) {
+              this.$emit("update:value", currentValue);
             }
           });
         },
       },
-      beforeDestroy() {
+      beforeUnmount() {
         if (this.editorInstance) {
           try {
             this.editorInstance.destroy();
@@ -311,87 +343,7 @@
     node._app = Vue.createApp({
       data() {
         return {
-          get myProperty() {
-            return node.myProperty
-              ? node.myProperty
-              : { value: "", type: "msg" };
-          },
-          set myProperty(newValue) {
-            node.changed = true;
-            node.myProperty = newValue;
-          },
-          get remoteServer() {
-            return node.remoteServer ? node.remoteServer : "";
-          },
-          set remoteServer(newValue) {
-            node.changed = true;
-            node.remoteServer = newValue;
-          },
-          get country() {
-            return node.country ? node.country : "";
-          },
-          set country(newValue) {
-            node.changed = true;
-            node.country = newValue;
-          },
-          get number() {
-            return node.number ? node.number : "";
-          },
-          set number(newValue) {
-            node.changed = true;
-            node.number = newValue;
-          },
-          get object() {
-            return node.object ? node.object : "";
-          },
-          set object(newValue) {
-            node.changed = true;
-            node.object = newValue;
-          },
-          get array() {
-            return node.array ? node.array : "";
-          },
-          set array(newValue) {
-            node.changed = true;
-            node.array = newValue;
-          },
-          get fruit() {
-            return node.fruit ? node.fruit : "";
-          },
-          set fruit(newValue) {
-            node.changed = true;
-            node.fruit = newValue;
-          },
-          get jsontest() {
-            return node.jsontest ? node.jsontest : "";
-          },
-          set jsontest(newValue) {
-            node.changed = true;
-            node.jsontest = newValue;
-          },
-          get csstest() {
-            return node.csstest ? node.csstest : "";
-          },
-          set csstest(newValue) {
-            node.changed = true;
-            node.csstest = newValue;
-          },
-          get username() {
-            return node.credentials.username ? node.credentials.username : "";
-          },
-          set username(newValue) {
-            node.changed = true;
-            node.credentials.username = newValue;
-            node.testingCustomProperty = "afg";
-          },
-          get password() {
-            return node.credentials.has_password ? "*********" : "";
-          },
-          set password(newValue) {
-            node.changed = true;
-            node.credentials.password = newValue;
-            node.credentials.has_password = true;
-          },
+          node,
           countries: [
             { value: "usa", label: "usa" },
             { value: "argentina", label: "argentina" },
@@ -430,47 +382,51 @@
   	<div style="width: 100%;">
   		<div class="form-row">
   			<label><i class="fa fa-tag"></i> Username</label>
-  			<NodeRedCredentialInput v-model:value="username" type="text"/>
+  			<NodeRedCredentialInput v-model:value="node.credentials.username" type="text"/>
   		</div>
   		<div class="form-row">
   			<label><i class="fa fa-tag"></i> Password</label>
-  			<NodeRedCredentialInput v-model:value="password" type="password"/>
+  			<NodeRedCredentialInput 
+          v-model:value="node.credentials.password" 
+          v-model:has-password="node.credentials.has_password" 
+          type="password" 
+        />
   		</div>
   		<div class="form-row">
   			<label style="width: 100%">Typed Input</label>
-  			<NodeRedTypedInput v-model:value="myProperty"/>
+  			<NodeRedTypedInput v-model:value="node.myProperty"/>
   		</div>
   		<div class="form-row">
   			<label style="width: 100%">Config Input</label>
-  			<NodeRedConfigInput v-model:value="remoteServer" type="remote-server"/>
+  			<NodeRedConfigInput v-model:value="node.remoteServer" type="remote-server"/>
   		</div>
   		<div class="form-row">
   			<label style="width: 100%">Select Input</label>
-  			<NodeRedSelectInput v-model:value="country" :options="countries"/>
+  			<NodeRedSelectInput v-model:value="node.country" :options="countries"/>
   		</div>
   		<div class="form-row">
   			<label style="width: 100%">MultiSelect Input</label>
-  			<NodeRedSelectInput v-model:value="fruit" :options="fruits" multiple/>
+  			<NodeRedSelectInput v-model:value="node.fruit" :options="fruits" multiple/>
   		</div>
         <div class="form-row">
   			<label style="width: 100%">Select Input</label>
-  			<NodeRedSelectInput v-model:value="number" :options="numbers"/>
+  			<NodeRedSelectInput v-model:value="node.number" :options="numbers"/>
   		</div>
         <div class="form-row">
   			<label style="width: 100%">Select Input</label>
-  			<NodeRedSelectInput v-model:value="object" :options="objects"/>
+  			<NodeRedSelectInput v-model:value="node.object" :options="objects"/>
   		</div>
         <div class="form-row">
   			<label style="width: 100%">Select Input</label>
-  			<NodeRedSelectInput v-model:value="array" :options="arrays"/>
+  			<NodeRedSelectInput v-model:value="node.array" :options="arrays"/>
   		</div>
   		<div class="form-row">
   			<label style="width: 100%">Editor with default height 200px and JSON</label>
-  			<NodeRedEditorInput v-model:value="jsontest" />
+  			<NodeRedEditorInput v-model:value="node.jsontest" />
   		</div>
   		<div class="form-row">
   		  <label style="width: 100%">Editor with custom height and CSS</label>
-  		  <NodeRedEditorInput v-model:value="csstest" language="css" style="height: 500px;"/>
+  		  <NodeRedEditorInput v-model:value="node.csstest" language="css" style="height: 500px;"/>
   		</div>
   	</div>
    `,
@@ -484,9 +440,28 @@
     node._app = null;
   }
 
+  // TODO: find a better way to compare node states
+  function strigifyNode(node) {
+    const infoEditor = node.infoEditor;
+    const app = node._app;
+    const initialState = node._initial_state;
+    const old = node._old;
+    const highlighted = node.highlighted;
+    delete node.infoEditor;
+    delete node._app;
+    delete node._initial_state;
+    delete node._old;
+    delete node.highlighted;
+    const val = JSON.stringify(node);
+    node.infoEditor = infoEditor;
+    node._app = app;
+    node._initial_state = initialState;
+    node._old = old;
+    node.highlighted = highlighted;
+    return val;
+  }
+
   $.getJSON("your-node", function (nodeProperties) {
-    console.log("RECEIVED NODE ProPS");
-    console.log(nodeProperties);
     RED.nodes.registerType("your-node", {
       ...nodeProperties,
       label: function () {
@@ -507,6 +482,11 @@
           node._old.credentials[value] = node.credentials[value];
         });
 
+        if (!node._initial_state) {
+          console.log("STORING NEW INITIAL STATE");
+          node._initial_state = JSON.parse(strigifyNode(node));
+        }
+
         if (typeof Vue !== "undefined") {
           console.log("Vue is already loaded:", Vue.version);
           mountApp(node);
@@ -524,25 +504,27 @@
       oneditsave: function () {
         const node = this;
 
-        if (node._old["remoteServer"]) {
-          const oldRemoteServer = RED.nodes.node(node._old["remoteServer"]);
-          const parentIndex = oldRemoteServer.users.findIndex(
-            (_node) => _node.id === node.id
-          );
-          if (parentIndex !== -1) {
-            oldRemoteServer.users.splice(parentIndex, 1);
-          }
-        }
-
-        RED.nodes.updateConfigNodeUsers(this, {
-          action: "add",
-          emitEvent: true,
-        });
+        node.changed = strigifyNode(node._initial_state) !== strigifyNode(node);
         if (node.changed) {
+          console.log("THERE ARE CHANGES");
+          if (node._old["remoteServer"]) {
+            const oldRemoteServer = RED.nodes.node(node._old["remoteServer"]);
+            const parentIndex = oldRemoteServer.users.findIndex(
+              (_node) => _node.id === node.id
+            );
+            if (parentIndex !== -1) {
+              oldRemoteServer.users.splice(parentIndex, 1);
+            }
+          }
+
+          RED.nodes.updateConfigNodeUsers(node, {
+            action: "add",
+            emitEvent: true,
+          });
+
           RED.nodes.dirty(node);
         }
 
-        node.outputs = node.outputs++;
         console.log("SAVED");
         console.log(node);
 
@@ -550,7 +532,7 @@
       },
       oneditcancel: function () {
         const node = this;
-        node.changed = false;
+
         Object.keys(nodeProperties.defaults).forEach((value) => {
           node[value] = node._old[value];
         });
@@ -558,6 +540,11 @@
         Object.keys(nodeProperties.credentials).forEach((value) => {
           node.credentials[value] = node._old.credentials[value];
         });
+
+        node.changed = strigifyNode(node._initial_state) !== strigifyNode(node);
+        if (node.changed) {
+          RED.nodes.dirty(node);
+        }
 
         unmountApp(node);
       },
