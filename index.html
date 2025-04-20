@@ -45,7 +45,14 @@
     $("#app").empty();
 
     const NodeRedCredentialInput = {
-      template: `<input :type="type" :value="internalValue" @input="onInput" style="flex: 1; width: 100%;" />`,
+      template: `
+    <div style="display: flex; flex-direction: column; width: 100%;">
+      <input ref="inputField" :type="type" :value="internalValue" @input="onInput" style="flex: 1; width: 100%;" />
+      <div v-if="error" class="error-text" >
+        {{ error }}
+      </div>
+    </div>
+  `,
       props: {
         value: String,
         type: {
@@ -59,7 +66,12 @@
           type: Boolean,
           default: false,
         },
+        error: {
+          type: String,
+          default: "",
+        },
       },
+      emits: ["update:value", "update:has-password", "input"],
       data() {
         return {
           internalValue: "",
@@ -76,11 +88,28 @@
           this.internalValue = this.value;
         }
       },
+      computed: {
+        showError() {
+          return this.error ? true : false;
+        },
+      },
+      watch: {
+        error(newVal) {
+          const input = this.$refs.inputField;
+          if (newVal) {
+            input.setCustomValidity(newVal);
+          } else {
+            input.setCustomValidity("");
+          }
+          input.reportValidity();
+        },
+      },
       methods: {
         onInput(event) {
           this.internalValue = event.target.value;
           this.$emit("update:value", this.internalValue);
-          this.$emit("update:hasPassword", !!this.internalValue);
+          this.$emit("update:has-password", !!this.internalValue);
+          this.$emit("input", this.internalValue);
         },
       },
     };
@@ -130,6 +159,7 @@
           ],
         },
       },
+      emits: ["update:value"],
       mounted() {
         const inputElement = this.$refs.typedInput;
         this.$input = $(inputElement).typedInput({
@@ -140,12 +170,40 @@
         this.$input.typedInput("value", this.value.value || "");
         this.$input.typedInput("type", this.value.type || this.types[0]);
 
-        this.$input.on("change", () => {
-          this.$emit("update:value", {
-            value: this.$input.typedInput("value"),
-            type: this.$input.typedInput("type"),
+        // NOTE: when typed input is just an text input, it isn't emiting change while typing because it is updating the value in a hidden input
+        this.$nextTick(() => {
+          const observer = new MutationObserver((mutations) => {
+            for (const mutation of mutations) {
+              if (mutation.attributeName === "value") {
+                this.onChange();
+              }
+            }
           });
+
+          observer.observe(inputElement, {
+            attributes: true,
+            attributeFilter: ["value"],
+          });
+
+          this._observer = observer;
         });
+
+        // NOTE: this emits changes to all types that lose focus when choosing a value, but text inputs
+        this.$input.on("change", () => {
+          this.onChange();
+        });
+      },
+      methods: {
+        onChange() {
+          const newValue = this.$input.typedInput("value");
+          const newType = this.$input.typedInput("type");
+          if (this.value.value !== newValue || this.value.type !== newType) {
+            this.$emit("update:value", {
+              value: newValue,
+              type: newType,
+            });
+          }
+        },
       },
     };
 
@@ -155,6 +213,7 @@
         value: String,
         type: String,
       },
+      emits: ["update:value"],
       data() {
         return {
           inputId: "node-input-" + this.value,
@@ -215,6 +274,7 @@
           default: false,
         },
       },
+      emits: ["update:value"],
       mounted() {
         const inputElement = this.$refs.selectInput;
         const $selectInput = $(inputElement);
@@ -229,7 +289,9 @@
 
         $selectInput.typedInput("value", this.value);
         $selectInput.on("change", () => {
-          const newValue = $selectInput.typedInput("value");
+          const newValue = this.multiple
+            ? $selectInput.typedInput("value")?.split(",")
+            : $selectInput.typedInput("value");
           this.$emit("update:value", newValue);
         });
       },
@@ -264,6 +326,7 @@
           },
         },
       },
+      emits: ["update:value"],
       editor: null,
       data() {
         return {
@@ -344,6 +407,9 @@
       data() {
         return {
           node,
+          error: false,
+          errors: [],
+          usernameError: "",
           countries: [
             { value: "usa", label: "usa" },
             { value: "argentina", label: "argentina" },
@@ -378,58 +444,203 @@
         NodeRedSelectInput,
         NodeRedEditorInput,
       },
+      beforeMount() {
+        console.log("BEFORE MOUNTING");
+        console.log(this.node._def);
+
+        // Object.keys(this.node._def.defaults).forEach((prop) => {
+        //   console.log("Add validation");
+        //   this.node._def.defaults[prop].validate =
+        //     this.createValidateFunction(prop);
+        // });
+
+        // Object.keys(this.node._def.credentials).forEach((prop) => {
+        //   console.log("Add validation");
+        //   this.node._def.credentials[prop].validate =
+        //     this.createValidateFunction(prop);
+        // });
+        // this.node._def.credentials.username.validate = this.validateUsername;
+        // this.node._def._creds = this.node.credentials;
+
+        Object.keys(this.node._def.defaults).forEach((prop) => {
+          this.$watch(
+            () => this.node[prop],
+            (newVal) => {
+              console.log(`changed prop: ${prop}`);
+              console.log(newVal);
+              this.validate();
+            },
+            { deep: true }
+          );
+        });
+
+        Object.keys(this.node._def.credentials).forEach((prop) => {
+          this.$watch(
+            () => this.node.credentials[prop],
+            (newVal) => {
+              console.log(`changed credentials: ${prop}`);
+              console.log(newVal);
+              this.validate();
+            },
+            { deep: true }
+          );
+        });
+      },
+      methods: {
+        toggleDoneButton() {
+          console.log("TOGGLING DONE BUTTON");
+          if (Object.keys(this.errors).length) {
+            $("#node-dialog-ok").prop("disabled", true).addClass("disabled");
+          } else {
+            $("#node-dialog-ok")
+              .prop("disabled", false)
+              .removeClass("disabled");
+          }
+        },
+        validate() {
+          if (this.node) {
+            const ajv = new ajv7({
+              allErrors: true,
+            });
+
+            const schema = {
+              type: "object",
+              properties: {
+                credentials: {
+                  type: "object",
+                  properties: {
+                    username: { type: "string", minLength: 5, maxLength: 10 },
+                    password: {
+                      type: "string",
+                      minLength: 8,
+                      maxLength: 20,
+                      pattern: "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]+$",
+                    },
+                  },
+                  required: ["password", "username"],
+                },
+                myProperty: {
+                  type: "object",
+                  properties: {
+                    value: {
+                      type: "string",
+                      default: "",
+                    },
+                    type: {
+                      type: "string",
+                      enum: [
+                        "msg",
+                        "flow",
+                        "global",
+                        "str",
+                        "num",
+                        "bool",
+                        "json",
+                        "bin",
+                        "re",
+                        "jsonata",
+                        "date",
+                        "env",
+                        "node",
+                        "cred",
+                      ],
+                      default: "str",
+                    },
+                  },
+                  required: ["value", "type"],
+                },
+              },
+              required: ["credentials", "myProperty"],
+            };
+
+            const data = {
+              credentials: {},
+            };
+            Object.keys(this.node._def.credentials).forEach((prop) => {
+              return (data.credentials[prop] = this.node.credentials[prop]);
+            });
+
+            Object.keys(this.node._def.defaults).forEach((prop) => {
+              return (data[prop] = this.node[prop]);
+            });
+
+            const validate = ajv.compile(schema);
+
+            const valid = validate(data);
+            if (!valid) {
+              console.log("errors");
+              console.log(validate.errors);
+              const errors = validate.errors;
+              this.errors = errors.reduce((acc, error) => {
+                const key = error.instancePath;
+                acc[key] = error.message;
+                return acc;
+              }, {});
+            } else {
+              this.errors = {};
+            }
+
+            this.toggleDoneButton();
+          }
+        },
+      },
       template: `
-  	<div style="width: 100%;">
-  		<div class="form-row">
-  			<label><i class="fa fa-tag"></i> Username</label>
-  			<NodeRedCredentialInput v-model:value="node.credentials.username" type="text"/>
-  		</div>
-  		<div class="form-row">
-  			<label><i class="fa fa-tag"></i> Password</label>
-  			<NodeRedCredentialInput 
-          v-model:value="node.credentials.password" 
-          v-model:has-password="node.credentials.has_password" 
-          type="password" 
-        />
-  		</div>
-  		<div class="form-row">
-  			<label style="width: 100%">Typed Input</label>
-  			<NodeRedTypedInput v-model:value="node.myProperty"/>
-  		</div>
-  		<div class="form-row">
-  			<label style="width: 100%">Config Input</label>
-  			<NodeRedConfigInput v-model:value="node.remoteServer" type="remote-server"/>
-  		</div>
-  		<div class="form-row">
-  			<label style="width: 100%">Select Input</label>
-  			<NodeRedSelectInput v-model:value="node.country" :options="countries"/>
-  		</div>
-  		<div class="form-row">
-  			<label style="width: 100%">MultiSelect Input</label>
-  			<NodeRedSelectInput v-model:value="node.fruit" :options="fruits" multiple/>
-  		</div>
-        <div class="form-row">
-  			<label style="width: 100%">Select Input</label>
-  			<NodeRedSelectInput v-model:value="node.number" :options="numbers"/>
-  		</div>
-        <div class="form-row">
-  			<label style="width: 100%">Select Input</label>
-  			<NodeRedSelectInput v-model:value="node.object" :options="objects"/>
-  		</div>
-        <div class="form-row">
-  			<label style="width: 100%">Select Input</label>
-  			<NodeRedSelectInput v-model:value="node.array" :options="arrays"/>
-  		</div>
-  		<div class="form-row">
-  			<label style="width: 100%">Editor with default height 200px and JSON</label>
-  			<NodeRedEditorInput v-model:value="node.jsontest" />
-  		</div>
-  		<div class="form-row">
-  		  <label style="width: 100%">Editor with custom height and CSS</label>
-  		  <NodeRedEditorInput v-model:value="node.csstest" language="css" style="height: 500px;"/>
-  		</div>
-  	</div>
-   `,
+    	<div style="width: 100%;">
+    		<div class="form-row">
+    			<label><i class="fa fa-tag"></i> Username</label>
+    			<NodeRedCredentialInput
+            v-model:value="node.credentials.username"
+            type="text"
+            :error="errors['/credentials/username']"
+          />
+    		</div>
+    		<div class="form-row">
+    			<label><i class="fa fa-tag"></i> Password</label>
+    			<NodeRedCredentialInput
+            v-model:value="node.credentials.password"
+            v-model:has-password="node.credentials.has_password"
+            type="password"
+            :error="errors['/credentials/password']"
+          />
+    		</div>
+    		<div class="form-row">
+    			<label style="width: 100%">Typed Input</label>
+    			<NodeRedTypedInput v-model:value="node.myProperty"/>
+    		</div>
+    		<div class="form-row">
+    			<label style="width: 100%">Config Input</label>
+    			<NodeRedConfigInput v-model:value="node.remoteServer" type="remote-server"/>
+    		</div>
+    		<div class="form-row">
+    			<label style="width: 100%">Select Input</label>
+    			<NodeRedSelectInput v-model:value="node.country" :options="countries"/>
+    		</div>
+    		<div class="form-row">
+    			<label style="width: 100%">MultiSelect Input</label>
+    			<NodeRedSelectInput v-model:value="node.fruit" :options="fruits" multiple/>
+    		</div>
+          <div class="form-row">
+    			<label style="width: 100%">Select Input</label>
+    			<NodeRedSelectInput v-model:value="node.number" :options="numbers"/>
+    		</div>
+          <div class="form-row">
+    			<label style="width: 100%">Select Input</label>
+    			<NodeRedSelectInput v-model:value="node.object" :options="objects"/>
+    		</div>
+          <div class="form-row">
+    			<label style="width: 100%">Select Input</label>
+    			<NodeRedSelectInput v-model:value="node.array" :options="arrays"/>
+    		</div>
+    		<div class="form-row">
+    			<label style="width: 100%">Editor with default height 200px and JSON</label>
+    			<NodeRedEditorInput v-model:value="node.jsontest" />
+    		</div>
+    		<div class="form-row">
+    		  <label style="width: 100%">Editor with custom height and CSS</label>
+    		  <NodeRedEditorInput v-model:value="node.csstest" language="css" style="height: 500px;"/>
+    		</div>
+    	</div>
+     `,
     });
     node._app.config.performance = true;
     node._app.mount("#app");
@@ -461,6 +672,29 @@
     return val;
   }
 
+  function loadScriptsAndMount(urls, callback) {
+    const scriptsLoaded = new Array(urls.length).fill(false); // To track the loading state of each script
+
+    const checkIfAllLoaded = () => {
+      if (scriptsLoaded.every((status) => status)) {
+        callback();
+      }
+    };
+
+    const onScriptLoad = (index) => {
+      scriptsLoaded[index] = true;
+      checkIfAllLoaded();
+    };
+
+    // Create and append each script
+    urls.forEach((url, index) => {
+      const script = document.createElement("script");
+      script.src = url;
+      script.onload = () => onScriptLoad(index);
+      document.head.appendChild(script);
+    });
+  }
+
   $.getJSON("your-node", function (nodeProperties) {
     RED.nodes.registerType("your-node", {
       ...nodeProperties,
@@ -469,6 +703,33 @@
       },
       oneditprepare: function (abc) {
         const node = this;
+
+        // document.getElementById("node-dialog-ok")?.addEventListener(
+        //   "click",
+        //   function (event) {
+        //     event.preventDefault();
+        //     event.stopImmediatePropagation();
+
+        //     // Your custom logic
+        //     console.log("Doing validation or async logic...");
+
+        //     // Simulate original action AFTER you're done
+        //     setTimeout(() => {
+        //       console.log("Triggering original Node-RED save...");
+
+        //       // Option 1: Trigger the click again (this time skipping your own listener)
+        //       $("#node-dialog-ok")[0].click();
+
+        //       // Option 2 (better): Call whatever function Node-RED uses to close the dialog or save
+        //       // RED.nodes.registerType(...) gives access to oneditsave/oneditsubmit/etc
+        //     }, 100); // Can also await a promise if you're async
+        //   },
+        //   true
+        // );
+
+        $("#node-dialog-ok").on("click", (event) => {
+          event.stopImmediatePropagation();
+        });
         console.log(node);
 
         node._old = {
@@ -493,13 +754,14 @@
           return;
         }
 
-        const script = document.createElement("script");
-        script.src = "https://unpkg.com/vue@3/dist/vue.global.js";
-        script.onload = () => {
-          mountApp(node);
-        };
+        const urls = [
+          "https://unpkg.com/vue@3/dist/vue.global.js",
+          "https://cdnjs.cloudflare.com/ajax/libs/ajv/8.17.1/ajv7.min.js",
+        ];
 
-        document.head.appendChild(script);
+        loadScriptsAndMount(urls, () => {
+          mountApp(node);
+        });
       },
       oneditsave: function () {
         const node = this;
@@ -525,9 +787,11 @@
           RED.nodes.dirty(node);
         }
 
+        node.validationErrors = ["'myField' is required"];
+        node.valid = false;
+        RED.view.redraw(true);
         console.log("SAVED");
         console.log(node);
-
         unmountApp(node);
       },
       oneditcancel: function () {
