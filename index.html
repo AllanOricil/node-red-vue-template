@@ -29,6 +29,11 @@
   <div id="app"></div>
 </script>
 
+<style>
+  .node-red-vue-input-error-message {
+    color: var(--red-ui-form-input-border-error-color);
+  }
+</style>
 <script type="text/javascript">
   // RED.events.on("editor:open", function () {
   //   alert("OPENED");
@@ -46,13 +51,12 @@
 
     const NodeRedCredentialInput = {
       template: `
-    <div style="display: flex; flex-direction: column; width: 100%;">
-      <input ref="inputField" :type="type" :value="internalValue" @input="onInput" style="flex: 1; width: 100%;" />
-      <div v-if="error" class="error-text" >
-        {{ error }}
-      </div>
-    </div>
-  `,
+      <div style="display: flex; flex-direction: column; width: 100%;">
+        <input ref="inputField" :type="type" :value="internalValue" @input="onInput" style="flex: 1; width: 100%;" />
+        <div v-if="error" class="node-red-vue-input-error-message " >
+          {{ error }}
+        </div>
+      </div>`,
       props: {
         value: String,
         type: {
@@ -88,22 +92,6 @@
           this.internalValue = this.value;
         }
       },
-      computed: {
-        showError() {
-          return this.error ? true : false;
-        },
-      },
-      watch: {
-        error(newVal) {
-          const input = this.$refs.inputField;
-          if (newVal) {
-            input.setCustomValidity(newVal);
-          } else {
-            input.setCustomValidity("");
-          }
-          input.reportValidity();
-        },
-      },
       methods: {
         onInput(event) {
           this.internalValue = event.target.value;
@@ -115,7 +103,13 @@
     };
 
     const NodeRedTypedInput = {
-      template: `<input type="text" ref="typedInput" class="node-red-typed-input" style="flex: 1; width: 100%;"/>`,
+      template: `
+      <div style="display: flex; flex-direction: column; width: 100%;">
+        <input type="text" ref="typedInput" class="node-red-typed-input" style="flex: 1; width: 100%;"/>
+        <div v-if="error" class="node-red-vue-input-error-message">
+          {{ error }}
+        </div>
+      </div>`,
       props: {
         value: {
           type: Object,
@@ -158,6 +152,10 @@
             "cred",
           ],
         },
+        error: {
+          type: String,
+          default: "",
+        },
       },
       emits: ["update:value"],
       mounted() {
@@ -170,7 +168,7 @@
         this.$input.typedInput("value", this.value.value || "");
         this.$input.typedInput("type", this.value.type || this.types[0]);
 
-        // NOTE: when typed input is just an text input, it isn't emiting change while typing because it is updating the value in a hidden input
+        // NOTE: when typed input is just a text input, it isn't emiting change while typing because it is updating the value in a hidden input
         this.$nextTick(() => {
           const observer = new MutationObserver((mutations) => {
             for (const mutation of mutations) {
@@ -193,6 +191,20 @@
           this.onChange();
         });
       },
+      watch: {
+        error(newVal) {
+          this.$nextTick(() => {
+            const targetDiv = this.$el.querySelector(
+              ".red-ui-typedInput-container"
+            );
+            if (newVal) {
+              targetDiv.classList.add("input-error");
+            } else {
+              targetDiv.classList.remove("input-error");
+            }
+          });
+        },
+      },
       methods: {
         onChange() {
           const newValue = this.$input.typedInput("value");
@@ -208,10 +220,20 @@
     };
 
     const NodeRedConfigInput = {
-      template: `<input type="text" :id="inputId" style="width: 100%"/>`,
+      template: `
+      <div style="display: flex; flex-direction: column; width: 100%;">
+        <input type="text" :id="inputId" style="width: 100%"/>
+        <div v-if="error" class="node-red-vue-input-error-message">
+          {{ error }}
+        </div>
+      </div>`,
       props: {
         value: String,
         type: String,
+        error: {
+          type: String,
+          default: "",
+        },
       },
       emits: ["update:value"],
       data() {
@@ -238,7 +260,13 @@
     };
 
     const NodeRedSelectInput = {
-      template: `<input type="text" ref="selectInput" class="node-input-select" style="width: 100%"/>`,
+      template: `
+      <div style="display: flex; flex-direction: column; width: 100%;">
+        <input type="text" ref="selectInput" class="node-input-select" style="width: 100%"/>
+        <div v-if="error" class="node-red-vue-input-error-message">
+          {{ error }}
+        </div>
+      </div>`,
       props: {
         value: String,
         options: {
@@ -273,6 +301,10 @@
           type: Boolean,
           default: false,
         },
+        error: {
+          type: String,
+          default: "",
+        },
       },
       emits: ["update:value"],
       mounted() {
@@ -298,7 +330,13 @@
     };
 
     const NodeRedEditorInput = {
-      template: `<div class="node-text-editor-container" ref="containerDiv" style="height: 200px"><div ref="editorDiv" :id="editorId" class="node-text-editor"></div></div>`,
+      template: `
+      <div ref="containerDiv" class="node-text-editor-container">
+        <div ref="editorDiv" :id="editorId" class="node-text-editor"></div>
+        <div v-show="error" class="node-red-vue-input-error-message">
+          {{ error }}
+        </div>
+      </div>`,
       props: {
         value: String,
         language: {
@@ -324,6 +362,10 @@
             }
             return isValid;
           },
+        },
+        error: {
+          type: String,
+          default: "",
         },
       },
       emits: ["update:value"],
@@ -407,9 +449,7 @@
       data() {
         return {
           node,
-          error: false,
-          errors: [],
-          usernameError: "",
+          errors: {},
           countries: [
             { value: "usa", label: "usa" },
             { value: "argentina", label: "argentina" },
@@ -445,29 +485,10 @@
         NodeRedEditorInput,
       },
       beforeMount() {
-        console.log("BEFORE MOUNTING");
-        console.log(this.node._def);
-
-        // Object.keys(this.node._def.defaults).forEach((prop) => {
-        //   console.log("Add validation");
-        //   this.node._def.defaults[prop].validate =
-        //     this.createValidateFunction(prop);
-        // });
-
-        // Object.keys(this.node._def.credentials).forEach((prop) => {
-        //   console.log("Add validation");
-        //   this.node._def.credentials[prop].validate =
-        //     this.createValidateFunction(prop);
-        // });
-        // this.node._def.credentials.username.validate = this.validateUsername;
-        // this.node._def._creds = this.node.credentials;
-
         Object.keys(this.node._def.defaults).forEach((prop) => {
           this.$watch(
             () => this.node[prop],
             (newVal) => {
-              console.log(`changed prop: ${prop}`);
-              console.log(newVal);
               this.validate();
             },
             { deep: true }
@@ -478,8 +499,6 @@
           this.$watch(
             () => this.node.credentials[prop],
             (newVal) => {
-              console.log(`changed credentials: ${prop}`);
-              console.log(newVal);
               this.validate();
             },
             { deep: true }
@@ -487,22 +506,15 @@
         });
       },
       methods: {
-        toggleDoneButton() {
-          console.log("TOGGLING DONE BUTTON");
-          if (Object.keys(this.errors).length) {
-            $("#node-dialog-ok").prop("disabled", true).addClass("disabled");
-          } else {
-            $("#node-dialog-ok")
-              .prop("disabled", false)
-              .removeClass("disabled");
-          }
-        },
+        // TODO: inject in the provided component
         validate() {
           if (this.node) {
+            // TODO: this will be a global in the final build
             const ajv = new ajv7({
               allErrors: true,
             });
 
+            // NOTE: this will be provided by the User with an import
             const schema = {
               type: "object",
               properties: {
@@ -548,99 +560,151 @@
                     },
                   },
                   required: ["value", "type"],
+                  oneOf: [
+                    {
+                      properties: {
+                        type: { const: "str" },
+                        value: { type: "string", minLength: 10 },
+                      },
+                    },
+                  ],
+                },
+                country: {
+                  type: "string",
+                  default: "brasil",
                 },
               },
-              required: ["credentials", "myProperty"],
             };
 
             const data = {
               credentials: {},
             };
             Object.keys(this.node._def.credentials).forEach((prop) => {
-              return (data.credentials[prop] = this.node.credentials[prop]);
+              data.credentials[prop] = this.node.credentials[prop];
             });
 
             Object.keys(this.node._def.defaults).forEach((prop) => {
-              return (data[prop] = this.node[prop]);
+              data[prop] = this.node[prop];
             });
 
+            // TODO: this will be compiled only once and has to be removed from here
             const validate = ajv.compile(schema);
 
             const valid = validate(data);
             if (!valid) {
-              console.log("errors");
-              console.log(validate.errors);
               const errors = validate.errors;
               this.errors = errors.reduce((acc, error) => {
-                const key = error.instancePath;
+                const key = `node${error.instancePath.replaceAll("/", ".")}`;
                 acc[key] = error.message;
                 return acc;
               }, {});
             } else {
               this.errors = {};
             }
-
-            this.toggleDoneButton();
+            if (Object.keys(this.errors).length) {
+              $("#node-dialog-ok").prop("disabled", true).addClass("disabled");
+              $("#red-ui-workspace").css("pointer-events", "none");
+            } else {
+              $("#node-dialog-ok")
+                .prop("disabled", false)
+                .removeClass("disabled");
+              $("#red-ui-workspace").css("pointer-events", "");
+            }
           }
         },
       },
       template: `
     	<div style="width: 100%;">
     		<div class="form-row">
-    			<label><i class="fa fa-tag"></i> Username</label>
+    			<label style="width: 100%"><i class="fa fa-tag"></i> Username</label>
     			<NodeRedCredentialInput
             v-model:value="node.credentials.username"
             type="text"
-            :error="errors['/credentials/username']"
+            :error="errors['node.credentials.username']"
           />
     		</div>
     		<div class="form-row">
-    			<label><i class="fa fa-tag"></i> Password</label>
+    			<label style="width: 100%"><i class="fa fa-tag"></i> Password</label>
     			<NodeRedCredentialInput
             v-model:value="node.credentials.password"
             v-model:has-password="node.credentials.has_password"
             type="password"
-            :error="errors['/credentials/password']"
+            :error="errors['node.credentials.password']"
           />
     		</div>
     		<div class="form-row">
     			<label style="width: 100%">Typed Input</label>
-    			<NodeRedTypedInput v-model:value="node.myProperty"/>
+    			<NodeRedTypedInput
+            v-model:value="node.myProperty"
+            :error="errors['node.myProperty']"
+          />
     		</div>
     		<div class="form-row">
     			<label style="width: 100%">Config Input</label>
-    			<NodeRedConfigInput v-model:value="node.remoteServer" type="remote-server"/>
+    			<NodeRedConfigInput
+            v-model:value="node.remoteServer"
+            type="remote-server"
+            :error="errors['node.remoteServer']"
+          />
     		</div>
     		<div class="form-row">
     			<label style="width: 100%">Select Input</label>
-    			<NodeRedSelectInput v-model:value="node.country" :options="countries"/>
+    			<NodeRedSelectInput
+            v-model:value="node.country"
+            :options="countries"
+            :error="errors['node.country']"
+          />
     		</div>
     		<div class="form-row">
     			<label style="width: 100%">MultiSelect Input</label>
-    			<NodeRedSelectInput v-model:value="node.fruit" :options="fruits" multiple/>
+    			<NodeRedSelectInput
+            v-model:value="node.fruit"
+            :options="fruits"
+            multiple
+            :error="errors['node.fruit']"
+          />
     		</div>
           <div class="form-row">
     			<label style="width: 100%">Select Input</label>
-    			<NodeRedSelectInput v-model:value="node.number" :options="numbers"/>
+    			<NodeRedSelectInput
+            v-model:value="node.number"
+            :options="numbers"
+            :error="errors['node.number']"
+          />
     		</div>
           <div class="form-row">
     			<label style="width: 100%">Select Input</label>
-    			<NodeRedSelectInput v-model:value="node.object" :options="objects"/>
+    			<NodeRedSelectInput
+            v-model:value="node.object"
+            :options="objects"
+            :error="errors['node.object']"
+          />
     		</div>
           <div class="form-row">
     			<label style="width: 100%">Select Input</label>
-    			<NodeRedSelectInput v-model:value="node.array" :options="arrays"/>
+    			<NodeRedSelectInput
+            v-model:value="node.array"
+            :options="arrays"
+            :error="errors['node.array']"
+          />
     		</div>
     		<div class="form-row">
     			<label style="width: 100%">Editor with default height 200px and JSON</label>
-    			<NodeRedEditorInput v-model:value="node.jsontest" />
+    			<NodeRedEditorInput
+            v-model:value="node.jsontest"
+            :error="errors['node.jsontest']"
+          />
     		</div>
     		<div class="form-row">
     		  <label style="width: 100%">Editor with custom height and CSS</label>
-    		  <NodeRedEditorInput v-model:value="node.csstest" language="css" style="height: 500px;"/>
+    		  <NodeRedEditorInput
+            v-model:value="node.csstest"
+            language="css"
+            style="height: 100px;"
+            :error="errors['node.csstest']"
+          />
     		</div>
-    	</div>
-     `,
+    	</div>`,
     });
     node._app.config.performance = true;
     node._app.mount("#app");
@@ -704,32 +768,6 @@
       oneditprepare: function (abc) {
         const node = this;
 
-        // document.getElementById("node-dialog-ok")?.addEventListener(
-        //   "click",
-        //   function (event) {
-        //     event.preventDefault();
-        //     event.stopImmediatePropagation();
-
-        //     // Your custom logic
-        //     console.log("Doing validation or async logic...");
-
-        //     // Simulate original action AFTER you're done
-        //     setTimeout(() => {
-        //       console.log("Triggering original Node-RED save...");
-
-        //       // Option 1: Trigger the click again (this time skipping your own listener)
-        //       $("#node-dialog-ok")[0].click();
-
-        //       // Option 2 (better): Call whatever function Node-RED uses to close the dialog or save
-        //       // RED.nodes.registerType(...) gives access to oneditsave/oneditsubmit/etc
-        //     }, 100); // Can also await a promise if you're async
-        //   },
-        //   true
-        // );
-
-        $("#node-dialog-ok").on("click", (event) => {
-          event.stopImmediatePropagation();
-        });
         console.log(node);
 
         node._old = {

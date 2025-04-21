@@ -1,0 +1,13 @@
+{
+  "node.credentials.username": "error message",
+  "node.credentials.password": "error message",
+  "node.myProperty": "error message",
+  "node.remoteServer": "error message",
+  "node.country": "error message",
+  "node.fruit": "error message",
+  "node.number": "error message",
+  "node.object": "error message",
+  "node.array": "error message",
+  "node.jsontest": "error message",
+  "node.csstest": "error message"
+}
