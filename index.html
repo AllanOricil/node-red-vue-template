@@ -46,7 +46,15 @@
     });
   });
 
-  function mountApp(node) {
+  function createValidator(schema) {
+    const ajv = new ajv7({
+      allErrors: true,
+    });
+
+    return ajv.compile(schema);
+  }
+
+  function createApp(node, NodeRedNodeForm, validator) {
     $("#app").empty();
 
     const NodeRedCredentialInput = {
@@ -450,39 +458,11 @@
         return {
           node,
           errors: {},
-          countries: [
-            { value: "usa", label: "usa" },
-            { value: "argentina", label: "argentina" },
-            { value: "brasil", label: "brasil" },
-          ],
-          fruits: [
-            { value: "apple", label: "apple" },
-            { value: "melon", label: "melon" },
-            { value: "raspberry", label: "raspberry" },
-          ],
-          numbers: [
-            { value: "1", label: "1" },
-            { value: "2", label: "2" },
-            { value: "3", label: "3" },
-          ],
-          objects: [
-            { value: JSON.stringify({ test: "a" }), label: "a" },
-            { value: JSON.stringify({ test: "b" }), label: "b" },
-            { value: JSON.stringify({ test: "c" }), label: "c" },
-          ],
-          arrays: [
-            { value: JSON.stringify(["a"]), label: "a" },
-            { value: JSON.stringify(["b"]), label: "b" },
-            { value: JSON.stringify(["c"]), label: "c" },
-          ],
         };
       },
+      validator,
       components: {
-        NodeRedCredentialInput,
-        NodeRedTypedInput,
-        NodeRedConfigInput,
-        NodeRedSelectInput,
-        NodeRedEditorInput,
+        NodeRedNodeForm,
       },
       beforeMount() {
         Object.keys(this.node._def.defaults).forEach((prop) => {
@@ -506,115 +486,139 @@
         });
       },
       methods: {
-        // TODO: inject in the provided component
         validate() {
-          if (this.node) {
-            // TODO: this will be a global in the final build
-            const ajv = new ajv7({
-              allErrors: true,
-            });
+          const data = {
+            credentials: {},
+          };
+          Object.keys(this.node._def.credentials).forEach((prop) => {
+            data.credentials[prop] = this.node.credentials[prop];
+          });
 
-            // NOTE: this will be provided by the User with an import
-            const schema = {
-              type: "object",
-              properties: {
-                credentials: {
-                  type: "object",
-                  properties: {
-                    username: { type: "string", minLength: 5, maxLength: 10 },
-                    password: {
-                      type: "string",
-                      minLength: 8,
-                      maxLength: 20,
-                      pattern: "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]+$",
-                    },
-                  },
-                  required: ["password", "username"],
-                },
-                myProperty: {
-                  type: "object",
-                  properties: {
-                    value: {
-                      type: "string",
-                      default: "",
-                    },
-                    type: {
-                      type: "string",
-                      enum: [
-                        "msg",
-                        "flow",
-                        "global",
-                        "str",
-                        "num",
-                        "bool",
-                        "json",
-                        "bin",
-                        "re",
-                        "jsonata",
-                        "date",
-                        "env",
-                        "node",
-                        "cred",
-                      ],
-                      default: "str",
-                    },
-                  },
-                  required: ["value", "type"],
-                  oneOf: [
-                    {
-                      properties: {
-                        type: { const: "str" },
-                        value: { type: "string", minLength: 10 },
-                      },
-                    },
-                  ],
-                },
-                country: {
-                  type: "string",
-                  default: "brasil",
-                },
-              },
-            };
+          Object.keys(this.node._def.defaults).forEach((prop) => {
+            data[prop] = this.node[prop];
+          });
 
-            const data = {
-              credentials: {},
-            };
-            Object.keys(this.node._def.credentials).forEach((prop) => {
-              data.credentials[prop] = this.node.credentials[prop];
-            });
-
-            Object.keys(this.node._def.defaults).forEach((prop) => {
-              data[prop] = this.node[prop];
-            });
-
-            // TODO: this will be compiled only once and has to be removed from here
-            const validate = ajv.compile(schema);
-
-            const valid = validate(data);
-            if (!valid) {
-              const errors = validate.errors;
-              this.errors = errors.reduce((acc, error) => {
-                const key = `node${error.instancePath.replaceAll("/", ".")}`;
-                acc[key] = error.message;
-                return acc;
-              }, {});
-            } else {
-              this.errors = {};
-            }
-            if (Object.keys(this.errors).length) {
-              $("#node-dialog-ok").prop("disabled", true).addClass("disabled");
-              $("#red-ui-workspace").css("pointer-events", "none");
-            } else {
-              $("#node-dialog-ok")
-                .prop("disabled", false)
-                .removeClass("disabled");
-              $("#red-ui-workspace").css("pointer-events", "");
-            }
+          const valid = validator(data);
+          if (!valid) {
+            const errors = validator.errors;
+            this.errors = errors.reduce((acc, error) => {
+              const key = `node${error.instancePath.replaceAll("/", ".")}`;
+              acc[key] = error.message;
+              return acc;
+            }, {});
+          } else {
+            this.errors = {};
+          }
+          if (Object.keys(this.errors).length) {
+            $("#node-dialog-ok").prop("disabled", true).addClass("disabled");
+            $("#red-ui-workspace").css("pointer-events", "none");
+          } else {
+            $("#node-dialog-ok")
+              .prop("disabled", false)
+              .removeClass("disabled");
+            $("#red-ui-workspace").css("pointer-events", "");
           }
         },
       },
       template: `
     	<div style="width: 100%;">
+    		<NodeRedNodeForm 
+          :node="node" 
+          :errors="errors"
+          style="width: 100%;"
+        />
+    	</div>`,
+    });
+    node._app.config.performance = true;
+    node._app.component("NodeRedCredentialInput", NodeRedCredentialInput);
+    node._app.component("NodeRedTypedInput", NodeRedTypedInput);
+    node._app.component("NodeRedConfigInput", NodeRedConfigInput);
+    node._app.component("NodeRedSelectInput", NodeRedSelectInput);
+    node._app.component("NodeRedEditorInput", NodeRedEditorInput);
+    node._app.mount("#app");
+  }
+
+  function mountApp(node, formComponent, schema) {
+    const validator = createValidator(schema);
+    createApp(node, formComponent, validator);
+  }
+
+  function unmountApp(node) {
+    node._app.unmount();
+    node._app = null;
+  }
+
+  // TODO: find a better way to compare node states
+  function strigifyNode(node) {
+    const infoEditor = node.infoEditor;
+    const app = node._app;
+    const initialState = node._initial_state;
+    const old = node._old;
+    const highlighted = node.highlighted;
+    delete node.infoEditor;
+    delete node._app;
+    delete node._initial_state;
+    delete node._old;
+    delete node.highlighted;
+    const val = JSON.stringify(node);
+    node.infoEditor = infoEditor;
+    node._app = app;
+    node._initial_state = initialState;
+    node._old = old;
+    node.highlighted = highlighted;
+    return val;
+  }
+
+  function getNodeState(node) {
+    const state = {
+      credentials: {},
+    };
+    Object.keys(node._def.defaults).forEach((prop) => {
+      state[prop] = node[prop];
+    });
+    Object.keys(node._def.credentials).forEach((value) => {
+      state.credentials[value] = node.credentials[value];
+    });
+
+    return state;
+  }
+
+  function loadExternalScripts(urls, callback) {
+    const scriptsLoaded = new Array(urls.length).fill(false); // To track the loading state of each script
+
+    const checkIfAllLoaded = () => {
+      if (scriptsLoaded.every((status) => status)) {
+        callback();
+      }
+    };
+
+    const onScriptLoad = (index) => {
+      scriptsLoaded[index] = true;
+      checkIfAllLoaded();
+    };
+
+    // Create and append each script
+    urls.forEach((url, index) => {
+      const script = document.createElement("script");
+      script.src = url;
+      script.onload = () => onScriptLoad(index);
+      document.head.appendChild(script);
+    });
+  }
+
+  $.getJSON("your-node", function (nodeProperties) {
+    RED.nodes.registerType("your-node", {
+      ...nodeProperties,
+      label: function () {
+        return this.name || "Your Node";
+      },
+      oneditprepare: function (abc) {
+        const node = this;
+
+        // NOTE: provided by the User
+        const formComponent = {
+          template: `
+    	<div>
     		<div class="form-row">
     			<label style="width: 100%"><i class="fa fa-tag"></i> Username</label>
     			<NodeRedCredentialInput
@@ -705,90 +709,116 @@
           />
     		</div>
     	</div>`,
-    });
-    node._app.config.performance = true;
-    node._app.mount("#app");
-  }
-
-  function unmountApp(node) {
-    node._app.unmount();
-    node._app = null;
-  }
-
-  // TODO: find a better way to compare node states
-  function strigifyNode(node) {
-    const infoEditor = node.infoEditor;
-    const app = node._app;
-    const initialState = node._initial_state;
-    const old = node._old;
-    const highlighted = node.highlighted;
-    delete node.infoEditor;
-    delete node._app;
-    delete node._initial_state;
-    delete node._old;
-    delete node.highlighted;
-    const val = JSON.stringify(node);
-    node.infoEditor = infoEditor;
-    node._app = app;
-    node._initial_state = initialState;
-    node._old = old;
-    node.highlighted = highlighted;
-    return val;
-  }
-
-  function loadScriptsAndMount(urls, callback) {
-    const scriptsLoaded = new Array(urls.length).fill(false); // To track the loading state of each script
-
-    const checkIfAllLoaded = () => {
-      if (scriptsLoaded.every((status) => status)) {
-        callback();
-      }
-    };
-
-    const onScriptLoad = (index) => {
-      scriptsLoaded[index] = true;
-      checkIfAllLoaded();
-    };
-
-    // Create and append each script
-    urls.forEach((url, index) => {
-      const script = document.createElement("script");
-      script.src = url;
-      script.onload = () => onScriptLoad(index);
-      document.head.appendChild(script);
-    });
-  }
-
-  $.getJSON("your-node", function (nodeProperties) {
-    RED.nodes.registerType("your-node", {
-      ...nodeProperties,
-      label: function () {
-        return this.name || "Your Node";
-      },
-      oneditprepare: function (abc) {
-        const node = this;
-
-        console.log(node);
-
-        node._old = {
-          credentials: {},
+          props: {
+            node: {
+              type: Object,
+            },
+            errors: {
+              type: Object,
+            },
+          },
+          data() {
+            return {
+              countries: [
+                { value: "usa", label: "usa" },
+                { value: "argentina", label: "argentina" },
+                { value: "brasil", label: "brasil" },
+              ],
+              fruits: [
+                { value: "apple", label: "apple" },
+                { value: "melon", label: "melon" },
+                { value: "raspberry", label: "raspberry" },
+              ],
+              numbers: [
+                { value: "1", label: "1" },
+                { value: "2", label: "2" },
+                { value: "3", label: "3" },
+              ],
+              objects: [
+                { value: JSON.stringify({ test: "a" }), label: "a" },
+                { value: JSON.stringify({ test: "b" }), label: "b" },
+                { value: JSON.stringify({ test: "c" }), label: "c" },
+              ],
+              arrays: [
+                { value: JSON.stringify(["a"]), label: "a" },
+                { value: JSON.stringify(["b"]), label: "b" },
+                { value: JSON.stringify(["c"]), label: "c" },
+              ],
+            };
+          },
         };
-        Object.keys(nodeProperties.defaults).forEach((value) => {
-          node._old[value] = node[value];
-        });
 
-        Object.keys(nodeProperties.credentials).forEach((value) => {
-          node._old.credentials[value] = node.credentials[value];
-        });
+        // NOTE: provided by the User
+        const schema = {
+          type: "object",
+          properties: {
+            credentials: {
+              type: "object",
+              properties: {
+                username: { type: "string", minLength: 5, maxLength: 10 },
+                password: {
+                  type: "string",
+                  minLength: 8,
+                  maxLength: 20,
+                  pattern: "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]+$",
+                },
+              },
+              required: ["password", "username"],
+            },
+            myProperty: {
+              type: "object",
+              properties: {
+                value: {
+                  type: "string",
+                  default: "",
+                },
+                type: {
+                  type: "string",
+                  enum: [
+                    "msg",
+                    "flow",
+                    "global",
+                    "str",
+                    "num",
+                    "bool",
+                    "json",
+                    "bin",
+                    "re",
+                    "jsonata",
+                    "date",
+                    "env",
+                    "node",
+                    "cred",
+                  ],
+                  default: "str",
+                },
+              },
+              required: ["value", "type"],
+              oneOf: [
+                {
+                  properties: {
+                    type: { const: "str" },
+                    value: { type: "string", minLength: 10 },
+                  },
+                },
+              ],
+            },
+            country: {
+              type: "string",
+              default: "brasil",
+            },
+          },
+        };
 
+        node._old = getNodeState(node);
         if (!node._initial_state) {
           console.log("STORING NEW INITIAL STATE");
-          node._initial_state = JSON.parse(strigifyNode(node));
+          node._initial_state = JSON.parse(JSON.stringify(node._old));
         }
 
         if (typeof Vue !== "undefined") {
           console.log("Vue is already loaded:", Vue.version);
-          mountApp(node);
+          mountApp(node, formComponent, schema);
           return;
         }
 
@@ -797,14 +827,15 @@
           "https://cdnjs.cloudflare.com/ajax/libs/ajv/8.17.1/ajv7.min.js",
         ];
 
-        loadScriptsAndMount(urls, () => {
-          mountApp(node);
+        loadExternalScripts(urls, () => {
+          mountApp(node, formComponent, schema);
         });
       },
       oneditsave: function () {
         const node = this;
-
-        node.changed = strigifyNode(node._initial_state) !== strigifyNode(node);
+        const current_state = getNodeState(node);
+        node.changed =
+          JSON.stringify(node._initial_state) !== JSON.stringify(current_state);
         if (node.changed) {
           console.log("THERE ARE CHANGES");
           if (node._old["remoteServer"]) {
@@ -835,16 +866,17 @@
       oneditcancel: function () {
         const node = this;
 
-        Object.keys(nodeProperties.defaults).forEach((value) => {
-          node[value] = node._old[value];
+        Object.keys(node._def.defaults).forEach((prop) => {
+          node[prop] = node._old[prop];
+        });
+        Object.keys(node._def.credentials).forEach((prop) => {
+          node.credentials[prop] = node._old.credentials[prop];
         });
 
-        Object.keys(nodeProperties.credentials).forEach((value) => {
-          node.credentials[value] = node._old.credentials[value];
-        });
-
-        node.changed = strigifyNode(node._initial_state) !== strigifyNode(node);
+        node.changed =
+          JSON.stringify(node._initial_state) !== JSON.stringify(node._old);
         if (node.changed) {
+          console.log("CHANGED WHILE RESTORING STATE");
           RED.nodes.dirty(node);
         }
 
