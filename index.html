@@ -488,7 +488,10 @@
       },
       beforeUnmount() {
         $("#node-dialog-ok").prop("disabled", false).removeClass("disabled");
-        $("#red-ui-workspace").css("pointer-events", "");
+        $("#red-ui-workspace").get(0).style.setProperty("pointer-events", "");
+        $("#red-ui-workspace-chart svg")
+          .get(0)
+          .style.setProperty("pointer-events", "all");
       },
       methods: {
         validate() {
@@ -505,12 +508,22 @@
           }
           if (Object.keys(this.errors).length) {
             $("#node-dialog-ok").prop("disabled", true).addClass("disabled");
-            $("#red-ui-workspace").css("pointer-events", "none");
+            $("#red-ui-workspace")
+              .get(0)
+              .style.setProperty("pointer-events", "none", "important");
+            $("#red-ui-workspace-chart svg")
+              .get(0)
+              .style.setProperty("pointer-events", "none", "important");
           } else {
             $("#node-dialog-ok")
               .prop("disabled", false)
               .removeClass("disabled");
-            $("#red-ui-workspace").css("pointer-events", "");
+            $("#red-ui-workspace")
+              .get(0)
+              .style.setProperty("pointer-events", "");
+            $("#red-ui-workspace-chart svg")
+              .get(0)
+              .style.setProperty("pointer-events", "all");
           }
         },
       },
@@ -909,9 +922,8 @@
           RED.nodes.dirty(node);
         }
 
-        RED.view.redraw(true);
-        console.log("SAVED");
         unmountApp(node);
+        console.log("SAVED");
       },
       oneditcancel: function () {
         console.log("ONEDITCANCEL");
