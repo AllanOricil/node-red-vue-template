@@ -46,6 +46,29 @@
     });
   });
 
+  function getChanges(old, current) {
+    const changes = {};
+
+    console.log(old);
+    console.log(current);
+
+    Object.keys(old).forEach((prop) => {
+      const o = old[prop];
+      const c = current[prop];
+
+      if (typeof o === "object") {
+        const _changes = getChanges(o, c);
+        if (Object.keys(_changes).length) {
+          changes[prop] = _changes;
+        }
+      } else if (o !== c) {
+        changes[prop] = o;
+      }
+    });
+
+    return changes;
+  }
+
   function createValidator(schema) {
     const ajv = new ajv7({
       allErrors: true,
@@ -875,9 +898,9 @@
       oneditsave: function () {
         const node = this;
         const current_state = getNodeState(node);
-        node.changed =
+        const changed =
           JSON.stringify(node._initial_state) !== JSON.stringify(current_state);
-        if (node.changed) {
+        if (changed) {
           console.log("THERE ARE CHANGES");
 
           // NOTE: updating config node users
@@ -919,11 +942,24 @@
             }
           });
 
-          RED.nodes.dirty(node);
+          const changes = getChanges(node._old, current_state);
+          return {
+            changed,
+            history: [
+              {
+                t: "edit",
+                node,
+                changes,
+                links: [],
+                dirty: RED.nodes.dirty(),
+                changed,
+              },
+            ],
+          };
         }
 
         unmountApp(node);
-        console.log("SAVED");
+        return false;
       },
       oneditcancel: function () {
         console.log("ONEDITCANCEL");
