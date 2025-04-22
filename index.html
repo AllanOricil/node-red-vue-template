@@ -49,14 +49,13 @@
   function createValidator(schema) {
     const ajv = new ajv7({
       allErrors: true,
+      useDefaults: "empty",
     });
 
     return ajv.compile(schema);
   }
 
   function createApp(node, NodeRedNodeForm, validator) {
-    $("#app").empty();
-
     const NodeRedCredentialInput = {
       template: `
       <div style="display: flex; flex-direction: column; width: 100%;">
@@ -74,37 +73,27 @@
             return ["text", "password"].includes(value);
           },
         },
-        hasPassword: {
-          type: Boolean,
-          default: false,
-        },
         error: {
           type: String,
           default: "",
         },
       },
-      emits: ["update:value", "update:has-password", "input"],
+      emits: ["update:value", "input"],
       data() {
         return {
           internalValue: "",
         };
       },
-      mounted() {
-        if (this.type === "text") {
-          this.hasPassword = false;
-        }
-
-        if (this.hasPassword) {
+      beforeMount() {
+        this.internalValue = this.value;
+        if (this.type === "password" && !this.value) {
           this.internalValue = "*************";
-        } else {
-          this.internalValue = this.value;
         }
       },
       methods: {
         onInput(event) {
           this.internalValue = event.target.value;
           this.$emit("update:value", this.internalValue);
-          this.$emit("update:has-password", !!this.internalValue);
           this.$emit("input", this.internalValue);
         },
       },
@@ -276,7 +265,7 @@
         </div>
       </div>`,
       props: {
-        value: String,
+        value: String | Array,
         options: {
           type: Array,
           required: true,
@@ -327,7 +316,10 @@
           ],
         });
 
-        $selectInput.typedInput("value", this.value);
+        $selectInput.typedInput(
+          "value",
+          Array.isArray(this.value) ? this.value.join(",") : this.value
+        );
         $selectInput.on("change", () => {
           const newValue = this.multiple
             ? $selectInput.typedInput("value")?.split(",")
@@ -453,7 +445,7 @@
       },
     };
 
-    node._app = Vue.createApp({
+    const app = Vue.createApp({
       data() {
         return {
           node,
@@ -465,6 +457,8 @@
         NodeRedNodeForm,
       },
       beforeMount() {
+        this.validate();
+
         Object.keys(this.node._def.defaults).forEach((prop) => {
           this.$watch(
             () => this.node[prop],
@@ -478,27 +472,27 @@
         Object.keys(this.node._def.credentials).forEach((prop) => {
           this.$watch(
             () => this.node.credentials[prop],
-            (newVal) => {
+            (newVal, oldVal) => {
               this.validate();
+
+              if (
+                this.node._def.credentials[prop].type === "password" &&
+                newVal !== oldVal
+              ) {
+                this.node.credentials[`has_${prop}`] = true;
+              }
             },
             { deep: true }
           );
         });
       },
+      beforeUnmount() {
+        $("#node-dialog-ok").prop("disabled", false).removeClass("disabled");
+        $("#red-ui-workspace").css("pointer-events", "");
+      },
       methods: {
         validate() {
-          const data = {
-            credentials: {},
-          };
-          Object.keys(this.node._def.credentials).forEach((prop) => {
-            data.credentials[prop] = this.node.credentials[prop];
-          });
-
-          Object.keys(this.node._def.defaults).forEach((prop) => {
-            data[prop] = this.node[prop];
-          });
-
-          const valid = validator(data);
+          const valid = validator(this.node);
           if (!valid) {
             const errors = validator.errors;
             this.errors = errors.reduce((acc, error) => {
@@ -522,51 +516,34 @@
       },
       template: `
     	<div style="width: 100%;">
-    		<NodeRedNodeForm 
-          :node="node" 
+    		<NodeRedNodeForm
+          :node="node"
           :errors="errors"
           style="width: 100%;"
         />
     	</div>`,
     });
-    node._app.config.performance = true;
-    node._app.component("NodeRedCredentialInput", NodeRedCredentialInput);
-    node._app.component("NodeRedTypedInput", NodeRedTypedInput);
-    node._app.component("NodeRedConfigInput", NodeRedConfigInput);
-    node._app.component("NodeRedSelectInput", NodeRedSelectInput);
-    node._app.component("NodeRedEditorInput", NodeRedEditorInput);
-    node._app.mount("#app");
+    app.config.performance = true;
+    app.component("NodeRedCredentialInput", NodeRedCredentialInput);
+    app.component("NodeRedTypedInput", NodeRedTypedInput);
+    app.component("NodeRedConfigInput", NodeRedConfigInput);
+    app.component("NodeRedSelectInput", NodeRedSelectInput);
+    app.component("NodeRedEditorInput", NodeRedEditorInput);
+    return app;
   }
 
   function mountApp(node, formComponent, schema) {
+    $("#app").empty();
     const validator = createValidator(schema);
-    createApp(node, formComponent, validator);
+    node._app = createApp(node, formComponent, validator);
+    node._app.mount("#app");
   }
 
   function unmountApp(node) {
-    node._app.unmount();
-    node._app = null;
-  }
-
-  // TODO: find a better way to compare node states
-  function strigifyNode(node) {
-    const infoEditor = node.infoEditor;
-    const app = node._app;
-    const initialState = node._initial_state;
-    const old = node._old;
-    const highlighted = node.highlighted;
-    delete node.infoEditor;
-    delete node._app;
-    delete node._initial_state;
-    delete node._old;
-    delete node.highlighted;
-    const val = JSON.stringify(node);
-    node.infoEditor = infoEditor;
-    node._app = app;
-    node._initial_state = initialState;
-    node._old = old;
-    node.highlighted = highlighted;
-    return val;
+    if (node._app) {
+      node._app.unmount();
+      node._app = null;
+    }
   }
 
   function getNodeState(node) {
@@ -576,8 +553,13 @@
     Object.keys(node._def.defaults).forEach((prop) => {
       state[prop] = node[prop];
     });
-    Object.keys(node._def.credentials).forEach((value) => {
-      state.credentials[value] = node.credentials[value];
+    Object.keys(node._def.credentials).forEach((prop) => {
+      state.credentials[prop] = node.credentials[prop];
+
+      if (node._def.credentials[prop].type === "password") {
+        state.credentials[`has_${prop}`] =
+          node.credentials[`has_${prop}`] || false;
+      }
     });
 
     return state;
@@ -615,6 +597,7 @@
       oneditprepare: function (abc) {
         const node = this;
 
+        console.log(node);
         // NOTE: provided by the User
         const formComponent = {
           template: `
@@ -623,7 +606,6 @@
     			<label style="width: 100%"><i class="fa fa-tag"></i> Username</label>
     			<NodeRedCredentialInput
             v-model:value="node.credentials.username"
-            type="text"
             :error="errors['node.credentials.username']"
           />
     		</div>
@@ -631,7 +613,6 @@
     			<label style="width: 100%"><i class="fa fa-tag"></i> Password</label>
     			<NodeRedCredentialInput
             v-model:value="node.credentials.password"
-            v-model:has-password="node.credentials.has_password"
             type="password"
             :error="errors['node.credentials.password']"
           />
@@ -641,6 +622,13 @@
     			<NodeRedTypedInput
             v-model:value="node.myProperty"
             :error="errors['node.myProperty']"
+          />
+    		</div>
+        <div class="form-row">
+    			<label style="width: 100%">Typed Input 2</label>
+    			<NodeRedTypedInput
+            v-model:value="node.myProperty2"
+            :error="errors['node.myProperty2']"
           />
     		</div>
     		<div class="form-row">
@@ -681,6 +669,7 @@
     			<NodeRedSelectInput
             v-model:value="node.object"
             :options="objects"
+            multiple
             :error="errors['node.object']"
           />
     		</div>
@@ -755,14 +744,21 @@
             credentials: {
               type: "object",
               properties: {
-                username: { type: "string", minLength: 5, maxLength: 10 },
+                username: {
+                  type: "string",
+                  minLength: 5,
+                  maxLength: 10,
+                  default: "",
+                },
                 password: {
                   type: "string",
                   minLength: 8,
                   maxLength: 20,
                   pattern: "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]+$",
+                  default: "",
                 },
               },
+              default: {},
               required: ["password", "username"],
             },
             myProperty: {
@@ -794,6 +790,7 @@
                 },
               },
               required: ["value", "type"],
+              default: {},
               oneOf: [
                 {
                   properties: {
@@ -802,6 +799,37 @@
                   },
                 },
               ],
+            },
+            myProperty2: {
+              type: "object",
+              properties: {
+                value: {
+                  type: "string",
+                  default: "",
+                },
+                type: {
+                  type: "string",
+                  enum: [
+                    "msg",
+                    "flow",
+                    "global",
+                    "str",
+                    "num",
+                    "bool",
+                    "json",
+                    "bin",
+                    "re",
+                    "jsonata",
+                    "date",
+                    "env",
+                    "node",
+                    "cred",
+                  ],
+                  default: "str",
+                },
+              },
+              required: ["value", "type"],
+              default: {},
             },
             country: {
               type: "string",
@@ -838,32 +866,55 @@
           JSON.stringify(node._initial_state) !== JSON.stringify(current_state);
         if (node.changed) {
           console.log("THERE ARE CHANGES");
-          if (node._old["remoteServer"]) {
-            const oldRemoteServer = RED.nodes.node(node._old["remoteServer"]);
-            const parentIndex = oldRemoteServer.users.findIndex(
-              (_node) => _node.id === node.id
-            );
-            if (parentIndex !== -1) {
-              oldRemoteServer.users.splice(parentIndex, 1);
-            }
-          }
 
-          RED.nodes.updateConfigNodeUsers(node, {
-            action: "add",
-            emitEvent: true,
+          // NOTE: updating config node users
+          Object.keys(node._def.defaults).forEach((prop) => {
+            if (node._def.defaults?.[prop]?.type) {
+              console.log(node._def.defaults?.[prop]?.type);
+              const oldPropState = node._old[prop];
+              const currentPropState = node[prop];
+              console.log(`prop: ${prop}`);
+              console.log(`oldPropState: ${oldPropState}`);
+              console.log(`currentPropState: ${currentPropState}`);
+              if (oldPropState !== currentPropState) {
+                console.log("CHANGED");
+
+                const oldConfigNode = RED.nodes.node(oldPropState);
+                console.log(`oldConfigNode`);
+                console.log(oldConfigNode);
+                if (oldConfigNode) {
+                  const parentNodeIndex = oldConfigNode.users.findIndex(
+                    (_node) => _node.id === node.id
+                  );
+                  if (parentNodeIndex !== -1) {
+                    oldConfigNode.users.splice(parentNodeIndex, 1);
+                  }
+                }
+
+                const currentConfigNode = RED.nodes.node(currentPropState);
+                console.log(`currentConfigNode`);
+                console.log(currentConfigNode);
+                if (currentConfigNode) {
+                  const parentNodeIndex = currentConfigNode.users.findIndex(
+                    (_node) => _node.id === node.id
+                  );
+                  if (parentNodeIndex === -1) {
+                    currentConfigNode.users.push(node);
+                  }
+                }
+              }
+            }
           });
 
           RED.nodes.dirty(node);
         }
 
-        node.validationErrors = ["'myField' is required"];
-        node.valid = false;
         RED.view.redraw(true);
         console.log("SAVED");
-        console.log(node);
         unmountApp(node);
       },
       oneditcancel: function () {
+        console.log("ONEDITCANCEL");
         const node = this;
 
         Object.keys(node._def.defaults).forEach((prop) => {
@@ -871,18 +922,17 @@
         });
         Object.keys(node._def.credentials).forEach((prop) => {
           node.credentials[prop] = node._old.credentials[prop];
-        });
 
-        node.changed =
-          JSON.stringify(node._initial_state) !== JSON.stringify(node._old);
-        if (node.changed) {
-          console.log("CHANGED WHILE RESTORING STATE");
-          RED.nodes.dirty(node);
-        }
+          if (node._def.credentials[prop].type === "password") {
+            node.credentials[`has_${prop}`] =
+              node._old.credentials[`has_${prop}`];
+          }
+        });
 
         unmountApp(node);
       },
       oneditdelete: function () {
+        console.log("ONEDITDELETE");
         const node = this;
         unmountApp(node);
       },
