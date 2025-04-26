@@ -23,7 +23,10 @@ export class TypedInput {
         msg,
         (err, result) => {
           if (err) return reject(err);
-          resolve(result);
+
+          this.type === "node"
+            ? resolve(RED.nodes.getNode(result))
+            : resolve(result);
         }
       );
     });

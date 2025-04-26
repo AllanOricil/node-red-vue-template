@@ -4,12 +4,12 @@ import { ConfigNode } from "./config-node";
 import * as Credential from "./credential";
 import { JSONSchema7 } from "json-schema";
 
-function input(target: any, key: string) {
+function config(target: any, key: string) {
   const ctor = target.constructor;
   const type = Reflect.getMetadata("design:type", target, key);
 
-  if (!ctor.hasOwnProperty("__inputs__")) {
-    Object.defineProperty(ctor, "__inputs__", {
+  if (!ctor.hasOwnProperty("__configs__")) {
+    Object.defineProperty(ctor, "__configs__", {
       value: [],
       writable: true,
       configurable: true,
@@ -23,7 +23,7 @@ function input(target: any, key: string) {
   };
 
   console.log(config);
-  ctor.__inputs__.push(config);
+  ctor.__configs__.push(config);
 
   // TODO: find a way to convert using prop acessors
 }
@@ -35,7 +35,7 @@ type NodeOptions = {
   inputs?: number;
   outputs?: number;
   icon?: string;
-  validation: {
+  validation?: {
     inputs: JSONSchema7;
     message: JSONSchema7;
   };
@@ -49,4 +49,4 @@ function node(options: NodeOptions) {
   };
 }
 
-export { input, node };
+export { config, node };

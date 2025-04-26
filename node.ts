@@ -1,3 +1,5 @@
+import { config } from "./decorators";
+
 export interface Node {
   id: string;
   type: string;
@@ -8,6 +10,9 @@ export interface Node {
 
 export class Node {
   static RED: any;
+
+  @config
+  name: string;
 
   constructor(config: any) {
     Node.RED.nodes.createNode(this, config);

@@ -1,4 +1,4 @@
-import { input, node } from "./decorators";
+import { config, node } from "./decorators";
 import { RemoteServerConfigNode } from "./_server";
 import { Node } from "./node";
 import { TypedInput } from "./typed-input";
@@ -8,48 +8,43 @@ import MessageSchema from "./message-schema";
 
 @node({
   type: "your-node",
-  category: "function",
-  color: "#000000",
-  inputs: 1,
-  outputs: 1,
-  icon: "node.svg",
   validation: {
     inputs: InputsSchema,
     message: MessageSchema,
   },
 })
 export class YourNode extends Node {
-  @input
+  @config
   myProperty: TypedInput;
 
-  @input
+  @config
   remoteServer: RemoteServerConfigNode;
 
-  @input
+  @config
   fruit: string;
 
-  @input
+  @config
   country: string;
 
-  @input
+  @config
   number: number;
 
-  @input
+  @config
   object: object;
 
-  @input
+  @config
   array: Array;
 
-  @input
+  @config
   jsontest: string;
 
-  @input
+  @config
   csstest: string;
 
-  @input
+  @config
   username: Credential.Text;
 
-  @input
+  @config
   password: Credential.Password;
 
   // NOTE: run only once when node type is registered
@@ -58,6 +53,7 @@ export class YourNode extends Node {
     console.log("fetched google");
   }
 
+  // TODO: define msg type using TypeBox and JSON Schema
   async onInput(
     msg: Record<string, any>,
     send: Function,
