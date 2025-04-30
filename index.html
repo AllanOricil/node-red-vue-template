@@ -55,11 +55,18 @@
   }
 
   function createApp(node, form, validator) {
-    const NodeRedCredentialInput = {
+    const NodeRedInput = {
       template: `
       <div style="display: flex; flex-direction: column; width: 100%;">
-        <input ref="inputField" :type="type" :value="internalValue" @input="onInput" style="flex: 1; width: 100%;" />
-        <div v-if="error" class="node-red-vue-input-error-message " >
+        <input
+          ref="inputField"
+          :type="type"
+          :value="internalValue"
+          :placeholder="placeholder"
+          @input="onInput"
+          style="flex: 1; width: 100%;" 
+        />
+        <div v-if="error" class="node-red-vue-input-error-message">
           {{ error }}
         </div>
       </div>`,
@@ -72,6 +79,7 @@
             return ["text", "password"].includes(value);
           },
         },
+        placeholder: String,
         error: {
           type: String,
           default: "",
@@ -553,7 +561,7 @@
     	</div>`,
     });
     app.config.performance = true;
-    app.component("NodeRedCredentialInput", NodeRedCredentialInput);
+    app.component("NodeRedInput", NodeRedInput);
     app.component("NodeRedTypedInput", NodeRedTypedInput);
     app.component("NodeRedConfigInput", NodeRedConfigInput);
     app.component("NodeRedSelectInput", NodeRedSelectInput);
@@ -625,14 +633,14 @@
     	<div>
     		<div class="form-row">
     			<label style="width: 100%"><i class="fa fa-tag"></i> Username</label>
-    			<NodeRedCredentialInput
+    			<NodeRedInput
             v-model:value="node.credentials.username"
             :error="errors['node.credentials.username']"
           />
     		</div>
     		<div class="form-row">
     			<label style="width: 100%"><i class="fa fa-tag"></i> Password</label>
-    			<NodeRedCredentialInput
+    			<NodeRedInput
             v-model:value="node.credentials.password"
             type="password"
             :error="errors['node.credentials.password']"
@@ -864,7 +872,37 @@
   };
 
   // NOTE: provided by the User
-  const serverNodeForm = {};
+  const serverNodeForm = {
+    template: `
+    <div>
+      <div class="form-row">
+        <label style="width: 100%"><i class="fa fa-tag"></i> Name</label>
+        <NodeRedInput
+          v-model:value="node.name"
+          :error="errors['node.name']"
+          placeholder="name"
+        />
+      </div>
+      <div class="form-row">
+        <label style="width: 100%"><i class="fa fa-tag"></i> Hostname</label>
+        <NodeRedInput
+          v-model:value="node.host"
+          :error="errors['node.host']"
+          placeholder="hostname"
+        />
+      </div>
+    </div>`,
+    props: {
+      node: {
+        type: Object,
+        required: true,
+      },
+      errors: {
+        type: Object,
+        default: () => ({}),
+      },
+    },
+  };
 
   // NOTE: provided by the User
   const serverNodeSchema = {
@@ -961,6 +999,9 @@
           const changed =
             JSON.stringify(node._old) !== JSON.stringify(current_state);
 
+          console.log(JSON.stringify(node._old));
+          console.log(JSON.stringify(current_state));
+
           if (!changed) {
             return false;
           }
@@ -1008,6 +1049,20 @@
 
           const changes = getChanges(node._old, current_state);
           console.log(changes);
+
+          console.log({
+            changed,
+            history: [
+              {
+                t: "edit",
+                node,
+                changes,
+                links: [],
+                dirty: RED.nodes.dirty(),
+                changed,
+              },
+            ],
+          });
           return {
             changed,
             history: [
@@ -1016,7 +1071,7 @@
                 node,
                 changes,
                 links: [],
-                dirty: RED.nodes.dirty(node),
+                dirty: RED.nodes.dirty(),
                 changed,
               },
             ],
@@ -1053,7 +1108,7 @@
 
   // TODO: move this to its own module (/src/nodes/{node-type}/client/index.js)
   registerType({
-    type: "your-server",
+    type: "remote-server",
     category: "config",
     color: "#a6bbcf",
     form: serverNodeForm,
@@ -1071,4 +1126,6 @@
     form: yourNodeFormComponent,
     schema: yourNodeFormSchema,
   });
+
+  //# sourceURL=dynamicScript.js
 </script>
