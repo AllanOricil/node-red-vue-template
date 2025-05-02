@@ -64,7 +64,7 @@
           :value="internalValue"
           :placeholder="placeholder"
           @input="onInput"
-          style="flex: 1; width: 100%;" 
+          style="flex: 1; width: 100%;"
         />
         <div v-if="error" class="node-red-vue-input-error-message">
           {{ error }}
@@ -475,7 +475,7 @@
     const app = Vue.createApp({
       data() {
         return {
-          node,
+          node: node._newState,
           errors: {},
         };
       },
@@ -503,7 +503,7 @@
                 this.node._def.credentials[prop].type === "password" &&
                 newVal !== oldVal
               ) {
-                this.node.credentials[`has_${prop}`] = true;
+                this.node.credentials[`has_${prop}`] = !!newVal;
               }
             },
             { deep: true }
@@ -567,12 +567,14 @@
     app.component("NodeRedSelectInput", NodeRedSelectInput);
     app.component("NodeRedEditorInput", NodeRedEditorInput);
     app.component("NodeRedNodeForm", form);
+
     return app;
   }
 
   function mountApp(node, formComponent, schema) {
     $("#app").empty();
     const validator = createValidator(schema);
+    node._newState = _.cloneDeep(node);
     node._app = createApp(node, formComponent, validator);
     node._app.mount("#app");
   }
@@ -965,12 +967,6 @@
           const node = this;
           console.log(node);
 
-          node._old = getNodeState(node);
-          if (!node._initial_state) {
-            console.log("STORING NEW INITIAL STATE");
-            node._initial_state = JSON.parse(JSON.stringify(node._old));
-          }
-
           if (typeof Vue !== "undefined" && typeof ajv7 !== "undefined") {
             console.log("dependencies loaded already");
             mountApp(node, form, schema);
@@ -983,6 +979,7 @@
           const urls = [
             "https://unpkg.com/vue@3/dist/vue.global.js",
             "https://cdnjs.cloudflare.com/ajax/libs/ajv/8.17.1/ajv7.min.js",
+            "https://cdn.jsdelivr.net/npm/es-toolkit@%5E1",
           ];
 
           loadExternalScripts(urls, () => {
@@ -993,34 +990,27 @@
           const node = this;
           unmountApp(node);
 
-          console.log(`was dirty: ${RED.nodes.dirty(node)}`);
-
-          const current_state = getNodeState(node);
-          const changed =
-            JSON.stringify(node._old) !== JSON.stringify(current_state);
-
-          console.log(JSON.stringify(node._old));
-          console.log(JSON.stringify(current_state));
-
+          const newState = getNodeState(node._newState);
+          const oldState = getNodeState(node);
+          const changes = getChanges(oldState, newState);
+          const changed = !!Object.keys(changes)?.length;
           if (!changed) {
             return false;
           }
-
-          console.log("THERE ARE CHANGES");
 
           // NOTE: updating config node users
           Object.keys(node._def.defaults).forEach((prop) => {
             if (node._def.defaults?.[prop]?.type) {
               console.log(node._def.defaults?.[prop]?.type);
-              const oldPropState = node._old[prop];
-              const currentPropState = node[prop];
+              const oldConfigNodeId = node[prop];
+              const newConfigNodeId = node._newState[prop];
               console.log(`prop: ${prop}`);
-              console.log(`oldPropState: ${oldPropState}`);
-              console.log(`currentPropState: ${currentPropState}`);
-              if (oldPropState !== currentPropState) {
+              console.log(`oldConfigNodeId: ${oldConfigNodeId}`);
+              console.log(`newConfigNodeId: ${newConfigNodeId}`);
+              if (oldConfigNodeId !== newConfigNodeId) {
                 console.log("CHANGED");
 
-                const oldConfigNode = RED.nodes.node(oldPropState);
+                const oldConfigNode = RED.nodes.node(oldConfigNodeId);
                 console.log(`oldConfigNode`);
                 console.log(oldConfigNode);
                 if (oldConfigNode) {
@@ -1032,37 +1022,35 @@
                   }
                 }
 
-                const currentConfigNode = RED.nodes.node(currentPropState);
-                console.log(`currentConfigNode`);
-                console.log(currentConfigNode);
-                if (currentConfigNode) {
-                  const parentNodeIndex = currentConfigNode.users.findIndex(
+                const newConfigNode = RED.nodes.node(newConfigNodeId);
+                console.log(`newConfigNode`);
+                console.log(newConfigNode);
+                if (newConfigNode) {
+                  const parentNodeIndex = newConfigNode.users.findIndex(
                     (_node) => _node.id === node.id
                   );
                   if (parentNodeIndex === -1) {
-                    currentConfigNode.users.push(node);
+                    newConfigNode.users.push(node);
                   }
                 }
               }
             }
           });
 
-          const changes = getChanges(node._old, current_state);
-          console.log(changes);
+          _.mergeWith(
+            node,
+            node._newState,
+            (objValue, srcValue, key, object, source, stack) => {
+              if (key.startsWith("_")) {
+                return objValue;
+              }
+              if (key === "constructor") {
+                return objValue;
+              }
+              return undefined;
+            }
+          );
 
-          console.log({
-            changed,
-            history: [
-              {
-                t: "edit",
-                node,
-                changes,
-                links: [],
-                dirty: RED.nodes.dirty(),
-                changed,
-              },
-            ],
-          });
           return {
             changed,
             history: [
@@ -1078,25 +1066,10 @@
           };
         },
         oneditcancel: function () {
-          const node = this;
-
-          Object.keys(node._def.defaults).forEach((prop) => {
-            node[prop] = node._old[prop];
-          });
-          Object.keys(node._def.credentials).forEach((prop) => {
-            node.credentials[prop] = node._old.credentials[prop];
-
-            if (node._def.credentials[prop].type === "password") {
-              node.credentials[`has_${prop}`] =
-                node._old.credentials[`has_${prop}`];
-            }
-          });
-
-          unmountApp(node);
+          unmountApp(this);
         },
         oneditdelete: function () {
-          const node = this;
-          unmountApp(node);
+          unmountApp(this);
         },
         onpaletteadd: onPaletteAdd,
         onpaltteremove: onPaletteRemove,
