@@ -37,7 +37,7 @@
         if (Object.keys(_changes).length) {
           changes[prop] = _changes;
         }
-      } else if (_o !== _n) {
+      } else if (!_.isEqual(_o, _n)) {
         changes[prop] = _o;
       }
     });
@@ -64,6 +64,8 @@
           :value="internalValue"
           :placeholder="placeholder"
           @input="onInput"
+          @focus="onFocus"
+          @blur="onBlur"
           style="flex: 1; width: 100%;"
         />
         <div v-if="error" class="node-red-vue-input-error-message">
@@ -89,19 +91,31 @@
       data() {
         return {
           internalValue: "",
+          secretPattern: "*************",
         };
       },
       beforeMount() {
         this.internalValue = this.value;
-        if (this.type === "password" && !this.value) {
-          this.internalValue = "*************";
-        }
+        this.onBlur();
       },
       methods: {
         onInput(event) {
           this.internalValue = event.target.value;
           this.$emit("update:value", this.internalValue);
           this.$emit("input", this.internalValue);
+        },
+        onFocus() {
+          if (
+            this.type === "password" &&
+            this.internalValue === this.secretPattern
+          ) {
+            this.internalValue = "";
+          }
+        },
+        onBlur() {
+          if (this.type === "password" && this.value === "__PWD__") {
+            this.internalValue = this.secretPattern;
+          }
         },
       },
     };
@@ -497,6 +511,13 @@
         });
 
         Object.keys(this.node._def.credentials).forEach((prop) => {
+          if (
+            this.node._def.credentials[prop].type === "password" &&
+            this.node.credentials[`has_${prop}`]
+          ) {
+            this.node.credentials[prop] = "__PWD__";
+          }
+
           this.$watch(
             () => this.node.credentials[prop],
             (newVal, oldVal) => {
@@ -519,6 +540,17 @@
         $("#red-ui-workspace-chart svg")
           .get(0)
           .style.setProperty("pointer-events", "all");
+
+        // NOTE: must set credentials prop to undefined to avoid updating it to __PWD__ in the server
+        Object.keys(this.node._def.credentials).forEach((prop) => {
+          if (
+            this.node._def.credentials[prop].type === "password" &&
+            this.node.credentials[`has_${prop}`] &&
+            this.node.credentials[prop] === "__PWD__"
+          ) {
+            this.node.credentials[prop] = undefined;
+          }
+        });
       },
       methods: {
         validate() {
