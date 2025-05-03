@@ -22,23 +22,23 @@
     });
   });
 
-  function getChanges(old, current) {
+  function getChanges(o, n) {
     const changes = {};
 
-    console.log(old);
-    console.log(current);
+    console.log(o);
+    console.log(n);
 
-    Object.keys(old).forEach((prop) => {
-      const o = old[prop];
-      const c = current[prop];
+    Object.keys(o).forEach((prop) => {
+      const _o = o[prop];
+      const _n = n[prop];
 
-      if (typeof o === "object") {
-        const _changes = getChanges(o, c);
+      if (typeof _o === "object") {
+        const _changes = getChanges(_o, _n);
         if (Object.keys(_changes).length) {
           changes[prop] = _changes;
         }
-      } else if (o !== c) {
-        changes[prop] = o;
+      } else if (_o !== _n) {
+        changes[prop] = _o;
       }
     });
 
@@ -260,10 +260,13 @@
         },
       },
       emits: ["update:value"],
-      data() {
-        return {
-          inputId: "node-input-" + this.value,
-        };
+      computed: {
+        inputPrefix() {
+          return "node-input-" + Math.random().toString(36).substring(2, 9);
+        },
+        inputId() {
+          return this.inputPrefix + "-" + this.value;
+        },
       },
       mounted() {
         console.log(this);
@@ -271,7 +274,7 @@
           this,
           this.value,
           this.type,
-          "node-input"
+          this.inputPrefix
         );
 
         const input = $("#" + this.inputId);
@@ -671,6 +674,14 @@
             :error="errors['node.remoteServer']"
           />
     		</div>
+        <div class="form-row">
+    			<label style="width: 100%">Config Input</label>
+    			<NodeRedConfigInput
+            v-model:value="node.anotherRemoteServer"
+            type="remote-server"
+            :error="errors['node.anotherRemoteServer']"
+          />
+    		</div>
     		<div class="form-row">
     			<label style="width: 100%">Select Input</label>
     			<NodeRedSelectInput
@@ -998,22 +1009,14 @@
             return false;
           }
 
-          // NOTE: updating config node users
+          // NOTE: if 2 different node props have the same config node value, there will be only one entry in the config node users for our node. DEFAULT NODE-RED BEHAVIOUR!
           Object.keys(node._def.defaults).forEach((prop) => {
             if (node._def.defaults?.[prop]?.type) {
-              console.log(node._def.defaults?.[prop]?.type);
               const oldConfigNodeId = node[prop];
               const newConfigNodeId = node._newState[prop];
-              console.log(`prop: ${prop}`);
-              console.log(`oldConfigNodeId: ${oldConfigNodeId}`);
-              console.log(`newConfigNodeId: ${newConfigNodeId}`);
               if (oldConfigNodeId !== newConfigNodeId) {
-                console.log("CHANGED");
-
                 const oldConfigNode = RED.nodes.node(oldConfigNodeId);
-                console.log(`oldConfigNode`);
-                console.log(oldConfigNode);
-                if (oldConfigNode) {
+                if (oldConfigNode && oldConfigNode._def.category === "config") {
                   const parentNodeIndex = oldConfigNode.users.findIndex(
                     (_node) => _node.id === node.id
                   );
@@ -1021,17 +1024,23 @@
                     oldConfigNode.users.splice(parentNodeIndex, 1);
                   }
                 }
+              }
+            }
+          });
 
-                const newConfigNode = RED.nodes.node(newConfigNodeId);
-                console.log(`newConfigNode`);
-                console.log(newConfigNode);
-                if (newConfigNode) {
-                  const parentNodeIndex = newConfigNode.users.findIndex(
-                    (_node) => _node.id === node.id
-                  );
-                  if (parentNodeIndex === -1) {
-                    newConfigNode.users.push(node);
-                  }
+          Object.keys(node._def.defaults).forEach((prop) => {
+            if (node._def.defaults?.[prop]?.type) {
+              const newStateConfigNodeId = node._newState[prop];
+              const newStateConfigNode = RED.nodes.node(newStateConfigNodeId);
+              if (
+                newStateConfigNode &&
+                newStateConfigNode._def.category === "config"
+              ) {
+                const parentNodeIndex = newStateConfigNode.users.findIndex(
+                  (_node) => _node.id === node.id
+                );
+                if (parentNodeIndex === -1) {
+                  newStateConfigNode.users.push(node);
                 }
               }
             }
