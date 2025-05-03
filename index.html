@@ -537,9 +537,9 @@
       beforeUnmount() {
         $("#node-dialog-ok").prop("disabled", false).removeClass("disabled");
         $("#red-ui-workspace").get(0).style.setProperty("pointer-events", "");
-        $("#red-ui-workspace-chart svg")
-          .get(0)
-          .style.setProperty("pointer-events", "all");
+        // $("#red-ui-workspace-chart svg")
+        //   .get(0)
+        //   .style.setProperty("pointer-events", "all");
 
         // NOTE: must set credentials prop to undefined to avoid updating it to __PWD__ in the server
         Object.keys(this.node._def.credentials).forEach((prop) => {
@@ -570,9 +570,9 @@
             $("#red-ui-workspace")
               .get(0)
               .style.setProperty("pointer-events", "none", "important");
-            $("#red-ui-workspace-chart svg")
-              .get(0)
-              .style.setProperty("pointer-events", "none", "important");
+            // $("#red-ui-workspace-chart svg")
+            //   .get(0)
+            //   .style.setProperty("pointer-events", "none", "important");
           } else {
             $("#node-dialog-ok")
               .prop("disabled", false)
@@ -580,9 +580,9 @@
             $("#red-ui-workspace")
               .get(0)
               .style.setProperty("pointer-events", "");
-            $("#red-ui-workspace-chart svg")
-              .get(0)
-              .style.setProperty("pointer-events", "all");
+            // $("#red-ui-workspace-chart svg")
+            //   .get(0)
+            //   .style.setProperty("pointer-events", "all");
           }
         },
       },
@@ -785,7 +785,7 @@
     },
     data() {
       return {
-        types: ["str", "msg"],
+        types: ["str", "msg", "node"],
         countries: [
           { value: "usa", label: "usa" },
           { value: "argentina", label: "argentina" },
