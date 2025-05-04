@@ -1,6 +1,6 @@
 <template>
   <div style="width: 100%">
-    <NodeRedNodeForm :node="node" :errors="errors" style="width: 100%" />
+    <NodeRedNodeForm :node="localNode" :errors="errors" style="width: 100%" />
   </div>
 </template>
 
@@ -19,15 +19,16 @@ export default {
   },
   data() {
     return {
+      localNode: this.node,
       errors: {},
     };
   },
-  mounted() {
+  beforeMount() {
     this.validate();
 
-    Object.keys(this.node._def.defaults).forEach((prop) => {
+    Object.keys(this.localNode._def.defaults).forEach((prop) => {
       this.$watch(
-        () => this.node[prop],
+        () => this.localNode[prop],
         (newVal) => {
           this.validate();
         },
@@ -35,24 +36,24 @@ export default {
       );
     });
 
-    Object.keys(this.node._def.credentials).forEach((prop) => {
+    Object.keys(this.localNode._def.credentials).forEach((prop) => {
       if (
-        this.node._def.credentials[prop].type === "password" &&
-        this.node.credentials[`has_${prop}`]
+        this.localNode._def.credentials[prop].type === "password" &&
+        this.localNode.credentials[`has_${prop}`]
       ) {
-        this.node.credentials[prop] = "__PWD__";
+        this.localNode.credentials[prop] = "__PWD__";
       }
 
       this.$watch(
-        () => this.node.credentials[prop],
+        () => this.localNode.credentials[prop],
         (newVal, oldVal) => {
           this.validate();
 
           if (
-            this.node._def.credentials[prop].type === "password" &&
+            this.localNode._def.credentials[prop].type === "password" &&
             newVal !== oldVal
           ) {
-            this.node.credentials[`has_${prop}`] = !!newVal;
+            this.localNode.credentials[`has_${prop}`] = !!newVal;
           }
         },
         { deep: true }
@@ -67,19 +68,19 @@ export default {
     //   .style.setProperty("pointer-events", "all");
 
     // NOTE: must set credentials prop to undefined to avoid updating it to __PWD__ in the server
-    Object.keys(this.node._def.credentials).forEach((prop) => {
+    Object.keys(this.localNode._def.credentials).forEach((prop) => {
       if (
-        this.node._def.credentials[prop].type === "password" &&
-        this.node.credentials[`has_${prop}`] &&
-        this.node.credentials[prop] === "__PWD__"
+        this.localNode._def.credentials[prop].type === "password" &&
+        this.localNode.credentials[`has_${prop}`] &&
+        this.localNode.credentials[prop] === "__PWD__"
       ) {
-        this.node.credentials[prop] = undefined;
+        this.localNode.credentials[prop] = undefined;
       }
     });
   },
   methods: {
     validate() {
-      const valid = this.validator(this.node);
+      const valid = this.validator(this.localNode);
       if (!valid) {
         const errors = this.validator.errors;
         this.errors = errors.reduce((acc, error) => {
