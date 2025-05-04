@@ -1,5 +1,5 @@
 import { createApp, Component, App, defineComponent } from "vue";
-import { cloneDeep, isEqual, mergeWith } from "es-toolkit";
+import { cloneDeep, isEqual, merge } from "es-toolkit";
 import $ from "jquery";
 import Ajv from "ajv";
 
@@ -112,7 +112,7 @@ function registerType({
   form,
   schema,
 }) {
-  $.getJSON(`/nrg/nodes/${type}`, ({ defaults, credentials }) => {
+  $.getJSON(`/nrg/nodes/${type}`, function ({ defaults, credentials }) {
     RED.nodes.registerType(type, {
       defaults,
       credentials,
@@ -138,6 +138,9 @@ function registerType({
       },
       oneditsave: function () {
         const node = this;
+
+        console.log("node");
+        console.log(node);
         unmountApp(node);
 
         const newState = getNodeState(node._newState);
@@ -185,19 +188,7 @@ function registerType({
           }
         });
 
-        mergeWith(
-          node,
-          node._newState,
-          (objValue, srcValue, key, object, source, stack) => {
-            if (key.startsWith("_")) {
-              return objValue;
-            }
-            if (key === "constructor") {
-              return objValue;
-            }
-            return undefined;
-          }
-        );
+        merge(node, newState);
 
         return {
           changed,
