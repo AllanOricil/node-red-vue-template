@@ -7,62 +7,40 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, computed, onMounted, watch } from "vue";
-import $ from "jquery";
-
-export default defineComponent({
-  name: "NodeRedConfigInput",
+<script>
+export default {
   props: {
-    value: {
-      type: String,
-      required: true,
-    },
-    type: {
-      type: String,
-      required: true,
-    },
+    value: String,
+    type: String,
     error: {
       type: String,
       default: "",
     },
   },
-  emits: {
-    "update:value": (value: string) => typeof value === "string",
+  emits: ["update:value"],
+  computed: {
+    inputPrefix() {
+      return "node-input-" + Math.random().toString(36).substring(2, 9);
+    },
+    inputId() {
+      return this.inputPrefix + "-" + this.value;
+    },
   },
-  setup(props, { emit }) {
-    const inputPrefix = ref(
-      "node-input-" + Math.random().toString(36).substring(2, 9)
+  mounted() {
+    console.log(this);
+    RED.editor.prepareConfigNodeSelect(
+      this,
+      this.value,
+      this.type,
+      this.inputPrefix
     );
 
-    const inputId = computed(() => {
-      return inputPrefix.value + "-" + props.value;
+    const input = $("#" + this.inputId);
+    input.on("change", () => {
+      this.$emit("update:value", input.val());
     });
 
-    onMounted(() => {
-      console.log(props);
-
-      RED.editor.prepareConfigNodeSelect(
-        props,
-        props.value,
-        props.type,
-        inputPrefix.value
-      );
-
-      const input = $("#" + inputId.value);
-
-      input.on("change", () => {
-        emit("update:value", input.val());
-      });
-
-      input.val(props.value || "_ADD_");
-    });
-
-    return {
-      inputPrefix,
-      inputId,
-      error: props.error,
-    };
+    input.val(this.value || "_ADD_");
   },
-});
+};
 </script>

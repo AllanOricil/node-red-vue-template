@@ -12,26 +12,14 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, onMounted, watch } from "vue";
-import $ from "jquery";
-
-interface Option {
-  value: string;
-  label: string;
-}
-
-export default defineComponent({
-  name: "NodeRedSelectInput",
+<script>
+export default {
   props: {
-    value: {
-      type: [String, Array] as () => string | string[],
-      required: true,
-    },
+    value: String | Array,
     options: {
-      type: Array as () => Option[],
+      type: Array,
       required: true,
-      validator(value: Option[]) {
+      validator: function (value) {
         if (!Array.isArray(value)) {
           console.warn("Prop 'options' must be an array.");
           return false;
@@ -65,54 +53,29 @@ export default defineComponent({
       default: "",
     },
   },
-  emits: {
-    "update:value": (value: string) => typeof value === "string",
-  },
-  setup(props, { emit }) {
-    const selectInputRef = ref<HTMLInputElement | null>(null);
-
-    watch(
-      () => props.value,
-      (newValue) => {
-        const $selectInput = $(selectInputRef.value);
-        $selectInput.typedInput(
-          "value",
-          Array.isArray(newValue) ? newValue.join(",") : newValue
-        );
-      }
-    );
-
-    onMounted(() => {
-      if (selectInputRef.value) {
-        const $selectInput = $(selectInputRef.value);
-
-        $selectInput.typedInput({
-          types: [
-            {
-              multiple: props.multiple,
-              options: props.options,
-            },
-          ],
-        });
-
-        $selectInput.typedInput(
-          "value",
-          Array.isArray(props.value) ? props.value.join(",") : props.value
-        );
-
-        $selectInput.on("change", () => {
-          const newValue = props.multiple
-            ? $selectInput.typedInput("value")?.split(",")
-            : $selectInput.typedInput("value");
-          emit("update:value", newValue);
-        });
-      }
+  emits: ["update:value"],
+  mounted() {
+    const inputElement = this.$refs.selectInput;
+    const $selectInput = $(inputElement);
+    $selectInput.typedInput({
+      types: [
+        {
+          multiple: this.multiple,
+          options: this.options,
+        },
+      ],
     });
 
-    return {
-      selectInputRef,
-      error: props.error,
-    };
+    $selectInput.typedInput(
+      "value",
+      Array.isArray(this.value) ? this.value.join(",") : this.value
+    );
+    $selectInput.on("change", () => {
+      const newValue = this.multiple
+        ? $selectInput.typedInput("value")?.split(",")
+        : $selectInput.typedInput("value");
+      this.$emit("update:value", newValue);
+    });
   },
-});
+};
 </script>

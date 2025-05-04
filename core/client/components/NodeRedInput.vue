@@ -16,17 +16,14 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, onBeforeMount, ref } from "vue";
-
-export default defineComponent({
-  name: "NodeRedInput",
+<script>
+export default {
   props: {
     value: String,
     type: {
       type: String,
       default: "text",
-      validator: function (value: String) {
+      validator: function (value) {
         return ["text", "password"].includes(value);
       },
     },
@@ -36,44 +33,36 @@ export default defineComponent({
       default: "",
     },
   },
-  emits: {
-    "update:value": (value: string) => typeof value === "string",
-    input: (value: string) => typeof value === "string",
-  },
-  setup(props, { emit }) {
-    const internalValue = ref("");
-    const secretPattern = "*************";
-
-    onBeforeMount(() => {
-      internalValue.value = props.value ?? "";
-      onBlur();
-    });
-
-    const onInput = (event: Event) => {
-      const target = event.target as HTMLInputElement;
-      internalValue.value = target.value;
-      emit("update:value", internalValue.value);
-      emit("input", internalValue.value);
-    };
-
-    const onFocus = () => {
-      if (props.type === "password" && internalValue.value === secretPattern) {
-        internalValue.value = "";
-      }
-    };
-
-    const onBlur = () => {
-      if (props.type === "password" && props.value === "__PWD__") {
-        internalValue.value = secretPattern;
-      }
-    };
-
+  emits: ["update:value", "input"],
+  data() {
     return {
-      internalValue,
-      onInput,
-      onFocus,
-      onBlur,
+      internalValue: "",
+      secretPattern: "*************",
     };
   },
-});
+  beforeMount() {
+    this.internalValue = this.value;
+    this.onBlur();
+  },
+  methods: {
+    onInput(event) {
+      this.internalValue = event.target.value;
+      this.$emit("update:value", this.internalValue);
+      this.$emit("input", this.internalValue);
+    },
+    onFocus() {
+      if (
+        this.type === "password" &&
+        this.internalValue === this.secretPattern
+      ) {
+        this.internalValue = "";
+      }
+    },
+    onBlur() {
+      if (this.type === "password" && this.value === "__PWD__") {
+        this.internalValue = this.secretPattern;
+      }
+    },
+  },
+};
 </script>

@@ -12,39 +12,22 @@
   </div>
 </template>
 
-<script lang="ts">
-import {
-  defineComponent,
-  ref,
-  computed,
-  onMounted,
-  watch,
-  nextTick,
-} from "vue";
-import $ from "jquery";
-
-interface TypedValue {
-  value: string;
-  type: string;
-}
-
-export default defineComponent({
-  name: "NodeRedTypedInput",
+<script>
+export default {
   props: {
     value: {
-      type: Object as () => TypedValue,
+      type: Object,
       required: true,
-      validator: (obj: TypedValue) => {
-        if (typeof obj !== "object") {
+      validator: function (obj) {
+        if (!typeof obj === "object") {
           console.warn("Prop 'value' must be an object.");
           return false;
         }
         const isValid =
-          "value" in obj &&
-          "type" in obj &&
+          obj.hasOwnProperty("value") &&
+          obj.hasOwnProperty("type") &&
           typeof obj.value === "string" &&
           typeof obj.type === "string";
-
         if (!isValid) {
           console.warn(
             "Validation failed for prop 'value': It must be an object with 'value' and 'type' properties being strings.",
@@ -55,7 +38,7 @@ export default defineComponent({
       },
     },
     types: {
-      type: Array as () => string[],
+      type: Array,
       default: () => [
         "msg",
         "flow",
@@ -78,99 +61,85 @@ export default defineComponent({
       default: "",
     },
   },
-  emits: {
-    "update:value": (val: TypedValue) =>
-      val &&
-      typeof val === "object" &&
-      typeof val.value === "string" &&
-      typeof val.type === "string",
+  emits: ["update:value"],
+  computed: {
+    isProvidedValueTypeValid() {
+      const type = this.value.type;
+      const types = this.types;
+
+      return types.includes(type);
+    },
   },
-  setup(props, { emit }) {
-    const typedInput = ref<HTMLElement | null>(null);
-    const $input = ref<JQuery | null>(null);
-    const _observer = ref<MutationObserver | null>(null);
-
-    const value = ref<TypedValue>(props.value);
-    const types = ref<string[]>(props.types);
-    const error = ref<string>(props.error);
-
-    const isProvidedValueTypeValid = computed(() => {
-      return types.value.includes(value.value.type);
+  watch: {
+    isProvidedValueTypeValid: {
+      handler(newValue) {
+        if (!newValue) {
+          console.warn(
+            `Validation failed: this.value.type (${this.value.type}) must be one of the provided types (${this.types}).`
+          );
+        }
+      },
+      immediate: true,
+    },
+  },
+  mounted() {
+    const inputElement = this.$refs.typedInput;
+    this.$input = $(inputElement).typedInput({
+      default: this.value.type || this.types[0],
+      types: this.types,
     });
 
-    watch(isProvidedValueTypeValid, (newVal) => {
-      if (!newVal) {
-        console.warn(
-          `Validation failed: this.value.type (${value.value.type}) must be one of the provided types (${types.value}).`
-        );
-      }
-    });
+    this.$input.typedInput("value", this.value.value || "");
+    this.$input.typedInput("type", this.value.type || this.types[0]);
 
-    watch(error, (newVal) => {
-      nextTick(() => {
-        const targetDiv = typedInput.value?.querySelector(
-          ".red-ui-typedInput-container"
-        );
-        if (targetDiv) {
-          if (newVal) {
-            targetDiv.classList.add("input-error");
-          } else {
-            targetDiv.classList.remove("input-error");
+    // NOTE: when typed input is just a text input, it isn't emiting change while typing because it is updating the value in a hidden input
+    this.$nextTick(() => {
+      const observer = new MutationObserver((mutations) => {
+        for (const mutation of mutations) {
+          if (mutation.attributeName === "value") {
+            this.onChange();
           }
         }
       });
+
+      observer.observe(inputElement, {
+        attributes: true,
+        attributeFilter: ["value"],
+      });
+
+      this._observer = observer;
     });
 
-    onMounted(() => {
-      const inputElement = typedInput.value;
-      if (inputElement) {
-        $input.value = $(inputElement).typedInput({
-          default: value.value.type || types.value[0],
-          types: types.value,
-        });
-
-        $input.value.typedInput("value", value.value.value || "");
-        $input.value.typedInput("type", value.value.type || types.value[0]);
-
-        nextTick(() => {
-          const observer = new MutationObserver((mutations) => {
-            for (const mutation of mutations) {
-              if (mutation.attributeName === "value") {
-                onChange();
-              }
-            }
-          });
-
-          observer.observe(inputElement, {
-            attributes: true,
-            attributeFilter: ["value"],
-          });
-
-          _observer.value = observer;
-        });
-
-        $input.value.on("change", () => {
-          onChange();
-        });
-      }
+    // NOTE: this emits changes to all types that lose focus when choosing a value, but text inputs
+    this.$input.on("change", () => {
+      this.onChange();
     });
-
-    const onChange = () => {
-      const newValue = $input.value?.typedInput("value");
-      const newType = $input.value?.typedInput("type");
-      if (value.value.value !== newValue || value.value.type !== newType) {
-        emit("update:value", {
+  },
+  watch: {
+    error(newVal) {
+      this.$nextTick(() => {
+        const targetDiv = this.$el.querySelector(
+          ".red-ui-typedInput-container"
+        );
+        if (newVal) {
+          targetDiv.classList.add("input-error");
+        } else {
+          targetDiv.classList.remove("input-error");
+        }
+      });
+    },
+  },
+  methods: {
+    onChange() {
+      const newValue = this.$input.typedInput("value");
+      const newType = this.$input.typedInput("type");
+      if (this.value.value !== newValue || this.value.type !== newType) {
+        this.$emit("update:value", {
           value: newValue,
           type: newType,
         });
       }
-    };
-
-    return {
-      typedInput,
-      error,
-      isProvidedValueTypeValid,
-    };
+    },
   },
-});
+};
 </script>
