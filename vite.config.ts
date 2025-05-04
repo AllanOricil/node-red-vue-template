@@ -1,4 +1,3 @@
-// vite.config.ts
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 
@@ -16,37 +15,40 @@ function appendSourceURLPlugin(filename: string) {
   };
 }
 
-export default defineConfig({
-  plugins: [vue(), appendSourceURLPlugin("nodes/index.js")],
-  build: {
-    lib: {
-      entry: "nodes/index.ts",
-      name: "NRG",
-      fileName: "nrg",
-      formats: ["iife"],
-    },
-    sourcemap: "inline",
-    minify: true,
-    keepNames: true,
-    outDir: "dist",
-    rollupOptions: {
-      external: ["jquery", "node-red"],
-      output: {
-        entryFileNames: "nrg.[hash].js",
-        chunkFileNames: "nrg.[hash].js",
-        assetFileNames: "nrg.[hash].[ext]",
-        globals: {
-          vue: "Vue",
-          jquery: "$",
-          "node-red": "RED",
+export default defineConfig(({ mode }) => {
+  const isDev = mode === "development";
+
+  return {
+    plugins: [vue(), appendSourceURLPlugin("nodes/index.js")],
+    build: {
+      lib: {
+        entry: "nodes/index.ts",
+        name: "NRG",
+        fileName: "nrg",
+        formats: ["iife"],
+      },
+      sourcemap: isDev ? "inline" : false,
+      minify: !isDev,
+      keepNames: isDev,
+      outDir: "dist",
+      rollupOptions: {
+        external: ["jquery", "node-red"],
+        treeshake: false,
+        output: {
+          entryFileNames: "nrg.[hash].js",
+          chunkFileNames: "nrg.[hash].js",
+          assetFileNames: "nrg.[hash].[ext]",
+          globals: {
+            vue: "Vue",
+            jquery: "$",
+            "node-red": "RED",
+          },
         },
       },
     },
-  },
-  define: {
-    "process.env.NODE_ENV": JSON.stringify(
-      process.env.NODE_ENV || "production"
-    ),
-    "process.env": {},
-  },
+    define: {
+      "process.env.NODE_ENV": JSON.stringify(mode),
+      "process.env": {},
+    },
+  };
 });

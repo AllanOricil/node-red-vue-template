@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build:dev": "vite build --mode development",
+    "build": "vite build --mode production"
   },
   "author": "",
   "license": "ISC",
@@ -14,16 +15,29 @@
     }
   },
   "devDependencies": {
+    "@types/jquery": "^3.5.32",
+    "@types/node": "^22.14.1",
+    "@vitejs/plugin-vue": "^5.2.3",
+    "@vue/runtime-dom": "^3.5.13",
     "ajv-formats": "^3.0.1",
     "esbuild": "^0.25.2",
     "esbuild-plugin-tsc": "^0.5.0",
     "json-schema": "^0.4.0",
-    "typescript": "^5.8.3"
+    "monaco-editor": "^0.52.2",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.4"
   },
   "dependencies": {
+    "@aws-cdk/toolkit-lib": "^0.3.1",
+    "@sinclair/typebox": "^0.34.33",
     "ajv": "^8.17.1",
+    "aws-cdk-lib": "^2.190.0",
     "camelcase": "^8.0.0",
+    "constructs": "^10.4.2",
     "deepmerge-ts": "^7.1.5",
-    "reflect-metadata": "^0.2.2"
+    "es-toolkit": "^1.37.2",
+    "jquery": "^3.7.1",
+    "reflect-metadata": "^0.2.2",
+    "vue": "^3.5.13"
   }
 }
