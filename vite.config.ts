@@ -19,10 +19,10 @@ export default defineConfig(({ mode }) => {
   const isDev = mode === "development";
 
   return {
-    plugins: [vue(), appendSourceURLPlugin("nodes/index.js")],
+    plugins: [vue(), appendSourceURLPlugin("src/nodes/index.js")],
     build: {
       lib: {
-        entry: "nodes/index.ts",
+        entry: "src/nodes/index.ts",
         name: "NRG",
         fileName: "nrg",
         formats: ["iife"],

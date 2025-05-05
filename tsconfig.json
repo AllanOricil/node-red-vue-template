@@ -17,6 +17,6 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
-  "include": ["*.ts", "src/**/*.ts"],
+  "include": ["src/**/*.ts", "src/**/*.vue", "global.d.ts"],
   "exclude": ["node_modules", "dist"]
 }
