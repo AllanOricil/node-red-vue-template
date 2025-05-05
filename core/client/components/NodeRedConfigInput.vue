@@ -27,7 +27,6 @@ export default {
     },
   },
   mounted() {
-    console.log(this);
     RED.editor.prepareConfigNodeSelect(
       this,
       this.value,
