@@ -13,6 +13,8 @@
 </template>
 
 <script>
+import { TYPED_INPUT_TYPES } from "../../constants";
+
 export default {
   props: {
     value: {
@@ -39,22 +41,7 @@ export default {
     },
     types: {
       type: Array,
-      default: () => [
-        "msg",
-        "flow",
-        "global",
-        "str",
-        "num",
-        "bool",
-        "json",
-        "bin",
-        "re",
-        "jsonata",
-        "date",
-        "env",
-        "node",
-        "cred",
-      ],
+      default: () => TYPED_INPUT_TYPES,
     },
     error: {
       type: String,

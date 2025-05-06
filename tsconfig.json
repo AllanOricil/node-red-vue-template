@@ -15,8 +15,10 @@
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "noEmitOnError": false,
+    "noEmit": true
   },
-  "include": ["src/**/*.ts", "src/**/*.vue", "global.d.ts"],
+  "include": ["src/**/*.ts", "src/**/*.vue", "global.d.ts", "shims-vue.d.ts"],
   "exclude": ["node_modules", "dist"]
 }

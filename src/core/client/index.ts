@@ -2,7 +2,8 @@ import $ from "jquery";
 import { createApp, Component, App, defineComponent } from "vue";
 import { cloneDeep, isEqual, merge } from "es-toolkit";
 import { AnySchema, ValidateFunction } from "ajv";
-import { ValidatorService } from "./validator-service";
+import { ValidatorService } from "../validator-service";
+import { getDefaultsFromSchema, getCredentialsFromSchema } from "../utils";
 
 import NodeRedVueApp from "./App.vue";
 import NodeRedInput from "./components/NodeRedInput.vue";
@@ -11,6 +12,7 @@ import NodeRedConfigInput from "./components/NodeRedConfigInput.vue";
 import NodeRedSelectInput from "./components/NodeRedSelectInput.vue";
 import NodeRedEditorInput from "./components/NodeRedEditorInput.vue";
 
+// NOTE: singleton to use ajv caching features
 const validatorService = new ValidatorService();
 
 function createNodeRedVueApp(
@@ -29,7 +31,6 @@ function createNodeRedVueApp(
   app.component("NodeRedSelectInput", NodeRedSelectInput);
   app.component("NodeRedEditorInput", NodeRedEditorInput);
   app.component("NodeRedNodeForm", form);
-  app.config.devtools = import.meta.env.MODE === "development" || false;
   return app;
 }
 
@@ -174,13 +175,36 @@ interface INode {
  * @param {Component} nodeConfig.form - The form component to use for configuring the node
  * @param {AnySchema} [nodeConfig.schema] - Schema definition for validation
  *
- * @returns {function(type: string): void} - A function that registers the node with the specified type
+ * @returns {function(type: string): Promise<void>} - A function that registers the node with the specified type
  */
-function registerType(baseOptions: Omit<INode, "type">) {
-  return function (type: string) {
-    $.getJSON(`/nrg/nodes/${type}`, function ({ defaults, credentials }) {
+function registerType(options: Omit<INode, "type">) {
+  /**
+   * Registers a node type with the Node-RED runtime.
+   *
+   * @param {string} type - The type identifier for the node
+   * @returns {Promise<void>} - A promise that resolves when registration is complete
+   * @throws {Error} - If there is a network error or the server returns an error status
+   */
+  return async function (type: string): Promise<void> {
+    try {
+      const response = await fetch(`/nrg/nodes/${type}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const { schema } = await response.json();
+
+      const defaults = getDefaultsFromSchema(schema);
+      if (defaults.credentials) delete defaults.credentials;
+      const credentials = getCredentialsFromSchema(
+        schema.properties.credentials
+      );
+
+      console.log("defaults", defaults);
+      console.log("credentials", credentials);
+
       RED.nodes.registerType(type, {
-        ...baseOptions,
+        ...options,
         defaults,
         credentials,
         type,
@@ -188,10 +212,8 @@ function registerType(baseOptions: Omit<INode, "type">) {
           return this.name;
         },
         oneditprepare: function () {
-          const validator = validatorService.createValidator(
-            baseOptions.schema
-          );
-          mountApp(this, baseOptions.form, validator);
+          const validator = validatorService.createValidator(schema);
+          mountApp(this, options.form, validator);
         },
         oneditsave: function () {
           const node = this;
@@ -261,10 +283,13 @@ function registerType(baseOptions: Omit<INode, "type">) {
         oneditdelete: function () {
           unmountApp(this);
         },
-        onpaletteadd: baseOptions.onPaletteAdd,
-        onpaltteremove: baseOptions.onPaletteRemove,
+        onpaletteadd: options.onPaletteAdd,
+        onpaltteremove: options.onPaletteRemove,
       });
-    });
+    } catch (error) {
+      console.error(`Error fetching node type ${type}:`, error);
+      throw error;
+    }
   };
 }
 

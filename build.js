@@ -9,13 +9,15 @@ const common = {
   plugins: [esbuildPluginTsc()],
   minify: false,
   keepNames: true,
+  external: ["*.node", "aws-cdk-lib", "constructs", "@aws-cdk"],
   loader: { ".js": "jsx" },
 };
 
 esbuild
   .build({
-    entryPoints: ["_index.ts"],
+    entryPoints: ["src/nodes/server.ts"],
     outfile: "index.js",
+    treeShaking: false,
     ...common,
   })
   .catch(() => process.exit(1));
