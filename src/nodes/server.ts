@@ -1,5 +1,5 @@
-import { YourNode } from "./your-node/server";
-import { RemoteServerConfigNode } from "./remote-server/server";
+import YourNode from "./your-node/server";
+import RemoteServerConfigNode from "./remote-server/server";
 import { registerType } from "../core/server/node-factory";
 
 // TODO: define RED type

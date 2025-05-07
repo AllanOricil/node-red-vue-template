@@ -25,7 +25,7 @@ type OutputMessage = Static<typeof OutputMessageSchema>;
     outputs: OutputMessageSchema,
   },
 })
-export class YourNode extends Node<
+export default class YourNode extends Node<
   Configs,
   Credentials,
   InputMessage,
@@ -53,7 +53,7 @@ export class YourNode extends Node<
     console.log(this);
     console.log(msg);
 
-    done();
+    this.configs.done();
   }
 
   async onClose(

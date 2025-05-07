@@ -8,8 +8,8 @@ type CloseDoneFunction = () => void;
 type Message = Static<typeof MessageSchema>;
 
 abstract class Node<
-  TConfigs,
-  TCredentials,
+  TConfigs = any,
+  TCredentials = any,
   TInputMessage = Message,
   TOutputMessage = Message | Message[] | (Message | null)[],
 > {
