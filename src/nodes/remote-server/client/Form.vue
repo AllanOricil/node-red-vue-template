@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="form-row">
-      <label style="width: 100%"><i class="fa fa-tag"></i> Name</label>
+      <label><i class="fa fa-tag"></i> Name</label>
       <NodeRedInput
         v-model:value="node.name"
         :error="errors['node.name']"
@@ -9,7 +9,7 @@
       />
     </div>
     <div class="form-row">
-      <label style="width: 100%"><i class="fa fa-tag"></i> Hostname</label>
+      <label><i class="fa fa-tag"></i> Hostname</label>
       <NodeRedInput
         v-model:value="node.host"
         :error="errors['node.host']"
@@ -34,3 +34,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+label {
+  width: 100%;
+}
+</style>

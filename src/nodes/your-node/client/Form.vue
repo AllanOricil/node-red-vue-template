@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="form-row">
-      <label style="width: 100%"><i class="fa fa-tag"></i> Username</label>
+      <label><i class="fa fa-tag"></i> Username</label>
       <NodeRedInput
         v-model:value="node.credentials.username"
         :error="errors['node.credentials.username']"
@@ -9,7 +9,7 @@
     </div>
 
     <div class="form-row">
-      <label style="width: 100%"><i class="fa fa-tag"></i> Password</label>
+      <label><i class="fa fa-tag"></i> Password</label>
       <NodeRedInput
         v-model:value="node.credentials.password"
         type="password"
@@ -18,7 +18,7 @@
     </div>
 
     <div class="form-row">
-      <label style="width: 100%">Typed Input</label>
+      <label>Typed Input</label>
       <NodeRedTypedInput
         v-model:value="node.myProperty"
         :types="types"
@@ -27,7 +27,7 @@
     </div>
 
     <div class="form-row">
-      <label style="width: 100%">Typed Input 2</label>
+      <label>Typed Input 2</label>
       <NodeRedTypedInput
         v-model:value="node.myProperty2"
         :error="errors['node.myProperty2']"
@@ -35,7 +35,7 @@
     </div>
 
     <div class="form-row">
-      <label style="width: 100%">Config Input</label>
+      <label>Config Input</label>
       <NodeRedConfigInput
         v-model:value="node.remoteServer"
         type="remote-server"
@@ -44,7 +44,7 @@
     </div>
 
     <div class="form-row">
-      <label style="width: 100%">Config Input</label>
+      <label>Config Input</label>
       <NodeRedConfigInput
         v-model:value="node.anotherRemoteServer"
         type="remote-server"
@@ -53,7 +53,7 @@
     </div>
 
     <div class="form-row">
-      <label style="width: 100%">Select Input</label>
+      <label>Select Input</label>
       <NodeRedSelectInput
         v-model:value="node.country"
         :options="countries"
@@ -62,7 +62,7 @@
     </div>
 
     <div class="form-row">
-      <label style="width: 100%">MultiSelect Input</label>
+      <label>MultiSelect Input</label>
       <NodeRedSelectInput
         v-model:value="node.fruit"
         :options="fruits"
@@ -72,7 +72,7 @@
     </div>
 
     <div class="form-row">
-      <label style="width: 100%">Select Input</label>
+      <label>Select Input</label>
       <NodeRedSelectInput
         v-model:value="node.number"
         :options="numbers"
@@ -81,7 +81,7 @@
     </div>
 
     <div class="form-row">
-      <label style="width: 100%">Select Input</label>
+      <label>Select Input</label>
       <NodeRedSelectInput
         v-model:value="node.object"
         :options="objects"
@@ -91,7 +91,7 @@
     </div>
 
     <div class="form-row">
-      <label style="width: 100%">Select Input</label>
+      <label>Select Input</label>
       <NodeRedSelectInput
         v-model:value="node.array"
         :options="arrays"
@@ -100,9 +100,7 @@
     </div>
 
     <div class="form-row">
-      <label style="width: 100%"
-        >Editor with default height 200px and JSON</label
-      >
+      <label>Editor with default height 200px and JSON</label>
       <NodeRedEditorInput
         v-model:value="node.jsontest"
         :error="errors['node.jsontest']"
@@ -110,7 +108,7 @@
     </div>
 
     <div class="form-row">
-      <label style="width: 100%">Editor with custom height and CSS</label>
+      <label>Editor with custom height and CSS</label>
       <NodeRedEditorInput
         v-model:value="node.csstest"
         language="css"
@@ -166,3 +164,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+label {
+  width: 100%;
+}
+</style>
