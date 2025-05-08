@@ -1,6 +1,6 @@
 import YourNode from "./your-node/server";
 import RemoteServerConfigNode from "./remote-server/server";
-import { registerType } from "../core/server/node-factory";
+import { registerType } from "../core/server";
 
 // TODO: define RED type
 export default async function (RED: any) {
