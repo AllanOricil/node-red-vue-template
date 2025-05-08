@@ -2,8 +2,11 @@ import $ from "jquery";
 import { createApp, Component, App, defineComponent } from "vue";
 import { cloneDeep, isEqual, merge } from "es-toolkit";
 import { AnySchema, ValidateFunction } from "ajv";
-import { ValidatorService } from "../validator-service";
-import { getDefaultsFromSchema, getCredentialsFromSchema } from "../utils";
+import {
+  getDefaultsFromSchema,
+  getCredentialsFromSchema,
+  patchPasswordPatterns,
+} from "../utils";
 
 import NodeRedVueApp from "./App.vue";
 import NodeRedInput from "./components/NodeRedInput.vue";
@@ -12,8 +15,7 @@ import NodeRedConfigInput from "./components/NodeRedConfigInput.vue";
 import NodeRedSelectInput from "./components/NodeRedSelectInput.vue";
 import NodeRedEditorInput from "./components/NodeRedEditorInput.vue";
 
-// NOTE: singleton to use ajv caching features
-const validatorService = new ValidatorService();
+import { validatorService } from "./validator";
 
 function createNodeRedVueApp(
   node: any,
@@ -199,6 +201,7 @@ function registerType(options: Omit<INode, "type">) {
       const credentials = getCredentialsFromSchema(
         schema.properties.credentials
       );
+      patchPasswordPatterns(schema.properties.credentials);
 
       console.log("defaults", defaults);
       console.log("credentials", credentials);

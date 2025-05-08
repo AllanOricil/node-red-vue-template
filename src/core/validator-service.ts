@@ -42,9 +42,9 @@ class ValidatorService {
 
   errors(
     errors?: ErrorObject[] | null | undefined,
-    { separator, dataVar }?: ErrorsTextOptions
+    options?: ErrorsTextOptions
   ) {
-    return this.ajv.errorsText(errors, { separator, dataVar });
+    return this.ajv.errorsText(errors, options);
   }
 }
 

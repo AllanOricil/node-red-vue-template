@@ -53,7 +53,7 @@ export default class YourNode extends Node<
     console.log(this);
     console.log(msg);
 
-    this.configs.done();
+    console.log(Node.RED.nodes.getNode(this.configs.remoteServer));
   }
 
   async onClose(

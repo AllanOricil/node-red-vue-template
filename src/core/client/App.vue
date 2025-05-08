@@ -5,6 +5,7 @@
 </template>
 
 <script>
+import { validatorService } from "./validator";
 export default {
   name: "NodeRedVueApp",
   props: {
@@ -24,7 +25,7 @@ export default {
     };
   },
   beforeMount() {
-    this.validate();
+    this.validator(this.localNode);
 
     Object.keys(this.localNode._def.defaults).forEach((prop) => {
       this.$watch(
@@ -61,7 +62,10 @@ export default {
     });
   },
   beforeUnmount() {
-    $("#node-dialog-ok").prop("disabled", false).removeClass("disabled");
+    $("#node-dialog-ok")?.prop("disabled", false).removeClass("disabled");
+    $("#node-config-dialog-ok")
+      ?.prop("disabled", false)
+      .removeClass("disabled");
     $("#red-ui-workspace").get(0).style.setProperty("pointer-events", "");
     // $("#red-ui-workspace-chart svg")
     //   .get(0)
@@ -82,6 +86,7 @@ export default {
     validate() {
       const valid = this.validator(this.localNode);
       if (!valid) {
+        const _errors = validatorService.errors(this.validator.errors);
         const errors = this.validator.errors;
         this.errors = errors.reduce((acc, error) => {
           const key = `node${error.instancePath.replaceAll("/", ".")}`;
@@ -92,7 +97,10 @@ export default {
         this.errors = {};
       }
       if (Object.keys(this.errors).length) {
-        $("#node-dialog-ok").prop("disabled", true).addClass("disabled");
+        $("#node-dialog-ok")?.prop("disabled", true).addClass("disabled");
+        $("#node-config-dialog-ok")
+          ?.prop("disabled", true)
+          .addClass("disabled");
         $("#red-ui-workspace")
           .get(0)
           .style.setProperty("pointer-events", "none", "important");
@@ -101,6 +109,9 @@ export default {
         //   .style.setProperty("pointer-events", "none", "important");
       } else {
         $("#node-dialog-ok").prop("disabled", false).removeClass("disabled");
+        $("#node-config-dialog-ok")
+          .prop("disabled", false)
+          .removeClass("disabled");
         $("#red-ui-workspace").get(0).style.setProperty("pointer-events", "");
         // $("#red-ui-workspace-chart svg")
         //   .get(0)

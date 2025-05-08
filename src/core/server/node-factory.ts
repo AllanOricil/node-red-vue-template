@@ -1,13 +1,11 @@
 import camelCase from "camelcase";
-import { ValidatorService } from "../validator-service";
 import { merge } from "es-toolkit";
 import { Node } from "./node";
+import { ConfigNode } from "./config-node";
 import { isSubclassOf, convertToType } from "./utils";
 import { getDefaultsFromSchema, getCredentialsFromSchema } from "../utils";
 import { Type } from "@sinclair/typebox";
-
-// NOTE: singleton to use ajv caching features
-const validatorService = new ValidatorService();
+import { validatorService } from "./validator";
 
 // TODO: define RED type
 /**
@@ -20,18 +18,35 @@ const validatorService = new ValidatorService();
  * @throws {Error} If NodeClass does not extend `Node`
  * @throws {Error} If type is note defined
  */
-export async function registerType(RED: any, type: string, NodeClass: Node) {
-  if (!(NodeClass.prototype instanceof Node)) {
-    throw new Error(`${NodeClass.name} must extend Node class`);
+export async function registerType(
+  RED: any,
+  type: string,
+  NodeClass: Node | ConfigNode
+) {
+  if (
+    !(NodeClass.prototype instanceof Node) &&
+    !(NodeClass.prototype instanceof ConfigNode)
+  ) {
+    throw new Error(`${NodeClass.name} must extend Node | ConfigNode class`);
   }
 
   if (!type) {
     throw new Error(`type must be provided when registering the node`);
   }
 
-  // TODO: move this somewhere else. There is no need to run it every time the function is called
+  // TODO: move this somewhere else
   if (Node.RED === undefined) {
     Object.defineProperty(Node, "RED", {
+      value: RED,
+      writable: false,
+      configurable: false,
+      enumerable: false,
+    });
+  }
+
+  // TODO: move this somewhere else
+  if (ConfigNode.RED === undefined) {
+    Object.defineProperty(ConfigNode, "RED", {
       value: RED,
       writable: false,
       configurable: false,

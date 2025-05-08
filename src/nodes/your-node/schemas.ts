@@ -6,8 +6,21 @@ const ConfigsSchema = Type.Object({
   name: Type.String({ default: "your-node" }),
   myProperty: TypedInputSchema,
   myProperty2: TypedInputSchema,
-  country: Type.String({ default: "brasil" }),
-  server: Type.Optional(Type.String({ nodeType: "remote-server" })),
+  remoteServer: Type.String({ nodeType: "remote-server" }),
+  anotherRemoteServer: Type.Optional(
+    Type.String({ nodeType: "remote-server" })
+  ),
+  country: Type.String({ default: "brazil" }),
+  fruit: Type.Array(Type.String(), { default: ["apple", "melon"] }),
+  number: Type.String({ default: "1" }),
+  object: Type.Array(Type.String(), {
+    default: [JSON.stringify({ test: "a" }), JSON.stringify({ test: "b" })],
+  }),
+  array: Type.String({
+    default: '["a"]',
+  }),
+  jsontest: Type.String({ default: "" }),
+  csstest: Type.String({ default: "" }),
 });
 
 const CredentialsSchema = Type.Object({
