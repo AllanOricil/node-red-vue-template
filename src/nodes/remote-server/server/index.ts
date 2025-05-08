@@ -12,7 +12,7 @@ type Configs = Static<typeof ConfigsSchema>;
 })
 export default class RemoteServerConfigNode extends ConfigNode<Configs> {
   // NOTE: run only once when node type is registered
-  static init() {
+  static override init() {
     console.log("server-node");
   }
 }

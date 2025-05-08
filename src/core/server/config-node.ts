@@ -1,13 +1,15 @@
 import { Static } from "@sinclair/typebox";
 
 abstract class ConfigNode<TConfigs = any, TCredentials = any> {
+  static readonly RED: any;
+
   public readonly id: string;
   public readonly type: string;
   public readonly name: string;
   public readonly users: string[];
 
-  protected readonly configs: TConfigs;
-  protected readonly credentials?: TCredentials;
+  public readonly configs: TConfigs;
+  public readonly credentials?: TCredentials;
 
   constructor(configs: TConfigs) {
     ConfigNode.RED.nodes.createNode(this, configs);
@@ -21,8 +23,8 @@ abstract class ConfigNode<TConfigs = any, TCredentials = any> {
     console.log("not implemented");
   }
 
-  protected getNode(nodeId: string): Node | ConfigNode {
-    return ConfigNode.RED.nodes.getNode(nodeId);
+  static getNode<T>(id: string): T | undefined {
+    return this.RED.nodes.getNode(id) as T;
   }
 }
 

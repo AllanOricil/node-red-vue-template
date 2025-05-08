@@ -11,6 +11,7 @@ import {
   InputMessageSchema,
   OutputMessageSchema,
 } from "../schemas";
+import RemoteServerConfigNode from "../../remote-server/server";
 
 type Configs = Static<typeof ConfigsSchema>;
 type Credentials = Static<typeof CredentialsSchema>;
@@ -53,7 +54,10 @@ export default class YourNode extends Node<
     console.log(this);
     console.log(msg);
 
-    console.log(Node.RED.nodes.getNode(this.configs.remoteServer));
+    const server = Node.getNode<RemoteServerConfigNode>(
+      this.configs.remoteServer
+    );
+    console.log(server?.users);
   }
 
   async onClose(

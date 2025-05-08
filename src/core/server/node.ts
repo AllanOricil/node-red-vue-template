@@ -13,6 +13,8 @@ abstract class Node<
   TInputMessage = Message,
   TOutputMessage = Message | Message[] | (Message | null)[],
 > {
+  static readonly RED: any;
+
   public readonly id: string;
   public readonly type: string;
   public readonly name: string;
@@ -21,8 +23,8 @@ abstract class Node<
   public readonly y?: number;
   public readonly z?: string;
   public readonly g?: string;
-  protected readonly configs: TConfigs;
-  protected readonly credentials?: TCredentials;
+  public readonly configs: TConfigs;
+  public readonly credentials?: TCredentials;
 
   constructor(configs: TConfigs) {
     Node.RED.nodes.createNode(this, configs);
@@ -48,8 +50,8 @@ abstract class Node<
     done: CloseDoneFunction
   ): void | Promise<void>;
 
-  protected getNode(nodeId: string): Node | ConfigNode {
-    return Node.RED.nodes.getNode(nodeId);
+  static getNode<T>(id: string): T | undefined {
+    return this.RED.nodes.getNode(id) as T;
   }
 }
 
