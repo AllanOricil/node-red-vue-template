@@ -17,18 +17,20 @@ abstract class Node<
   public readonly type: string;
   public readonly name: string;
   public readonly wires: string[][];
-  public readonly _users?: string[];
   public readonly x?: number;
   public readonly y?: number;
   public readonly z?: string;
   public readonly g?: string;
-
   protected readonly configs: TConfigs;
   protected readonly credentials?: TCredentials;
 
   constructor(configs: TConfigs) {
     Node.RED.nodes.createNode(this, configs);
     this.configs = configs;
+    this.x = configs.x;
+    this.y = configs.y;
+    this.z = configs.z;
+    this.g = configs.g;
   }
 
   static init(): void | Promise<void> {
@@ -46,7 +48,7 @@ abstract class Node<
     done: CloseDoneFunction
   ): void | Promise<void>;
 
-  protected getNode(nodeId: string): Node {
+  protected getNode(nodeId: string): Node | ConfigNode {
     return Node.RED.nodes.getNode(nodeId);
   }
 }
