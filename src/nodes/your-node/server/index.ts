@@ -13,10 +13,10 @@ import {
 } from "../schemas";
 import RemoteServerConfigNode from "../../remote-server/server";
 
-type Configs = Static<typeof ConfigsSchema>;
-type Credentials = Static<typeof CredentialsSchema>;
-type InputMessage = Static<typeof InputMessageSchema>;
-type OutputMessage = Static<typeof OutputMessageSchema>;
+export type YourNodeConfigs = Static<typeof ConfigsSchema>;
+export type YourNodeCredentials = Static<typeof CredentialsSchema>;
+export type YourNodeInputMessage = Static<typeof InputMessageSchema>;
+export type YourNodeOutputMessage = Static<typeof OutputMessageSchema>;
 
 @node({
   validation: {
@@ -27,10 +27,10 @@ type OutputMessage = Static<typeof OutputMessageSchema>;
   },
 })
 export default class YourNode extends Node<
-  Configs,
-  Credentials,
-  InputMessage,
-  OutputMessage
+  YourNodeConfigs,
+  YourNodeCredentials,
+  YourNodeInputMessage,
+  YourNodeOutputMessage
 > {
   static override async init() {
     console.log("testing your node init");
