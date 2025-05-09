@@ -31,14 +31,14 @@ export default defineConfig(({ mode }) => {
   const isDev = mode === "development";
 
   return {
-    plugins: [
-      vue(),
-      appendSourceURLPlugin("src/nodes/client.js"),
-      banner(signature),
-    ],
+    base: "/",
+    plugins: [vue(), appendSourceURLPlugin("src/client.js"), banner(signature)],
+    css: {
+      devSourcemap: isDev,
+    },
     build: {
       lib: {
-        entry: "src/nodes/client.ts",
+        entry: "src/client.ts",
         name: "NRG",
         fileName: "nrg",
         formats: ["iife"],
@@ -49,7 +49,7 @@ export default defineConfig(({ mode }) => {
       outDir: "dist",
       rollupOptions: {
         external: ["jquery", "node-red"],
-        treeshake: false,
+        treeshake: true,
         output: {
           entryFileNames: "nrg.[hash].js",
           chunkFileNames: "nrg.[hash].js",
@@ -58,6 +58,9 @@ export default defineConfig(({ mode }) => {
             vue: "Vue",
             jquery: "$",
             "node-red": "RED",
+          },
+          sourcemapPathTransform: (relativeSourcePath) => {
+            return relativeSourcePath.replace(/\/client\//g, "/");
           },
         },
       },

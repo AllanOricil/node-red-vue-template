@@ -13103,7 +13103,7 @@ var require_dist2 = __commonJS({
   }
 });
 
-// src/nodes/server.ts
+// src/server.ts
 var server_exports = {};
 __export(server_exports, {
   default: () => server_default
@@ -13363,7 +13363,7 @@ async function registerType(RED, type, NodeClass) {
 }
 __name(registerType, "registerType");
 
-// src/nodes/server.ts
+// src/server.ts
 var import_server = __toESM(require_server());
 var import_server2 = __toESM(require_server2());
 async function server_default(RED) {

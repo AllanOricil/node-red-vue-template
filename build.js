@@ -15,7 +15,7 @@ const common = {
 
 esbuild
   .build({
-    entryPoints: ["src/nodes/server.ts"],
+    entryPoints: ["src/server.ts"],
     outfile: "index.js",
     treeShaking: false,
     ...common,

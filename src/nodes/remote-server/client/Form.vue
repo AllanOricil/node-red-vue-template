@@ -34,9 +34,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-label {
-  width: 100%;
-}
-</style>
