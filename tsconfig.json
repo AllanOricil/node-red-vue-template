@@ -5,6 +5,8 @@
     "moduleResolution": "Node",
     "outDir": "dist",
     "rootDir": "./",
+    "declaration": true,
+    "declarationDir": "./types",
     "strict": true,
     "noImplicitAny": true,
     "skipLibCheck": true,
