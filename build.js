@@ -16,7 +16,5 @@ esbuild
     minify: false,
     keepNames: true,
     treeShaking: true,
-    external: ["*.node"],
-    loader: { ".js": "jsx" },
   })
   .catch(() => process.exit(1));
