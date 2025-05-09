@@ -29,7 +29,16 @@ const CredentialsSchema = Type.Object({
       default: "",
       minLength: 8,
       maxLength: 20,
-      pattern: "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]+$",
+      pattern: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/.source,
+      format: "password",
+    })
+  ),
+  password2: Type.Optional(
+    Type.String({
+      default: "",
+      pattern:
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+          .source,
       format: "password",
     })
   ),

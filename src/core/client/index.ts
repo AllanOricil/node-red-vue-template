@@ -201,7 +201,6 @@ function registerType(options: Omit<INode, "type">) {
       const credentials = getCredentialsFromSchema(
         schema.properties.credentials
       );
-      patchPasswordPatterns(schema.properties.credentials);
 
       console.log("defaults", defaults);
       console.log("credentials", credentials);

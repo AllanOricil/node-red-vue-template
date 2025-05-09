@@ -6,6 +6,8 @@
 
 <script>
 import { validatorService } from "./validator";
+import jsonpointer from "jsonpointer";
+
 export default {
   name: "NodeRedVueApp",
   props: {
@@ -86,12 +88,25 @@ export default {
     validate() {
       const valid = this.validator(this.localNode);
       if (!valid) {
-        const _errors = validatorService.errors(this.validator.errors);
         const errors = this.validator.errors;
         this.errors = errors.reduce((acc, error) => {
-          const key = `node${error.instancePath.replaceAll("/", ".")}`;
-          acc[key] = error.message;
-          return acc;
+          const errorValue = jsonpointer.get(
+            this.localNode,
+            error.instancePath
+          );
+          if (
+            error.parentSchema.format === "password" &&
+            errorValue === "__PWD__"
+          ) {
+            console.log(
+              "password fields with value equal to __PWD__ should not be an error"
+            );
+            return acc;
+          } else {
+            const key = `node${error.instancePath.replaceAll("/", ".")}`;
+            acc[key] = error.message;
+            return acc;
+          }
         }, {});
       } else {
         this.errors = {};

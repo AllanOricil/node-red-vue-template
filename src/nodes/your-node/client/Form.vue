@@ -18,6 +18,15 @@
     </div>
 
     <div class="form-row">
+      <label><i class="fa fa-tag"></i> Password 2</label>
+      <NodeRedInput
+        v-model:value="node.credentials.password2"
+        type="password"
+        :error="errors['node.credentials.password2']"
+      />
+    </div>
+
+    <div class="form-row">
       <label>Typed Input</label>
       <NodeRedTypedInput
         v-model:value="node.myProperty"

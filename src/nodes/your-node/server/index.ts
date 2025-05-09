@@ -57,6 +57,7 @@ export default class YourNode extends Node<
     const server = Node.getNode<RemoteServerConfigNode>(
       this.configs.remoteServer
     );
+
     console.log(server?.users);
   }
 
