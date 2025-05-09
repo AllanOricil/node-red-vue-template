@@ -1,4 +1,4 @@
-import { config, node } from "./decorators";
+import { input, node } from "./decorators";
 import { RemoteServerConfigNode } from "./_server";
 import { Node } from "./node";
 import { TypedInput } from "./typed-input";
@@ -8,47 +8,96 @@ import MessageSchema from "./message-schema";
 
 @node({
   type: "your-node",
+  category: "function",
+  color: "#000000",
+  inputs: 1,
+  outputs: 1,
+  icon: "node.svg",
   validation: {
     inputs: InputsSchema,
     message: MessageSchema,
   },
 })
 export class YourNode extends Node {
-  @config
-  myProperty: TypedInput;
+  @input({
+    type: "typed:str",
+    default: "abc",
+    required: true,
+    validation: function (value) {
+      return value > 10;
+    },
+  })
+  #myProperty;
 
-  @config
-  remoteServer: RemoteServerConfigNode;
+  @input({
+    type: "config:remote-server",
+    required: true,
+    validation: function (value) {
+      return value > 10;
+    },
+  })
+  #remoteServer;
 
-  @config
-  anotherRemoteServer: RemoteServerConfigNode;
+  @input({
+    type: "select:string"
+    default: "abc",
+    required: true,
+  })
+  #fruit;
 
-  @config
-  fruit: string;
+  @input({
+    type: "multi-select:string"
+    default: "abc",
+    required: true,
+  })
+  #country;
 
-  @config
-  country: string;
+  @input({
+    type: "string",
+    default: "abc",
+    required: true,
+  })
+  #number;
 
-  @config
-  number: number;
+  @input({
+    type: "string",
+    default: "abc",
+    required: true,
+  })
+  #object;
 
-  @config
-  object: object;
+  @input({
+    type: "string",
+    default: ["a", "b", "c"],
+    required: true,
+  })
+  #array;
 
-  @config
-  array: Array;
+  @input({
+    type: "editor:string",
+    default: "abc",
+    required: true,
+  })
+  #jsontest;
 
-  @config
-  jsontest: string;
+  @input({
+    type: "editor:string",
+    default: "abc",
+    required: true,
+  })
+  #csstest;
 
-  @config
-  csstest: string;
+  @input({
+    type: "credential:text",
+    required: true,
+  })
+  #username;
 
-  @config
-  username: Credential.Text;
-
-  @config
-  password: Credential.Password;
+  @input({
+    type: "credential:password",
+    required: true,
+  })
+  #password;
 
   // NOTE: run only once when node type is registered
   static async init() {
@@ -56,12 +105,7 @@ export class YourNode extends Node {
     console.log("fetched google");
   }
 
-  // TODO: define msg type using TypeBox and JSON Schema
-  async onInput(
-    msg: Record<string, any>,
-    send: Function,
-    done: Function
-  ): void {
+  async onInput(msg, send, done) {
     console.log(this);
     console.log(msg);
 

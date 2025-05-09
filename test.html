@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Node-RED typedInput Example</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/fontawesome-4.7@4.7.0/css/font-awesome.min.css"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@node-red/editor-client@latest/public/red/style.min.css"
+    />
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/jquery-ui@1.12.1/themes/base/theme.min.css"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css"
+    />
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      .input-row {
+        margin-bottom: 20px;
+      }
+      .input-label {
+        display: inline-block;
+        width: 120px;
+        font-weight: bold;
+      }
+      .input-container {
+        display: inline-block;
+        width: 300px;
+      }
+      .button-container {
+        margin-top: 20px;
+      }
+      button {
+        padding: 8px 16px;
+        cursor: pointer;
+      }
+      #result {
+        margin-top: 20px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        background-color: #f9f9f9;
+        min-height: 100px;
+      }
+
+      input:focus,
+      textarea:focus,
+      select:focus,
+      button:focus {
+        outline: 0;
+        border-color: var(--red-ui-form-input-focus-color) !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Node-RED typedInput Example</h1>
+
+      <div class="input-row">
+        <div class="input-label">JSON Input:</div>
+        <div class="input-container">
+          <input id="json-input" type="text" />
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/jsonata@2.0.6/jsonata.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/i18next@21.6.0/i18next.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/i18next-http-backend@1.2.0/i18nextHttpBackend.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-i18next@1.0.0/dist/umd/jquery-i18next.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+
+    <!-- Load red.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@node-red/editor-client@latest/public/red/red.js"></script>
+
+    <script>
+      RED.init({});
+      // Ensure RED object exists
+      if (!window.RED) window.RED = {};
+      if (!RED.settings) RED.settings = {};
+      if (!RED.settings.context) {
+        RED.settings.context = {
+          stores: ["default"],
+          default: "default",
+        };
+      }
+
+      console.log("RED.settings.context:", RED.settings.context);
+
+      // Mock RED._ for localization to prevent TypeError
+      //   RED._ = function (key) {
+      //     return key; // Returns key as default if translation is missing
+      //   };
+
+      //   // Optional: If using i18next, integrate with RED._
+      //   if (window.i18next) {
+      //     RED._ = function (key) {
+      //       return i18next.t(key) || key; // Try translating, otherwise return key
+      //     };
+      //   }
+    </script>
+
+    <script>
+      function initializeTypedInput() {
+        if (!window.RED || !RED._ || !$.fn.typedInput) {
+          console.error("Node-RED or typedInput is not ready yet.");
+          return;
+        }
+
+        console.log("Initializing typedInput...");
+
+        $("#json-input").val("{}");
+        $("#json-input").typedInput({
+          default: "json",
+          types: [
+            "msg",
+            "flow",
+            "global",
+            "str",
+            "num",
+            "bool",
+            "env",
+            "bin",
+            "date",
+            "json",
+            "jsonata",
+          ],
+        });
+
+        console.log(
+          "typedInput instance:",
+          $("#json-input").data("typedInput")
+        );
+      }
+
+      $(document).ready(function () {
+        // Wait for `red.js` to fully load before initializing typedInput
+        setTimeout(() => {
+          initializeTypedInput();
+        }, 2000); // Increased timeout to allow red.js to load
+      });
+    </script>
+  </body>
+</html>

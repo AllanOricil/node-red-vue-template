@@ -1,0 +1,18 @@
+/**
+* name: red-vue-test
+* version: v1.0.0
+* description: 
+* author: 
+*/
+
+.node-red-vue-input-error-message {
+  color: var(--red-ui-form-input-border-error-color);
+}
+
+label[data-v-d1d8f032] {
+  width: 100%;
+}
+
+label[data-v-52a2434f] {
+  width: 100%;
+}

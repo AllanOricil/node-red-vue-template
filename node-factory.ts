@@ -204,8 +204,11 @@ export async function registerType(RED: any, NodeClass: Node | ConfigNode) {
             if (type === Credential.Password || type === Credential.Text)
               return acc;
 
+            console.log(`key: ${key}`);
+            console.log(`type: ${type}`);
             acc[key] = {
               value: "",
+              required: false, // NOTE: this ensures the editor won't treat the config node as required unless specified in the schema
               type: isSubclassOf(type, ConfigNode)
                 ? type.__nodeProperties___.type
                 : undefined,

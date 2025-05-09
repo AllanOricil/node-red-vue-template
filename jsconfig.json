@@ -13,13 +13,8 @@
     "allowJs": false,
     "checkJs": false,
     "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "noEmitOnError": false,
-    "noEmit": true,
-    "types": ["vite/client", "vue"]
+    "allowSyntheticDefaultImports": true
   },
-  "include": ["src/**/*.ts", "src/**/*.vue", "global.d.ts", "shims-vue.d.ts"],
+  "include": ["*.ts", "src/**/*.ts", "_yournode.js"],
   "exclude": ["node_modules", "dist"]
 }
