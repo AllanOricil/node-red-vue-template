@@ -95,7 +95,7 @@ function getChanges(o: Record<any, any>, n: Record<any, any>) {
 }
 
 /**
- * Interface representing a button configuration for a node.
+ * Interface representing the button configuration for a Node.
  *
  * @interface INodeButton
  * @property {string} toggle - Text to display when toggling the button.
@@ -112,6 +112,13 @@ interface INodeButton {
   visible?: () => boolean;
 }
 
+/**
+ * Interface representing the form configuration for a Node.
+ *
+ * @interface INodeForm
+ * @property {Component} [component] - Vue 3 component.
+ * @property {boolean} [disableSaveButtonOnError] - When this property is true, the Save, or Update, buttons are disabled when the form has errors. It defaults to false.
+ */
 interface INodeForm {
   component: Component;
   disableSaveButtonOnError?: boolean;
@@ -136,7 +143,7 @@ interface INodeForm {
  * @property {INodeButton} [button] - Configuration for a button on the node.
  * @property {function(): void} [onPaletteAdd] - Function called when the node is added to the palette.
  * @property {function(): void} [onPaletteRemove] - Function called when the node is removed from the palette.
- * @property {Component} form - The form component to use for configuring the node.
+ * @property {INodeForm} form - The form component to use for configuring the node.
  * @property {AnySchema} [schema] - Schema definition for validation.
  */
 interface INode {
