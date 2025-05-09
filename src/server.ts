@@ -5,8 +5,15 @@ import { registerType } from "./core/server";
 
 // TODO: define RED type
 export default async function (RED: any) {
-  // NOTE: the order nodes are registered can be defined in nrg.config.registrationOrder
-  // TODO: investigate if it is possible to run Khan's algorithm to determine the registration order
-  await registerType(RED, "remote-server", RemoteServerConfigNode);
-  await registerType(RED, "your-node", YourNode);
+  try {
+    // TODO: the order nodes are registered will be defined in nrg.config.ts. If not provided, it will be registered alphabetically based on the folder names
+    // TODO: investigate if it is possible to run Khan's algorithm to determine the registration order
+    await registerType(RED, "remote-server", RemoteServerConfigNode);
+    await registerType(RED, "your-node", YourNode);
+
+    // TODO: add the order in the message
+    console.log("All node types registered in series");
+  } catch (error) {
+    console.error("Error registering node types:", error);
+  }
 }
