@@ -22,17 +22,16 @@ export default {
       required: true,
       validator: function (obj) {
         if (!typeof obj === "object") {
-          console.warn("Prop 'value' must be an object.");
+          console.warn(
+            "[WARN] Invalid value for 'value' property. It must be an object."
+          );
           return false;
         }
         const isValid =
-          obj.hasOwnProperty("value") &&
-          obj.hasOwnProperty("type") &&
-          typeof obj.value === "string" &&
-          typeof obj.type === "string";
+          typeof obj?.value === "string" && typeof obj?.type === "string";
         if (!isValid) {
           console.warn(
-            "Validation failed for prop 'value': It must be an object with 'value' and 'type' properties being strings.",
+            "[WARN] Invalid value for 'value' property. It must be an object with 'value' and 'type' properties being strings.",
             obj
           );
         }

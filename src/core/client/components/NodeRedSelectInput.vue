@@ -21,7 +21,9 @@ export default {
       required: true,
       validator: function (value) {
         if (!Array.isArray(value)) {
-          console.warn("Prop 'options' must be an array.");
+          console.warn(
+            "[WARN] Invalid value for 'options' property. It must be an array."
+          );
           return false;
         }
         const isValid = value.every((item) => {
@@ -37,7 +39,7 @@ export default {
 
         if (!isValid) {
           console.warn(
-            "Validation failed for prop 'options': Each item must be an object with 'value' and 'label' properties being strings.",
+            "[WARN] Invalid value for 'options' property. Each item must be an object with 'value' and 'label' properties being strings.",
             value
           );
         }

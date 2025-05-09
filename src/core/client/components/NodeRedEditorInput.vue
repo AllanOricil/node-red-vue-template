@@ -28,7 +28,7 @@ export default {
         const isValid = allowedLanguages.includes(value);
         if (!isValid) {
           console.warn(
-            `[NodeRedEditorComponent] Invalid ACE editor mode prop: "${value}". ` +
+            `[WARN]: Invalid value for 'type' property: "${value}". ` +
               `Expected one of: ${allowedLanguages.join(", ")}`
           );
         }
