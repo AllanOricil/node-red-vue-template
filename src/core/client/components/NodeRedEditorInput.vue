@@ -13,7 +13,7 @@ export default {
     value: String,
     language: {
       type: String,
-      default: "abap",
+      default: "json",
       validator: function (value) {
         const allowedLanguages = [
           "abap",
