@@ -3,6 +3,7 @@ import vue from "@vitejs/plugin-vue";
 import banner from "vite-plugin-banner";
 import pkg from "./package.json" assert { type: "json" };
 import type { OutputBundle, NormalizedOutputOptions, Plugin } from "rollup";
+import { visualizer } from "rollup-plugin-visualizer";
 
 function appendSourceURLPlugin(filename: string): Plugin {
   return {
@@ -32,7 +33,17 @@ export default defineConfig(({ mode }) => {
 
   return {
     base: "/",
-    plugins: [vue(), appendSourceURLPlugin("src/client.js"), banner(signature)],
+    plugins: [
+      vue(),
+      appendSourceURLPlugin("src/client.js"),
+      banner(signature),
+      visualizer({
+        open: isDev,
+        gzipSize: true,
+        brotliSize: true,
+        template: "treemap",
+      }),
+    ],
     css: {
       devSourcemap: isDev,
     },
