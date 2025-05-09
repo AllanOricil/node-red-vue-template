@@ -34,1192 +34,11 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-// node_modules/reflect-metadata/Reflect.js
-var require_Reflect = __commonJS({
-  "node_modules/reflect-metadata/Reflect.js"() {
-    var Reflect2;
-    (function(Reflect3) {
-      (function(factory) {
-        var root = typeof globalThis === "object" ? globalThis : typeof global === "object" ? global : typeof self === "object" ? self : typeof this === "object" ? this : sloppyModeThis();
-        var exporter = makeExporter(Reflect3);
-        if (typeof root.Reflect !== "undefined") {
-          exporter = makeExporter(root.Reflect, exporter);
-        }
-        factory(exporter, root);
-        if (typeof root.Reflect === "undefined") {
-          root.Reflect = Reflect3;
-        }
-        function makeExporter(target, previous) {
-          return function(key, value) {
-            Object.defineProperty(target, key, { configurable: true, writable: true, value });
-            if (previous)
-              previous(key, value);
-          };
-        }
-        __name(makeExporter, "makeExporter");
-        function functionThis() {
-          try {
-            return Function("return this;")();
-          } catch (_) {
-          }
-        }
-        __name(functionThis, "functionThis");
-        function indirectEvalThis() {
-          try {
-            return (void 0, eval)("(function() { return this; })()");
-          } catch (_) {
-          }
-        }
-        __name(indirectEvalThis, "indirectEvalThis");
-        function sloppyModeThis() {
-          return functionThis() || indirectEvalThis();
-        }
-        __name(sloppyModeThis, "sloppyModeThis");
-      })(function(exporter, root) {
-        var hasOwn = Object.prototype.hasOwnProperty;
-        var supportsSymbol = typeof Symbol === "function";
-        var toPrimitiveSymbol = supportsSymbol && typeof Symbol.toPrimitive !== "undefined" ? Symbol.toPrimitive : "@@toPrimitive";
-        var iteratorSymbol = supportsSymbol && typeof Symbol.iterator !== "undefined" ? Symbol.iterator : "@@iterator";
-        var supportsCreate = typeof Object.create === "function";
-        var supportsProto = { __proto__: [] } instanceof Array;
-        var downLevel = !supportsCreate && !supportsProto;
-        var HashMap = {
-          // create an object in dictionary mode (a.k.a. "slow" mode in v8)
-          create: supportsCreate ? function() {
-            return MakeDictionary(/* @__PURE__ */ Object.create(null));
-          } : supportsProto ? function() {
-            return MakeDictionary({ __proto__: null });
-          } : function() {
-            return MakeDictionary({});
-          },
-          has: downLevel ? function(map, key) {
-            return hasOwn.call(map, key);
-          } : function(map, key) {
-            return key in map;
-          },
-          get: downLevel ? function(map, key) {
-            return hasOwn.call(map, key) ? map[key] : void 0;
-          } : function(map, key) {
-            return map[key];
-          }
-        };
-        var functionPrototype = Object.getPrototypeOf(Function);
-        var _Map = typeof Map === "function" && typeof Map.prototype.entries === "function" ? Map : CreateMapPolyfill();
-        var _Set = typeof Set === "function" && typeof Set.prototype.entries === "function" ? Set : CreateSetPolyfill();
-        var _WeakMap = typeof WeakMap === "function" ? WeakMap : CreateWeakMapPolyfill();
-        var registrySymbol = supportsSymbol ? Symbol.for("@reflect-metadata:registry") : void 0;
-        var metadataRegistry = GetOrCreateMetadataRegistry();
-        var metadataProvider = CreateMetadataProvider(metadataRegistry);
-        function decorate(decorators, target, propertyKey, attributes) {
-          if (!IsUndefined(propertyKey)) {
-            if (!IsArray(decorators))
-              throw new TypeError();
-            if (!IsObject(target))
-              throw new TypeError();
-            if (!IsObject(attributes) && !IsUndefined(attributes) && !IsNull(attributes))
-              throw new TypeError();
-            if (IsNull(attributes))
-              attributes = void 0;
-            propertyKey = ToPropertyKey(propertyKey);
-            return DecorateProperty(decorators, target, propertyKey, attributes);
-          } else {
-            if (!IsArray(decorators))
-              throw new TypeError();
-            if (!IsConstructor(target))
-              throw new TypeError();
-            return DecorateConstructor(decorators, target);
-          }
-        }
-        __name(decorate, "decorate");
-        exporter("decorate", decorate);
-        function metadata(metadataKey, metadataValue) {
-          function decorator(target, propertyKey) {
-            if (!IsObject(target))
-              throw new TypeError();
-            if (!IsUndefined(propertyKey) && !IsPropertyKey(propertyKey))
-              throw new TypeError();
-            OrdinaryDefineOwnMetadata(metadataKey, metadataValue, target, propertyKey);
-          }
-          __name(decorator, "decorator");
-          return decorator;
-        }
-        __name(metadata, "metadata");
-        exporter("metadata", metadata);
-        function defineMetadata(metadataKey, metadataValue, target, propertyKey) {
-          if (!IsObject(target))
-            throw new TypeError();
-          if (!IsUndefined(propertyKey))
-            propertyKey = ToPropertyKey(propertyKey);
-          return OrdinaryDefineOwnMetadata(metadataKey, metadataValue, target, propertyKey);
-        }
-        __name(defineMetadata, "defineMetadata");
-        exporter("defineMetadata", defineMetadata);
-        function hasMetadata(metadataKey, target, propertyKey) {
-          if (!IsObject(target))
-            throw new TypeError();
-          if (!IsUndefined(propertyKey))
-            propertyKey = ToPropertyKey(propertyKey);
-          return OrdinaryHasMetadata(metadataKey, target, propertyKey);
-        }
-        __name(hasMetadata, "hasMetadata");
-        exporter("hasMetadata", hasMetadata);
-        function hasOwnMetadata(metadataKey, target, propertyKey) {
-          if (!IsObject(target))
-            throw new TypeError();
-          if (!IsUndefined(propertyKey))
-            propertyKey = ToPropertyKey(propertyKey);
-          return OrdinaryHasOwnMetadata(metadataKey, target, propertyKey);
-        }
-        __name(hasOwnMetadata, "hasOwnMetadata");
-        exporter("hasOwnMetadata", hasOwnMetadata);
-        function getMetadata(metadataKey, target, propertyKey) {
-          if (!IsObject(target))
-            throw new TypeError();
-          if (!IsUndefined(propertyKey))
-            propertyKey = ToPropertyKey(propertyKey);
-          return OrdinaryGetMetadata(metadataKey, target, propertyKey);
-        }
-        __name(getMetadata, "getMetadata");
-        exporter("getMetadata", getMetadata);
-        function getOwnMetadata(metadataKey, target, propertyKey) {
-          if (!IsObject(target))
-            throw new TypeError();
-          if (!IsUndefined(propertyKey))
-            propertyKey = ToPropertyKey(propertyKey);
-          return OrdinaryGetOwnMetadata(metadataKey, target, propertyKey);
-        }
-        __name(getOwnMetadata, "getOwnMetadata");
-        exporter("getOwnMetadata", getOwnMetadata);
-        function getMetadataKeys(target, propertyKey) {
-          if (!IsObject(target))
-            throw new TypeError();
-          if (!IsUndefined(propertyKey))
-            propertyKey = ToPropertyKey(propertyKey);
-          return OrdinaryMetadataKeys(target, propertyKey);
-        }
-        __name(getMetadataKeys, "getMetadataKeys");
-        exporter("getMetadataKeys", getMetadataKeys);
-        function getOwnMetadataKeys(target, propertyKey) {
-          if (!IsObject(target))
-            throw new TypeError();
-          if (!IsUndefined(propertyKey))
-            propertyKey = ToPropertyKey(propertyKey);
-          return OrdinaryOwnMetadataKeys(target, propertyKey);
-        }
-        __name(getOwnMetadataKeys, "getOwnMetadataKeys");
-        exporter("getOwnMetadataKeys", getOwnMetadataKeys);
-        function deleteMetadata(metadataKey, target, propertyKey) {
-          if (!IsObject(target))
-            throw new TypeError();
-          if (!IsUndefined(propertyKey))
-            propertyKey = ToPropertyKey(propertyKey);
-          if (!IsObject(target))
-            throw new TypeError();
-          if (!IsUndefined(propertyKey))
-            propertyKey = ToPropertyKey(propertyKey);
-          var provider = GetMetadataProvider(
-            target,
-            propertyKey,
-            /*Create*/
-            false
-          );
-          if (IsUndefined(provider))
-            return false;
-          return provider.OrdinaryDeleteMetadata(metadataKey, target, propertyKey);
-        }
-        __name(deleteMetadata, "deleteMetadata");
-        exporter("deleteMetadata", deleteMetadata);
-        function DecorateConstructor(decorators, target) {
-          for (var i = decorators.length - 1; i >= 0; --i) {
-            var decorator = decorators[i];
-            var decorated = decorator(target);
-            if (!IsUndefined(decorated) && !IsNull(decorated)) {
-              if (!IsConstructor(decorated))
-                throw new TypeError();
-              target = decorated;
-            }
-          }
-          return target;
-        }
-        __name(DecorateConstructor, "DecorateConstructor");
-        function DecorateProperty(decorators, target, propertyKey, descriptor) {
-          for (var i = decorators.length - 1; i >= 0; --i) {
-            var decorator = decorators[i];
-            var decorated = decorator(target, propertyKey, descriptor);
-            if (!IsUndefined(decorated) && !IsNull(decorated)) {
-              if (!IsObject(decorated))
-                throw new TypeError();
-              descriptor = decorated;
-            }
-          }
-          return descriptor;
-        }
-        __name(DecorateProperty, "DecorateProperty");
-        function OrdinaryHasMetadata(MetadataKey, O, P) {
-          var hasOwn2 = OrdinaryHasOwnMetadata(MetadataKey, O, P);
-          if (hasOwn2)
-            return true;
-          var parent = OrdinaryGetPrototypeOf(O);
-          if (!IsNull(parent))
-            return OrdinaryHasMetadata(MetadataKey, parent, P);
-          return false;
-        }
-        __name(OrdinaryHasMetadata, "OrdinaryHasMetadata");
-        function OrdinaryHasOwnMetadata(MetadataKey, O, P) {
-          var provider = GetMetadataProvider(
-            O,
-            P,
-            /*Create*/
-            false
-          );
-          if (IsUndefined(provider))
-            return false;
-          return ToBoolean(provider.OrdinaryHasOwnMetadata(MetadataKey, O, P));
-        }
-        __name(OrdinaryHasOwnMetadata, "OrdinaryHasOwnMetadata");
-        function OrdinaryGetMetadata(MetadataKey, O, P) {
-          var hasOwn2 = OrdinaryHasOwnMetadata(MetadataKey, O, P);
-          if (hasOwn2)
-            return OrdinaryGetOwnMetadata(MetadataKey, O, P);
-          var parent = OrdinaryGetPrototypeOf(O);
-          if (!IsNull(parent))
-            return OrdinaryGetMetadata(MetadataKey, parent, P);
-          return void 0;
-        }
-        __name(OrdinaryGetMetadata, "OrdinaryGetMetadata");
-        function OrdinaryGetOwnMetadata(MetadataKey, O, P) {
-          var provider = GetMetadataProvider(
-            O,
-            P,
-            /*Create*/
-            false
-          );
-          if (IsUndefined(provider))
-            return;
-          return provider.OrdinaryGetOwnMetadata(MetadataKey, O, P);
-        }
-        __name(OrdinaryGetOwnMetadata, "OrdinaryGetOwnMetadata");
-        function OrdinaryDefineOwnMetadata(MetadataKey, MetadataValue, O, P) {
-          var provider = GetMetadataProvider(
-            O,
-            P,
-            /*Create*/
-            true
-          );
-          provider.OrdinaryDefineOwnMetadata(MetadataKey, MetadataValue, O, P);
-        }
-        __name(OrdinaryDefineOwnMetadata, "OrdinaryDefineOwnMetadata");
-        function OrdinaryMetadataKeys(O, P) {
-          var ownKeys = OrdinaryOwnMetadataKeys(O, P);
-          var parent = OrdinaryGetPrototypeOf(O);
-          if (parent === null)
-            return ownKeys;
-          var parentKeys = OrdinaryMetadataKeys(parent, P);
-          if (parentKeys.length <= 0)
-            return ownKeys;
-          if (ownKeys.length <= 0)
-            return parentKeys;
-          var set = new _Set();
-          var keys = [];
-          for (var _i = 0, ownKeys_1 = ownKeys; _i < ownKeys_1.length; _i++) {
-            var key = ownKeys_1[_i];
-            var hasKey = set.has(key);
-            if (!hasKey) {
-              set.add(key);
-              keys.push(key);
-            }
-          }
-          for (var _a = 0, parentKeys_1 = parentKeys; _a < parentKeys_1.length; _a++) {
-            var key = parentKeys_1[_a];
-            var hasKey = set.has(key);
-            if (!hasKey) {
-              set.add(key);
-              keys.push(key);
-            }
-          }
-          return keys;
-        }
-        __name(OrdinaryMetadataKeys, "OrdinaryMetadataKeys");
-        function OrdinaryOwnMetadataKeys(O, P) {
-          var provider = GetMetadataProvider(
-            O,
-            P,
-            /*create*/
-            false
-          );
-          if (!provider) {
-            return [];
-          }
-          return provider.OrdinaryOwnMetadataKeys(O, P);
-        }
-        __name(OrdinaryOwnMetadataKeys, "OrdinaryOwnMetadataKeys");
-        function Type(x) {
-          if (x === null)
-            return 1;
-          switch (typeof x) {
-            case "undefined":
-              return 0;
-            case "boolean":
-              return 2;
-            case "string":
-              return 3;
-            case "symbol":
-              return 4;
-            case "number":
-              return 5;
-            case "object":
-              return x === null ? 1 : 6;
-            default:
-              return 6;
-          }
-        }
-        __name(Type, "Type");
-        function IsUndefined(x) {
-          return x === void 0;
-        }
-        __name(IsUndefined, "IsUndefined");
-        function IsNull(x) {
-          return x === null;
-        }
-        __name(IsNull, "IsNull");
-        function IsSymbol(x) {
-          return typeof x === "symbol";
-        }
-        __name(IsSymbol, "IsSymbol");
-        function IsObject(x) {
-          return typeof x === "object" ? x !== null : typeof x === "function";
-        }
-        __name(IsObject, "IsObject");
-        function ToPrimitive(input, PreferredType) {
-          switch (Type(input)) {
-            case 0:
-              return input;
-            case 1:
-              return input;
-            case 2:
-              return input;
-            case 3:
-              return input;
-            case 4:
-              return input;
-            case 5:
-              return input;
-          }
-          var hint = PreferredType === 3 ? "string" : PreferredType === 5 ? "number" : "default";
-          var exoticToPrim = GetMethod(input, toPrimitiveSymbol);
-          if (exoticToPrim !== void 0) {
-            var result = exoticToPrim.call(input, hint);
-            if (IsObject(result))
-              throw new TypeError();
-            return result;
-          }
-          return OrdinaryToPrimitive(input, hint === "default" ? "number" : hint);
-        }
-        __name(ToPrimitive, "ToPrimitive");
-        function OrdinaryToPrimitive(O, hint) {
-          if (hint === "string") {
-            var toString_1 = O.toString;
-            if (IsCallable(toString_1)) {
-              var result = toString_1.call(O);
-              if (!IsObject(result))
-                return result;
-            }
-            var valueOf = O.valueOf;
-            if (IsCallable(valueOf)) {
-              var result = valueOf.call(O);
-              if (!IsObject(result))
-                return result;
-            }
-          } else {
-            var valueOf = O.valueOf;
-            if (IsCallable(valueOf)) {
-              var result = valueOf.call(O);
-              if (!IsObject(result))
-                return result;
-            }
-            var toString_2 = O.toString;
-            if (IsCallable(toString_2)) {
-              var result = toString_2.call(O);
-              if (!IsObject(result))
-                return result;
-            }
-          }
-          throw new TypeError();
-        }
-        __name(OrdinaryToPrimitive, "OrdinaryToPrimitive");
-        function ToBoolean(argument) {
-          return !!argument;
-        }
-        __name(ToBoolean, "ToBoolean");
-        function ToString(argument) {
-          return "" + argument;
-        }
-        __name(ToString, "ToString");
-        function ToPropertyKey(argument) {
-          var key = ToPrimitive(
-            argument,
-            3
-            /* String */
-          );
-          if (IsSymbol(key))
-            return key;
-          return ToString(key);
-        }
-        __name(ToPropertyKey, "ToPropertyKey");
-        function IsArray(argument) {
-          return Array.isArray ? Array.isArray(argument) : argument instanceof Object ? argument instanceof Array : Object.prototype.toString.call(argument) === "[object Array]";
-        }
-        __name(IsArray, "IsArray");
-        function IsCallable(argument) {
-          return typeof argument === "function";
-        }
-        __name(IsCallable, "IsCallable");
-        function IsConstructor(argument) {
-          return typeof argument === "function";
-        }
-        __name(IsConstructor, "IsConstructor");
-        function IsPropertyKey(argument) {
-          switch (Type(argument)) {
-            case 3:
-              return true;
-            case 4:
-              return true;
-            default:
-              return false;
-          }
-        }
-        __name(IsPropertyKey, "IsPropertyKey");
-        function SameValueZero(x, y) {
-          return x === y || x !== x && y !== y;
-        }
-        __name(SameValueZero, "SameValueZero");
-        function GetMethod(V, P) {
-          var func = V[P];
-          if (func === void 0 || func === null)
-            return void 0;
-          if (!IsCallable(func))
-            throw new TypeError();
-          return func;
-        }
-        __name(GetMethod, "GetMethod");
-        function GetIterator(obj) {
-          var method = GetMethod(obj, iteratorSymbol);
-          if (!IsCallable(method))
-            throw new TypeError();
-          var iterator = method.call(obj);
-          if (!IsObject(iterator))
-            throw new TypeError();
-          return iterator;
-        }
-        __name(GetIterator, "GetIterator");
-        function IteratorValue(iterResult) {
-          return iterResult.value;
-        }
-        __name(IteratorValue, "IteratorValue");
-        function IteratorStep(iterator) {
-          var result = iterator.next();
-          return result.done ? false : result;
-        }
-        __name(IteratorStep, "IteratorStep");
-        function IteratorClose(iterator) {
-          var f = iterator["return"];
-          if (f)
-            f.call(iterator);
-        }
-        __name(IteratorClose, "IteratorClose");
-        function OrdinaryGetPrototypeOf(O) {
-          var proto = Object.getPrototypeOf(O);
-          if (typeof O !== "function" || O === functionPrototype)
-            return proto;
-          if (proto !== functionPrototype)
-            return proto;
-          var prototype = O.prototype;
-          var prototypeProto = prototype && Object.getPrototypeOf(prototype);
-          if (prototypeProto == null || prototypeProto === Object.prototype)
-            return proto;
-          var constructor = prototypeProto.constructor;
-          if (typeof constructor !== "function")
-            return proto;
-          if (constructor === O)
-            return proto;
-          return constructor;
-        }
-        __name(OrdinaryGetPrototypeOf, "OrdinaryGetPrototypeOf");
-        function CreateMetadataRegistry() {
-          var fallback;
-          if (!IsUndefined(registrySymbol) && typeof root.Reflect !== "undefined" && !(registrySymbol in root.Reflect) && typeof root.Reflect.defineMetadata === "function") {
-            fallback = CreateFallbackProvider(root.Reflect);
-          }
-          var first;
-          var second;
-          var rest;
-          var targetProviderMap = new _WeakMap();
-          var registry = {
-            registerProvider,
-            getProvider,
-            setProvider
-          };
-          return registry;
-          function registerProvider(provider) {
-            if (!Object.isExtensible(registry)) {
-              throw new Error("Cannot add provider to a frozen registry.");
-            }
-            switch (true) {
-              case fallback === provider:
-                break;
-              case IsUndefined(first):
-                first = provider;
-                break;
-              case first === provider:
-                break;
-              case IsUndefined(second):
-                second = provider;
-                break;
-              case second === provider:
-                break;
-              default:
-                if (rest === void 0)
-                  rest = new _Set();
-                rest.add(provider);
-                break;
-            }
-          }
-          __name(registerProvider, "registerProvider");
-          function getProviderNoCache(O, P) {
-            if (!IsUndefined(first)) {
-              if (first.isProviderFor(O, P))
-                return first;
-              if (!IsUndefined(second)) {
-                if (second.isProviderFor(O, P))
-                  return first;
-                if (!IsUndefined(rest)) {
-                  var iterator = GetIterator(rest);
-                  while (true) {
-                    var next = IteratorStep(iterator);
-                    if (!next) {
-                      return void 0;
-                    }
-                    var provider = IteratorValue(next);
-                    if (provider.isProviderFor(O, P)) {
-                      IteratorClose(iterator);
-                      return provider;
-                    }
-                  }
-                }
-              }
-            }
-            if (!IsUndefined(fallback) && fallback.isProviderFor(O, P)) {
-              return fallback;
-            }
-            return void 0;
-          }
-          __name(getProviderNoCache, "getProviderNoCache");
-          function getProvider(O, P) {
-            var providerMap = targetProviderMap.get(O);
-            var provider;
-            if (!IsUndefined(providerMap)) {
-              provider = providerMap.get(P);
-            }
-            if (!IsUndefined(provider)) {
-              return provider;
-            }
-            provider = getProviderNoCache(O, P);
-            if (!IsUndefined(provider)) {
-              if (IsUndefined(providerMap)) {
-                providerMap = new _Map();
-                targetProviderMap.set(O, providerMap);
-              }
-              providerMap.set(P, provider);
-            }
-            return provider;
-          }
-          __name(getProvider, "getProvider");
-          function hasProvider(provider) {
-            if (IsUndefined(provider))
-              throw new TypeError();
-            return first === provider || second === provider || !IsUndefined(rest) && rest.has(provider);
-          }
-          __name(hasProvider, "hasProvider");
-          function setProvider(O, P, provider) {
-            if (!hasProvider(provider)) {
-              throw new Error("Metadata provider not registered.");
-            }
-            var existingProvider = getProvider(O, P);
-            if (existingProvider !== provider) {
-              if (!IsUndefined(existingProvider)) {
-                return false;
-              }
-              var providerMap = targetProviderMap.get(O);
-              if (IsUndefined(providerMap)) {
-                providerMap = new _Map();
-                targetProviderMap.set(O, providerMap);
-              }
-              providerMap.set(P, provider);
-            }
-            return true;
-          }
-          __name(setProvider, "setProvider");
-        }
-        __name(CreateMetadataRegistry, "CreateMetadataRegistry");
-        function GetOrCreateMetadataRegistry() {
-          var metadataRegistry2;
-          if (!IsUndefined(registrySymbol) && IsObject(root.Reflect) && Object.isExtensible(root.Reflect)) {
-            metadataRegistry2 = root.Reflect[registrySymbol];
-          }
-          if (IsUndefined(metadataRegistry2)) {
-            metadataRegistry2 = CreateMetadataRegistry();
-          }
-          if (!IsUndefined(registrySymbol) && IsObject(root.Reflect) && Object.isExtensible(root.Reflect)) {
-            Object.defineProperty(root.Reflect, registrySymbol, {
-              enumerable: false,
-              configurable: false,
-              writable: false,
-              value: metadataRegistry2
-            });
-          }
-          return metadataRegistry2;
-        }
-        __name(GetOrCreateMetadataRegistry, "GetOrCreateMetadataRegistry");
-        function CreateMetadataProvider(registry) {
-          var metadata2 = new _WeakMap();
-          var provider = {
-            isProviderFor: /* @__PURE__ */ __name(function(O, P) {
-              var targetMetadata = metadata2.get(O);
-              if (IsUndefined(targetMetadata))
-                return false;
-              return targetMetadata.has(P);
-            }, "isProviderFor"),
-            OrdinaryDefineOwnMetadata: OrdinaryDefineOwnMetadata2,
-            OrdinaryHasOwnMetadata: OrdinaryHasOwnMetadata2,
-            OrdinaryGetOwnMetadata: OrdinaryGetOwnMetadata2,
-            OrdinaryOwnMetadataKeys: OrdinaryOwnMetadataKeys2,
-            OrdinaryDeleteMetadata
-          };
-          metadataRegistry.registerProvider(provider);
-          return provider;
-          function GetOrCreateMetadataMap(O, P, Create) {
-            var targetMetadata = metadata2.get(O);
-            var createdTargetMetadata = false;
-            if (IsUndefined(targetMetadata)) {
-              if (!Create)
-                return void 0;
-              targetMetadata = new _Map();
-              metadata2.set(O, targetMetadata);
-              createdTargetMetadata = true;
-            }
-            var metadataMap = targetMetadata.get(P);
-            if (IsUndefined(metadataMap)) {
-              if (!Create)
-                return void 0;
-              metadataMap = new _Map();
-              targetMetadata.set(P, metadataMap);
-              if (!registry.setProvider(O, P, provider)) {
-                targetMetadata.delete(P);
-                if (createdTargetMetadata) {
-                  metadata2.delete(O);
-                }
-                throw new Error("Wrong provider for target.");
-              }
-            }
-            return metadataMap;
-          }
-          __name(GetOrCreateMetadataMap, "GetOrCreateMetadataMap");
-          function OrdinaryHasOwnMetadata2(MetadataKey, O, P) {
-            var metadataMap = GetOrCreateMetadataMap(
-              O,
-              P,
-              /*Create*/
-              false
-            );
-            if (IsUndefined(metadataMap))
-              return false;
-            return ToBoolean(metadataMap.has(MetadataKey));
-          }
-          __name(OrdinaryHasOwnMetadata2, "OrdinaryHasOwnMetadata");
-          function OrdinaryGetOwnMetadata2(MetadataKey, O, P) {
-            var metadataMap = GetOrCreateMetadataMap(
-              O,
-              P,
-              /*Create*/
-              false
-            );
-            if (IsUndefined(metadataMap))
-              return void 0;
-            return metadataMap.get(MetadataKey);
-          }
-          __name(OrdinaryGetOwnMetadata2, "OrdinaryGetOwnMetadata");
-          function OrdinaryDefineOwnMetadata2(MetadataKey, MetadataValue, O, P) {
-            var metadataMap = GetOrCreateMetadataMap(
-              O,
-              P,
-              /*Create*/
-              true
-            );
-            metadataMap.set(MetadataKey, MetadataValue);
-          }
-          __name(OrdinaryDefineOwnMetadata2, "OrdinaryDefineOwnMetadata");
-          function OrdinaryOwnMetadataKeys2(O, P) {
-            var keys = [];
-            var metadataMap = GetOrCreateMetadataMap(
-              O,
-              P,
-              /*Create*/
-              false
-            );
-            if (IsUndefined(metadataMap))
-              return keys;
-            var keysObj = metadataMap.keys();
-            var iterator = GetIterator(keysObj);
-            var k = 0;
-            while (true) {
-              var next = IteratorStep(iterator);
-              if (!next) {
-                keys.length = k;
-                return keys;
-              }
-              var nextValue = IteratorValue(next);
-              try {
-                keys[k] = nextValue;
-              } catch (e) {
-                try {
-                  IteratorClose(iterator);
-                } finally {
-                  throw e;
-                }
-              }
-              k++;
-            }
-          }
-          __name(OrdinaryOwnMetadataKeys2, "OrdinaryOwnMetadataKeys");
-          function OrdinaryDeleteMetadata(MetadataKey, O, P) {
-            var metadataMap = GetOrCreateMetadataMap(
-              O,
-              P,
-              /*Create*/
-              false
-            );
-            if (IsUndefined(metadataMap))
-              return false;
-            if (!metadataMap.delete(MetadataKey))
-              return false;
-            if (metadataMap.size === 0) {
-              var targetMetadata = metadata2.get(O);
-              if (!IsUndefined(targetMetadata)) {
-                targetMetadata.delete(P);
-                if (targetMetadata.size === 0) {
-                  metadata2.delete(targetMetadata);
-                }
-              }
-            }
-            return true;
-          }
-          __name(OrdinaryDeleteMetadata, "OrdinaryDeleteMetadata");
-        }
-        __name(CreateMetadataProvider, "CreateMetadataProvider");
-        function CreateFallbackProvider(reflect) {
-          var defineMetadata2 = reflect.defineMetadata, hasOwnMetadata2 = reflect.hasOwnMetadata, getOwnMetadata2 = reflect.getOwnMetadata, getOwnMetadataKeys2 = reflect.getOwnMetadataKeys, deleteMetadata2 = reflect.deleteMetadata;
-          var metadataOwner = new _WeakMap();
-          var provider = {
-            isProviderFor: /* @__PURE__ */ __name(function(O, P) {
-              var metadataPropertySet = metadataOwner.get(O);
-              if (!IsUndefined(metadataPropertySet) && metadataPropertySet.has(P)) {
-                return true;
-              }
-              if (getOwnMetadataKeys2(O, P).length) {
-                if (IsUndefined(metadataPropertySet)) {
-                  metadataPropertySet = new _Set();
-                  metadataOwner.set(O, metadataPropertySet);
-                }
-                metadataPropertySet.add(P);
-                return true;
-              }
-              return false;
-            }, "isProviderFor"),
-            OrdinaryDefineOwnMetadata: defineMetadata2,
-            OrdinaryHasOwnMetadata: hasOwnMetadata2,
-            OrdinaryGetOwnMetadata: getOwnMetadata2,
-            OrdinaryOwnMetadataKeys: getOwnMetadataKeys2,
-            OrdinaryDeleteMetadata: deleteMetadata2
-          };
-          return provider;
-        }
-        __name(CreateFallbackProvider, "CreateFallbackProvider");
-        function GetMetadataProvider(O, P, Create) {
-          var registeredProvider = metadataRegistry.getProvider(O, P);
-          if (!IsUndefined(registeredProvider)) {
-            return registeredProvider;
-          }
-          if (Create) {
-            if (metadataRegistry.setProvider(O, P, metadataProvider)) {
-              return metadataProvider;
-            }
-            throw new Error("Illegal state.");
-          }
-          return void 0;
-        }
-        __name(GetMetadataProvider, "GetMetadataProvider");
-        function CreateMapPolyfill() {
-          var cacheSentinel = {};
-          var arraySentinel = [];
-          var MapIterator = (
-            /** @class */
-            function() {
-              function MapIterator2(keys, values, selector) {
-                this._index = 0;
-                this._keys = keys;
-                this._values = values;
-                this._selector = selector;
-              }
-              __name(MapIterator2, "MapIterator");
-              MapIterator2.prototype["@@iterator"] = function() {
-                return this;
-              };
-              MapIterator2.prototype[iteratorSymbol] = function() {
-                return this;
-              };
-              MapIterator2.prototype.next = function() {
-                var index = this._index;
-                if (index >= 0 && index < this._keys.length) {
-                  var result = this._selector(this._keys[index], this._values[index]);
-                  if (index + 1 >= this._keys.length) {
-                    this._index = -1;
-                    this._keys = arraySentinel;
-                    this._values = arraySentinel;
-                  } else {
-                    this._index++;
-                  }
-                  return { value: result, done: false };
-                }
-                return { value: void 0, done: true };
-              };
-              MapIterator2.prototype.throw = function(error) {
-                if (this._index >= 0) {
-                  this._index = -1;
-                  this._keys = arraySentinel;
-                  this._values = arraySentinel;
-                }
-                throw error;
-              };
-              MapIterator2.prototype.return = function(value) {
-                if (this._index >= 0) {
-                  this._index = -1;
-                  this._keys = arraySentinel;
-                  this._values = arraySentinel;
-                }
-                return { value, done: true };
-              };
-              return MapIterator2;
-            }()
-          );
-          var Map2 = (
-            /** @class */
-            function() {
-              function Map3() {
-                this._keys = [];
-                this._values = [];
-                this._cacheKey = cacheSentinel;
-                this._cacheIndex = -2;
-              }
-              __name(Map3, "Map");
-              Object.defineProperty(Map3.prototype, "size", {
-                get: /* @__PURE__ */ __name(function() {
-                  return this._keys.length;
-                }, "get"),
-                enumerable: true,
-                configurable: true
-              });
-              Map3.prototype.has = function(key) {
-                return this._find(
-                  key,
-                  /*insert*/
-                  false
-                ) >= 0;
-              };
-              Map3.prototype.get = function(key) {
-                var index = this._find(
-                  key,
-                  /*insert*/
-                  false
-                );
-                return index >= 0 ? this._values[index] : void 0;
-              };
-              Map3.prototype.set = function(key, value) {
-                var index = this._find(
-                  key,
-                  /*insert*/
-                  true
-                );
-                this._values[index] = value;
-                return this;
-              };
-              Map3.prototype.delete = function(key) {
-                var index = this._find(
-                  key,
-                  /*insert*/
-                  false
-                );
-                if (index >= 0) {
-                  var size = this._keys.length;
-                  for (var i = index + 1; i < size; i++) {
-                    this._keys[i - 1] = this._keys[i];
-                    this._values[i - 1] = this._values[i];
-                  }
-                  this._keys.length--;
-                  this._values.length--;
-                  if (SameValueZero(key, this._cacheKey)) {
-                    this._cacheKey = cacheSentinel;
-                    this._cacheIndex = -2;
-                  }
-                  return true;
-                }
-                return false;
-              };
-              Map3.prototype.clear = function() {
-                this._keys.length = 0;
-                this._values.length = 0;
-                this._cacheKey = cacheSentinel;
-                this._cacheIndex = -2;
-              };
-              Map3.prototype.keys = function() {
-                return new MapIterator(this._keys, this._values, getKey);
-              };
-              Map3.prototype.values = function() {
-                return new MapIterator(this._keys, this._values, getValue);
-              };
-              Map3.prototype.entries = function() {
-                return new MapIterator(this._keys, this._values, getEntry);
-              };
-              Map3.prototype["@@iterator"] = function() {
-                return this.entries();
-              };
-              Map3.prototype[iteratorSymbol] = function() {
-                return this.entries();
-              };
-              Map3.prototype._find = function(key, insert) {
-                if (!SameValueZero(this._cacheKey, key)) {
-                  this._cacheIndex = -1;
-                  for (var i = 0; i < this._keys.length; i++) {
-                    if (SameValueZero(this._keys[i], key)) {
-                      this._cacheIndex = i;
-                      break;
-                    }
-                  }
-                }
-                if (this._cacheIndex < 0 && insert) {
-                  this._cacheIndex = this._keys.length;
-                  this._keys.push(key);
-                  this._values.push(void 0);
-                }
-                return this._cacheIndex;
-              };
-              return Map3;
-            }()
-          );
-          return Map2;
-          function getKey(key, _) {
-            return key;
-          }
-          __name(getKey, "getKey");
-          function getValue(_, value) {
-            return value;
-          }
-          __name(getValue, "getValue");
-          function getEntry(key, value) {
-            return [key, value];
-          }
-          __name(getEntry, "getEntry");
-        }
-        __name(CreateMapPolyfill, "CreateMapPolyfill");
-        function CreateSetPolyfill() {
-          var Set2 = (
-            /** @class */
-            function() {
-              function Set3() {
-                this._map = new _Map();
-              }
-              __name(Set3, "Set");
-              Object.defineProperty(Set3.prototype, "size", {
-                get: /* @__PURE__ */ __name(function() {
-                  return this._map.size;
-                }, "get"),
-                enumerable: true,
-                configurable: true
-              });
-              Set3.prototype.has = function(value) {
-                return this._map.has(value);
-              };
-              Set3.prototype.add = function(value) {
-                return this._map.set(value, value), this;
-              };
-              Set3.prototype.delete = function(value) {
-                return this._map.delete(value);
-              };
-              Set3.prototype.clear = function() {
-                this._map.clear();
-              };
-              Set3.prototype.keys = function() {
-                return this._map.keys();
-              };
-              Set3.prototype.values = function() {
-                return this._map.keys();
-              };
-              Set3.prototype.entries = function() {
-                return this._map.entries();
-              };
-              Set3.prototype["@@iterator"] = function() {
-                return this.keys();
-              };
-              Set3.prototype[iteratorSymbol] = function() {
-                return this.keys();
-              };
-              return Set3;
-            }()
-          );
-          return Set2;
-        }
-        __name(CreateSetPolyfill, "CreateSetPolyfill");
-        function CreateWeakMapPolyfill() {
-          var UUID_SIZE = 16;
-          var keys = HashMap.create();
-          var rootKey = CreateUniqueKey();
-          return (
-            /** @class */
-            function() {
-              function WeakMap2() {
-                this._key = CreateUniqueKey();
-              }
-              __name(WeakMap2, "WeakMap");
-              WeakMap2.prototype.has = function(target) {
-                var table = GetOrCreateWeakMapTable(
-                  target,
-                  /*create*/
-                  false
-                );
-                return table !== void 0 ? HashMap.has(table, this._key) : false;
-              };
-              WeakMap2.prototype.get = function(target) {
-                var table = GetOrCreateWeakMapTable(
-                  target,
-                  /*create*/
-                  false
-                );
-                return table !== void 0 ? HashMap.get(table, this._key) : void 0;
-              };
-              WeakMap2.prototype.set = function(target, value) {
-                var table = GetOrCreateWeakMapTable(
-                  target,
-                  /*create*/
-                  true
-                );
-                table[this._key] = value;
-                return this;
-              };
-              WeakMap2.prototype.delete = function(target) {
-                var table = GetOrCreateWeakMapTable(
-                  target,
-                  /*create*/
-                  false
-                );
-                return table !== void 0 ? delete table[this._key] : false;
-              };
-              WeakMap2.prototype.clear = function() {
-                this._key = CreateUniqueKey();
-              };
-              return WeakMap2;
-            }()
-          );
-          function CreateUniqueKey() {
-            var key;
-            do
-              key = "@@WeakMap@@" + CreateUUID();
-            while (HashMap.has(keys, key));
-            keys[key] = true;
-            return key;
-          }
-          __name(CreateUniqueKey, "CreateUniqueKey");
-          function GetOrCreateWeakMapTable(target, create) {
-            if (!hasOwn.call(target, rootKey)) {
-              if (!create)
-                return void 0;
-              Object.defineProperty(target, rootKey, { value: HashMap.create() });
-            }
-            return target[rootKey];
-          }
-          __name(GetOrCreateWeakMapTable, "GetOrCreateWeakMapTable");
-          function FillRandomBytes(buffer, size) {
-            for (var i = 0; i < size; ++i)
-              buffer[i] = Math.random() * 255 | 0;
-            return buffer;
-          }
-          __name(FillRandomBytes, "FillRandomBytes");
-          function GenRandomBytes(size) {
-            if (typeof Uint8Array === "function") {
-              var array = new Uint8Array(size);
-              if (typeof crypto !== "undefined") {
-                crypto.getRandomValues(array);
-              } else if (typeof msCrypto !== "undefined") {
-                msCrypto.getRandomValues(array);
-              } else {
-                FillRandomBytes(array, size);
-              }
-              return array;
-            }
-            return FillRandomBytes(new Array(size), size);
-          }
-          __name(GenRandomBytes, "GenRandomBytes");
-          function CreateUUID() {
-            var data = GenRandomBytes(UUID_SIZE);
-            data[6] = data[6] & 79 | 64;
-            data[8] = data[8] & 191 | 128;
-            var result = "";
-            for (var offset = 0; offset < UUID_SIZE; ++offset) {
-              var byte = data[offset];
-              if (offset === 4 || offset === 6 || offset === 8)
-                result += "-";
-              if (byte < 16)
-                result += "0";
-              result += byte.toString(16).toLowerCase();
-            }
-            return result;
-          }
-          __name(CreateUUID, "CreateUUID");
-        }
-        __name(CreateWeakMapPolyfill, "CreateWeakMapPolyfill");
-        function MakeDictionary(obj) {
-          obj.__ = void 0;
-          delete obj.__;
-          return obj;
-        }
-        __name(MakeDictionary, "MakeDictionary");
-      });
-    })(Reflect2 || (Reflect2 = {}));
-  }
-});
-
-// decorators.ts
+// src/core/server/decorators.ts
 var decorators_exports = {};
 __export(decorators_exports, {
-  config: () => config,
   node: () => node
 });
-function config(target, key) {
-  const ctor = target.constructor;
-  const type = Reflect.getMetadata("design:type", target, key);
-  if (!ctor.hasOwnProperty("__configs__")) {
-    Object.defineProperty(ctor, "__configs__", {
-      value: [],
-      writable: true,
-      configurable: true,
-      enumerable: false
-    });
-  }
-  const config2 = {
-    key,
-    type
-  };
-  console.log(config2);
-  ctor.__configs__.push(config2);
-}
 function node(options) {
   return function(constructor) {
     return class extends constructor {
@@ -1227,106 +46,5534 @@ function node(options) {
     };
   };
 }
-var import_reflect_metadata;
 var init_decorators = __esm({
-  "decorators.ts"() {
+  "src/core/server/decorators.ts"() {
     "use strict";
-    import_reflect_metadata = __toESM(require_Reflect());
-    __name(config, "config");
     __name(node, "node");
   }
 });
 
-// node.ts
-var require_node = __commonJS({
-  "node.ts"(exports2) {
+// src/core/server/node.ts
+var node_exports = {};
+__export(node_exports, {
+  Node: () => Node
+});
+var Node;
+var init_node = __esm({
+  "src/core/server/node.ts"() {
     "use strict";
-    var __decorate = exports2 && exports2.__decorate || function(decorators, target, key, desc) {
-      var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-      if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-      else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-      return c > 3 && r && Object.defineProperty(target, key, r), r;
-    };
-    var __metadata = exports2 && exports2.__metadata || function(k, v) {
-      if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-    };
-    Object.defineProperty(exports2, "__esModule", { value: true });
-    exports2.Node = void 0;
-    var decorators_1 = (init_decorators(), __toCommonJS(decorators_exports));
-    var Node3 = class _Node {
+    Node = class _Node {
       static {
         __name(this, "Node");
       }
       static RED;
+      id;
+      type;
       name;
-      constructor(config2) {
-        _Node.RED.nodes.createNode(this, config2);
-        this.__config = config2;
-        console.log("INSIDE PARENT CONSTRUCTOR");
-        console.log(this);
+      wires;
+      x;
+      y;
+      z;
+      g;
+      configs;
+      credentials;
+      constructor(configs) {
+        _Node.RED.nodes.createNode(this, configs);
+        this.configs = configs;
+        this.x = configs.x;
+        this.y = configs.y;
+        this.z = configs.z;
+        this.g = configs.g;
       }
-      onInput(msg, send, done) {
-        console.log("parent on input");
-        done();
+      static init() {
+        console.log("not implemented");
       }
-      onClose(removed, done) {
-        done();
+      static getNode(id) {
+        return this.RED.nodes.getNode(id);
       }
     };
-    exports2.Node = Node3;
-    __decorate([
-      decorators_1.config,
-      __metadata("design:type", String)
-    ], Node3.prototype, "name", void 0);
   }
 });
 
-// config-node.ts
-var config_node_exports = {};
-__export(config_node_exports, {
-  ConfigNode: () => ConfigNode
+// node_modules/@sinclair/typebox/build/esm/type/guard/value.mjs
+var value_exports = {};
+__export(value_exports, {
+  HasPropertyKey: () => HasPropertyKey,
+  IsArray: () => IsArray,
+  IsAsyncIterator: () => IsAsyncIterator,
+  IsBigInt: () => IsBigInt,
+  IsBoolean: () => IsBoolean,
+  IsDate: () => IsDate,
+  IsFunction: () => IsFunction,
+  IsIterator: () => IsIterator,
+  IsNull: () => IsNull,
+  IsNumber: () => IsNumber,
+  IsObject: () => IsObject,
+  IsRegExp: () => IsRegExp,
+  IsString: () => IsString,
+  IsSymbol: () => IsSymbol,
+  IsUint8Array: () => IsUint8Array,
+  IsUndefined: () => IsUndefined
 });
-var import_node, ConfigNode;
-var init_config_node = __esm({
-  "config-node.ts"() {
-    "use strict";
-    import_node = __toESM(require_node());
-    ConfigNode = class extends import_node.Node {
+function HasPropertyKey(value, key) {
+  return key in value;
+}
+function IsAsyncIterator(value) {
+  return IsObject(value) && !IsArray(value) && !IsUint8Array(value) && Symbol.asyncIterator in value;
+}
+function IsArray(value) {
+  return Array.isArray(value);
+}
+function IsBigInt(value) {
+  return typeof value === "bigint";
+}
+function IsBoolean(value) {
+  return typeof value === "boolean";
+}
+function IsDate(value) {
+  return value instanceof globalThis.Date;
+}
+function IsFunction(value) {
+  return typeof value === "function";
+}
+function IsIterator(value) {
+  return IsObject(value) && !IsArray(value) && !IsUint8Array(value) && Symbol.iterator in value;
+}
+function IsNull(value) {
+  return value === null;
+}
+function IsNumber(value) {
+  return typeof value === "number";
+}
+function IsObject(value) {
+  return typeof value === "object" && value !== null;
+}
+function IsRegExp(value) {
+  return value instanceof globalThis.RegExp;
+}
+function IsString(value) {
+  return typeof value === "string";
+}
+function IsSymbol(value) {
+  return typeof value === "symbol";
+}
+function IsUint8Array(value) {
+  return value instanceof globalThis.Uint8Array;
+}
+function IsUndefined(value) {
+  return value === void 0;
+}
+var init_value = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/guard/value.mjs"() {
+    __name(HasPropertyKey, "HasPropertyKey");
+    __name(IsAsyncIterator, "IsAsyncIterator");
+    __name(IsArray, "IsArray");
+    __name(IsBigInt, "IsBigInt");
+    __name(IsBoolean, "IsBoolean");
+    __name(IsDate, "IsDate");
+    __name(IsFunction, "IsFunction");
+    __name(IsIterator, "IsIterator");
+    __name(IsNull, "IsNull");
+    __name(IsNumber, "IsNumber");
+    __name(IsObject, "IsObject");
+    __name(IsRegExp, "IsRegExp");
+    __name(IsString, "IsString");
+    __name(IsSymbol, "IsSymbol");
+    __name(IsUint8Array, "IsUint8Array");
+    __name(IsUndefined, "IsUndefined");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/clone/value.mjs
+function ArrayType(value) {
+  return value.map((value2) => Visit(value2));
+}
+function DateType(value) {
+  return new Date(value.getTime());
+}
+function Uint8ArrayType(value) {
+  return new Uint8Array(value);
+}
+function RegExpType(value) {
+  return new RegExp(value.source, value.flags);
+}
+function ObjectType(value) {
+  const result = {};
+  for (const key of Object.getOwnPropertyNames(value)) {
+    result[key] = Visit(value[key]);
+  }
+  for (const key of Object.getOwnPropertySymbols(value)) {
+    result[key] = Visit(value[key]);
+  }
+  return result;
+}
+function Visit(value) {
+  return IsArray(value) ? ArrayType(value) : IsDate(value) ? DateType(value) : IsUint8Array(value) ? Uint8ArrayType(value) : IsRegExp(value) ? RegExpType(value) : IsObject(value) ? ObjectType(value) : value;
+}
+function Clone(value) {
+  return Visit(value);
+}
+var init_value2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/clone/value.mjs"() {
+    init_value();
+    __name(ArrayType, "ArrayType");
+    __name(DateType, "DateType");
+    __name(Uint8ArrayType, "Uint8ArrayType");
+    __name(RegExpType, "RegExpType");
+    __name(ObjectType, "ObjectType");
+    __name(Visit, "Visit");
+    __name(Clone, "Clone");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/clone/type.mjs
+function CloneRest(schemas) {
+  return schemas.map((schema) => CloneType(schema));
+}
+function CloneType(schema, options) {
+  return options === void 0 ? Clone(schema) : Clone({ ...options, ...schema });
+}
+var init_type = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/clone/type.mjs"() {
+    init_value2();
+    __name(CloneRest, "CloneRest");
+    __name(CloneType, "CloneType");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/clone/index.mjs
+var init_clone = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/clone/index.mjs"() {
+    init_type();
+    init_value2();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/value/guard/guard.mjs
+function IsAsyncIterator2(value) {
+  return IsObject2(value) && globalThis.Symbol.asyncIterator in value;
+}
+function IsIterator2(value) {
+  return IsObject2(value) && globalThis.Symbol.iterator in value;
+}
+function IsStandardObject(value) {
+  return IsObject2(value) && (globalThis.Object.getPrototypeOf(value) === Object.prototype || globalThis.Object.getPrototypeOf(value) === null);
+}
+function IsInstanceObject(value) {
+  return IsObject2(value) && !IsArray2(value) && IsFunction2(value.constructor) && value.constructor.name !== "Object";
+}
+function IsPromise(value) {
+  return value instanceof globalThis.Promise;
+}
+function IsDate2(value) {
+  return value instanceof Date && globalThis.Number.isFinite(value.getTime());
+}
+function IsMap(value) {
+  return value instanceof globalThis.Map;
+}
+function IsSet(value) {
+  return value instanceof globalThis.Set;
+}
+function IsRegExp2(value) {
+  return value instanceof globalThis.RegExp;
+}
+function IsTypedArray(value) {
+  return globalThis.ArrayBuffer.isView(value);
+}
+function IsInt8Array(value) {
+  return value instanceof globalThis.Int8Array;
+}
+function IsUint8Array2(value) {
+  return value instanceof globalThis.Uint8Array;
+}
+function IsUint8ClampedArray(value) {
+  return value instanceof globalThis.Uint8ClampedArray;
+}
+function IsInt16Array(value) {
+  return value instanceof globalThis.Int16Array;
+}
+function IsUint16Array(value) {
+  return value instanceof globalThis.Uint16Array;
+}
+function IsInt32Array(value) {
+  return value instanceof globalThis.Int32Array;
+}
+function IsUint32Array(value) {
+  return value instanceof globalThis.Uint32Array;
+}
+function IsFloat32Array(value) {
+  return value instanceof globalThis.Float32Array;
+}
+function IsFloat64Array(value) {
+  return value instanceof globalThis.Float64Array;
+}
+function IsBigInt64Array(value) {
+  return value instanceof globalThis.BigInt64Array;
+}
+function IsBigUint64Array(value) {
+  return value instanceof globalThis.BigUint64Array;
+}
+function HasPropertyKey2(value, key) {
+  return key in value;
+}
+function IsObject2(value) {
+  return value !== null && typeof value === "object";
+}
+function IsArray2(value) {
+  return globalThis.Array.isArray(value) && !globalThis.ArrayBuffer.isView(value);
+}
+function IsUndefined2(value) {
+  return value === void 0;
+}
+function IsNull2(value) {
+  return value === null;
+}
+function IsBoolean2(value) {
+  return typeof value === "boolean";
+}
+function IsNumber2(value) {
+  return typeof value === "number";
+}
+function IsInteger(value) {
+  return globalThis.Number.isInteger(value);
+}
+function IsBigInt2(value) {
+  return typeof value === "bigint";
+}
+function IsString2(value) {
+  return typeof value === "string";
+}
+function IsFunction2(value) {
+  return typeof value === "function";
+}
+function IsSymbol2(value) {
+  return typeof value === "symbol";
+}
+function IsValueType(value) {
+  return IsBigInt2(value) || IsBoolean2(value) || IsNull2(value) || IsNumber2(value) || IsString2(value) || IsSymbol2(value) || IsUndefined2(value);
+}
+var init_guard = __esm({
+  "node_modules/@sinclair/typebox/build/esm/value/guard/guard.mjs"() {
+    __name(IsAsyncIterator2, "IsAsyncIterator");
+    __name(IsIterator2, "IsIterator");
+    __name(IsStandardObject, "IsStandardObject");
+    __name(IsInstanceObject, "IsInstanceObject");
+    __name(IsPromise, "IsPromise");
+    __name(IsDate2, "IsDate");
+    __name(IsMap, "IsMap");
+    __name(IsSet, "IsSet");
+    __name(IsRegExp2, "IsRegExp");
+    __name(IsTypedArray, "IsTypedArray");
+    __name(IsInt8Array, "IsInt8Array");
+    __name(IsUint8Array2, "IsUint8Array");
+    __name(IsUint8ClampedArray, "IsUint8ClampedArray");
+    __name(IsInt16Array, "IsInt16Array");
+    __name(IsUint16Array, "IsUint16Array");
+    __name(IsInt32Array, "IsInt32Array");
+    __name(IsUint32Array, "IsUint32Array");
+    __name(IsFloat32Array, "IsFloat32Array");
+    __name(IsFloat64Array, "IsFloat64Array");
+    __name(IsBigInt64Array, "IsBigInt64Array");
+    __name(IsBigUint64Array, "IsBigUint64Array");
+    __name(HasPropertyKey2, "HasPropertyKey");
+    __name(IsObject2, "IsObject");
+    __name(IsArray2, "IsArray");
+    __name(IsUndefined2, "IsUndefined");
+    __name(IsNull2, "IsNull");
+    __name(IsBoolean2, "IsBoolean");
+    __name(IsNumber2, "IsNumber");
+    __name(IsInteger, "IsInteger");
+    __name(IsBigInt2, "IsBigInt");
+    __name(IsString2, "IsString");
+    __name(IsFunction2, "IsFunction");
+    __name(IsSymbol2, "IsSymbol");
+    __name(IsValueType, "IsValueType");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/value/guard/index.mjs
+var init_guard2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/value/guard/index.mjs"() {
+    init_guard();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/system/policy.mjs
+var TypeSystemPolicy;
+var init_policy = __esm({
+  "node_modules/@sinclair/typebox/build/esm/system/policy.mjs"() {
+    init_guard2();
+    (function(TypeSystemPolicy2) {
+      TypeSystemPolicy2.InstanceMode = "default";
+      TypeSystemPolicy2.ExactOptionalPropertyTypes = false;
+      TypeSystemPolicy2.AllowArrayObject = false;
+      TypeSystemPolicy2.AllowNaN = false;
+      TypeSystemPolicy2.AllowNullVoid = false;
+      function IsExactOptionalProperty(value, key) {
+        return TypeSystemPolicy2.ExactOptionalPropertyTypes ? key in value : value[key] !== void 0;
+      }
+      __name(IsExactOptionalProperty, "IsExactOptionalProperty");
+      TypeSystemPolicy2.IsExactOptionalProperty = IsExactOptionalProperty;
+      function IsObjectLike(value) {
+        const isObject = IsObject2(value);
+        return TypeSystemPolicy2.AllowArrayObject ? isObject : isObject && !IsArray2(value);
+      }
+      __name(IsObjectLike, "IsObjectLike");
+      TypeSystemPolicy2.IsObjectLike = IsObjectLike;
+      function IsRecordLike(value) {
+        return IsObjectLike(value) && !(value instanceof Date) && !(value instanceof Uint8Array);
+      }
+      __name(IsRecordLike, "IsRecordLike");
+      TypeSystemPolicy2.IsRecordLike = IsRecordLike;
+      function IsNumberLike(value) {
+        return TypeSystemPolicy2.AllowNaN ? IsNumber2(value) : Number.isFinite(value);
+      }
+      __name(IsNumberLike, "IsNumberLike");
+      TypeSystemPolicy2.IsNumberLike = IsNumberLike;
+      function IsVoidLike(value) {
+        const isUndefined = IsUndefined2(value);
+        return TypeSystemPolicy2.AllowNullVoid ? isUndefined || value === null : isUndefined;
+      }
+      __name(IsVoidLike, "IsVoidLike");
+      TypeSystemPolicy2.IsVoidLike = IsVoidLike;
+    })(TypeSystemPolicy || (TypeSystemPolicy = {}));
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/create/immutable.mjs
+function ImmutableArray(value) {
+  return globalThis.Object.freeze(value).map((value2) => Immutable(value2));
+}
+function ImmutableDate(value) {
+  return value;
+}
+function ImmutableUint8Array(value) {
+  return value;
+}
+function ImmutableRegExp(value) {
+  return value;
+}
+function ImmutableObject(value) {
+  const result = {};
+  for (const key of Object.getOwnPropertyNames(value)) {
+    result[key] = Immutable(value[key]);
+  }
+  for (const key of Object.getOwnPropertySymbols(value)) {
+    result[key] = Immutable(value[key]);
+  }
+  return globalThis.Object.freeze(result);
+}
+function Immutable(value) {
+  return IsArray(value) ? ImmutableArray(value) : IsDate(value) ? ImmutableDate(value) : IsUint8Array(value) ? ImmutableUint8Array(value) : IsRegExp(value) ? ImmutableRegExp(value) : IsObject(value) ? ImmutableObject(value) : value;
+}
+var init_immutable = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/create/immutable.mjs"() {
+    init_value();
+    __name(ImmutableArray, "ImmutableArray");
+    __name(ImmutableDate, "ImmutableDate");
+    __name(ImmutableUint8Array, "ImmutableUint8Array");
+    __name(ImmutableRegExp, "ImmutableRegExp");
+    __name(ImmutableObject, "ImmutableObject");
+    __name(Immutable, "Immutable");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/create/type.mjs
+function CreateType(schema, options) {
+  const result = options !== void 0 ? { ...options, ...schema } : schema;
+  switch (TypeSystemPolicy.InstanceMode) {
+    case "freeze":
+      return Immutable(result);
+    case "clone":
+      return Clone(result);
+    default:
+      return result;
+  }
+}
+var init_type2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/create/type.mjs"() {
+    init_policy();
+    init_immutable();
+    init_value2();
+    __name(CreateType, "CreateType");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/create/index.mjs
+var init_create = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/create/index.mjs"() {
+    init_type2();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/error/error.mjs
+var TypeBoxError;
+var init_error = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/error/error.mjs"() {
+    TypeBoxError = class extends Error {
       static {
-        __name(this, "ConfigNode");
+        __name(this, "TypeBoxError");
       }
-      constructor(config2) {
-        super(config2);
+      constructor(message) {
+        super(message);
       }
     };
   }
 });
 
-// remote-server-inputs-schema.ts
-var remote_server_inputs_schema_exports = {};
-__export(remote_server_inputs_schema_exports, {
-  default: () => remote_server_inputs_schema_default
+// node_modules/@sinclair/typebox/build/esm/type/error/index.mjs
+var init_error2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/error/index.mjs"() {
+    init_error();
+  }
 });
-var InputsSchema, remote_server_inputs_schema_default;
-var init_remote_server_inputs_schema = __esm({
-  "remote-server-inputs-schema.ts"() {
+
+// node_modules/@sinclair/typebox/build/esm/type/symbols/symbols.mjs
+var TransformKind, ReadonlyKind, OptionalKind, Hint, Kind;
+var init_symbols = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/symbols/symbols.mjs"() {
+    TransformKind = Symbol.for("TypeBox.Transform");
+    ReadonlyKind = Symbol.for("TypeBox.Readonly");
+    OptionalKind = Symbol.for("TypeBox.Optional");
+    Hint = Symbol.for("TypeBox.Hint");
+    Kind = Symbol.for("TypeBox.Kind");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/symbols/index.mjs
+var init_symbols2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/symbols/index.mjs"() {
+    init_symbols();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/guard/kind.mjs
+function IsReadonly(value) {
+  return IsObject(value) && value[ReadonlyKind] === "Readonly";
+}
+function IsOptional(value) {
+  return IsObject(value) && value[OptionalKind] === "Optional";
+}
+function IsAny(value) {
+  return IsKindOf(value, "Any");
+}
+function IsArgument(value) {
+  return IsKindOf(value, "Argument");
+}
+function IsArray3(value) {
+  return IsKindOf(value, "Array");
+}
+function IsAsyncIterator3(value) {
+  return IsKindOf(value, "AsyncIterator");
+}
+function IsBigInt3(value) {
+  return IsKindOf(value, "BigInt");
+}
+function IsBoolean3(value) {
+  return IsKindOf(value, "Boolean");
+}
+function IsComputed(value) {
+  return IsKindOf(value, "Computed");
+}
+function IsConstructor(value) {
+  return IsKindOf(value, "Constructor");
+}
+function IsDate3(value) {
+  return IsKindOf(value, "Date");
+}
+function IsFunction3(value) {
+  return IsKindOf(value, "Function");
+}
+function IsImport(value) {
+  return IsKindOf(value, "Import");
+}
+function IsInteger2(value) {
+  return IsKindOf(value, "Integer");
+}
+function IsProperties(value) {
+  return IsObject(value);
+}
+function IsIntersect(value) {
+  return IsKindOf(value, "Intersect");
+}
+function IsIterator3(value) {
+  return IsKindOf(value, "Iterator");
+}
+function IsKindOf(value, kind) {
+  return IsObject(value) && Kind in value && value[Kind] === kind;
+}
+function IsLiteralString(value) {
+  return IsLiteral(value) && IsString(value.const);
+}
+function IsLiteralNumber(value) {
+  return IsLiteral(value) && IsNumber(value.const);
+}
+function IsLiteralBoolean(value) {
+  return IsLiteral(value) && IsBoolean(value.const);
+}
+function IsLiteralValue(value) {
+  return IsBoolean(value) || IsNumber(value) || IsString(value);
+}
+function IsLiteral(value) {
+  return IsKindOf(value, "Literal");
+}
+function IsMappedKey(value) {
+  return IsKindOf(value, "MappedKey");
+}
+function IsMappedResult(value) {
+  return IsKindOf(value, "MappedResult");
+}
+function IsNever(value) {
+  return IsKindOf(value, "Never");
+}
+function IsNot(value) {
+  return IsKindOf(value, "Not");
+}
+function IsNull3(value) {
+  return IsKindOf(value, "Null");
+}
+function IsNumber3(value) {
+  return IsKindOf(value, "Number");
+}
+function IsObject3(value) {
+  return IsKindOf(value, "Object");
+}
+function IsPromise2(value) {
+  return IsKindOf(value, "Promise");
+}
+function IsRecord(value) {
+  return IsKindOf(value, "Record");
+}
+function IsRecursive(value) {
+  return IsObject(value) && Hint in value && value[Hint] === "Recursive";
+}
+function IsRef(value) {
+  return IsKindOf(value, "Ref");
+}
+function IsRegExp3(value) {
+  return IsKindOf(value, "RegExp");
+}
+function IsString3(value) {
+  return IsKindOf(value, "String");
+}
+function IsSymbol3(value) {
+  return IsKindOf(value, "Symbol");
+}
+function IsTemplateLiteral(value) {
+  return IsKindOf(value, "TemplateLiteral");
+}
+function IsThis(value) {
+  return IsKindOf(value, "This");
+}
+function IsTransform(value) {
+  return IsObject(value) && TransformKind in value;
+}
+function IsTuple(value) {
+  return IsKindOf(value, "Tuple");
+}
+function IsUndefined3(value) {
+  return IsKindOf(value, "Undefined");
+}
+function IsUnion(value) {
+  return IsKindOf(value, "Union");
+}
+function IsUint8Array3(value) {
+  return IsKindOf(value, "Uint8Array");
+}
+function IsUnknown(value) {
+  return IsKindOf(value, "Unknown");
+}
+function IsUnsafe(value) {
+  return IsKindOf(value, "Unsafe");
+}
+function IsVoid(value) {
+  return IsKindOf(value, "Void");
+}
+function IsKind(value) {
+  return IsObject(value) && Kind in value && IsString(value[Kind]);
+}
+function IsSchema(value) {
+  return IsAny(value) || IsArgument(value) || IsArray3(value) || IsBoolean3(value) || IsBigInt3(value) || IsAsyncIterator3(value) || IsComputed(value) || IsConstructor(value) || IsDate3(value) || IsFunction3(value) || IsInteger2(value) || IsIntersect(value) || IsIterator3(value) || IsLiteral(value) || IsMappedKey(value) || IsMappedResult(value) || IsNever(value) || IsNot(value) || IsNull3(value) || IsNumber3(value) || IsObject3(value) || IsPromise2(value) || IsRecord(value) || IsRef(value) || IsRegExp3(value) || IsString3(value) || IsSymbol3(value) || IsTemplateLiteral(value) || IsThis(value) || IsTuple(value) || IsUndefined3(value) || IsUnion(value) || IsUint8Array3(value) || IsUnknown(value) || IsUnsafe(value) || IsVoid(value) || IsKind(value);
+}
+var init_kind = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/guard/kind.mjs"() {
+    init_value();
+    init_symbols2();
+    __name(IsReadonly, "IsReadonly");
+    __name(IsOptional, "IsOptional");
+    __name(IsAny, "IsAny");
+    __name(IsArgument, "IsArgument");
+    __name(IsArray3, "IsArray");
+    __name(IsAsyncIterator3, "IsAsyncIterator");
+    __name(IsBigInt3, "IsBigInt");
+    __name(IsBoolean3, "IsBoolean");
+    __name(IsComputed, "IsComputed");
+    __name(IsConstructor, "IsConstructor");
+    __name(IsDate3, "IsDate");
+    __name(IsFunction3, "IsFunction");
+    __name(IsImport, "IsImport");
+    __name(IsInteger2, "IsInteger");
+    __name(IsProperties, "IsProperties");
+    __name(IsIntersect, "IsIntersect");
+    __name(IsIterator3, "IsIterator");
+    __name(IsKindOf, "IsKindOf");
+    __name(IsLiteralString, "IsLiteralString");
+    __name(IsLiteralNumber, "IsLiteralNumber");
+    __name(IsLiteralBoolean, "IsLiteralBoolean");
+    __name(IsLiteralValue, "IsLiteralValue");
+    __name(IsLiteral, "IsLiteral");
+    __name(IsMappedKey, "IsMappedKey");
+    __name(IsMappedResult, "IsMappedResult");
+    __name(IsNever, "IsNever");
+    __name(IsNot, "IsNot");
+    __name(IsNull3, "IsNull");
+    __name(IsNumber3, "IsNumber");
+    __name(IsObject3, "IsObject");
+    __name(IsPromise2, "IsPromise");
+    __name(IsRecord, "IsRecord");
+    __name(IsRecursive, "IsRecursive");
+    __name(IsRef, "IsRef");
+    __name(IsRegExp3, "IsRegExp");
+    __name(IsString3, "IsString");
+    __name(IsSymbol3, "IsSymbol");
+    __name(IsTemplateLiteral, "IsTemplateLiteral");
+    __name(IsThis, "IsThis");
+    __name(IsTransform, "IsTransform");
+    __name(IsTuple, "IsTuple");
+    __name(IsUndefined3, "IsUndefined");
+    __name(IsUnion, "IsUnion");
+    __name(IsUint8Array3, "IsUint8Array");
+    __name(IsUnknown, "IsUnknown");
+    __name(IsUnsafe, "IsUnsafe");
+    __name(IsVoid, "IsVoid");
+    __name(IsKind, "IsKind");
+    __name(IsSchema, "IsSchema");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/guard/type.mjs
+var type_exports = {};
+__export(type_exports, {
+  IsAny: () => IsAny2,
+  IsArgument: () => IsArgument2,
+  IsArray: () => IsArray4,
+  IsAsyncIterator: () => IsAsyncIterator4,
+  IsBigInt: () => IsBigInt4,
+  IsBoolean: () => IsBoolean4,
+  IsComputed: () => IsComputed2,
+  IsConstructor: () => IsConstructor2,
+  IsDate: () => IsDate4,
+  IsFunction: () => IsFunction4,
+  IsImport: () => IsImport2,
+  IsInteger: () => IsInteger3,
+  IsIntersect: () => IsIntersect2,
+  IsIterator: () => IsIterator4,
+  IsKind: () => IsKind2,
+  IsKindOf: () => IsKindOf2,
+  IsLiteral: () => IsLiteral2,
+  IsLiteralBoolean: () => IsLiteralBoolean2,
+  IsLiteralNumber: () => IsLiteralNumber2,
+  IsLiteralString: () => IsLiteralString2,
+  IsLiteralValue: () => IsLiteralValue2,
+  IsMappedKey: () => IsMappedKey2,
+  IsMappedResult: () => IsMappedResult2,
+  IsNever: () => IsNever2,
+  IsNot: () => IsNot2,
+  IsNull: () => IsNull4,
+  IsNumber: () => IsNumber4,
+  IsObject: () => IsObject4,
+  IsOptional: () => IsOptional2,
+  IsPromise: () => IsPromise3,
+  IsProperties: () => IsProperties2,
+  IsReadonly: () => IsReadonly2,
+  IsRecord: () => IsRecord2,
+  IsRecursive: () => IsRecursive2,
+  IsRef: () => IsRef2,
+  IsRegExp: () => IsRegExp4,
+  IsSchema: () => IsSchema2,
+  IsString: () => IsString4,
+  IsSymbol: () => IsSymbol4,
+  IsTemplateLiteral: () => IsTemplateLiteral2,
+  IsThis: () => IsThis2,
+  IsTransform: () => IsTransform2,
+  IsTuple: () => IsTuple2,
+  IsUint8Array: () => IsUint8Array4,
+  IsUndefined: () => IsUndefined4,
+  IsUnion: () => IsUnion2,
+  IsUnionLiteral: () => IsUnionLiteral,
+  IsUnknown: () => IsUnknown2,
+  IsUnsafe: () => IsUnsafe2,
+  IsVoid: () => IsVoid2,
+  TypeGuardUnknownTypeError: () => TypeGuardUnknownTypeError
+});
+function IsPattern(value) {
+  try {
+    new RegExp(value);
+    return true;
+  } catch {
+    return false;
+  }
+}
+function IsControlCharacterFree(value) {
+  if (!IsString(value))
+    return false;
+  for (let i = 0; i < value.length; i++) {
+    const code = value.charCodeAt(i);
+    if (code >= 7 && code <= 13 || code === 27 || code === 127) {
+      return false;
+    }
+  }
+  return true;
+}
+function IsAdditionalProperties(value) {
+  return IsOptionalBoolean(value) || IsSchema2(value);
+}
+function IsOptionalBigInt(value) {
+  return IsUndefined(value) || IsBigInt(value);
+}
+function IsOptionalNumber(value) {
+  return IsUndefined(value) || IsNumber(value);
+}
+function IsOptionalBoolean(value) {
+  return IsUndefined(value) || IsBoolean(value);
+}
+function IsOptionalString(value) {
+  return IsUndefined(value) || IsString(value);
+}
+function IsOptionalPattern(value) {
+  return IsUndefined(value) || IsString(value) && IsControlCharacterFree(value) && IsPattern(value);
+}
+function IsOptionalFormat(value) {
+  return IsUndefined(value) || IsString(value) && IsControlCharacterFree(value);
+}
+function IsOptionalSchema(value) {
+  return IsUndefined(value) || IsSchema2(value);
+}
+function IsReadonly2(value) {
+  return IsObject(value) && value[ReadonlyKind] === "Readonly";
+}
+function IsOptional2(value) {
+  return IsObject(value) && value[OptionalKind] === "Optional";
+}
+function IsAny2(value) {
+  return IsKindOf2(value, "Any") && IsOptionalString(value.$id);
+}
+function IsArgument2(value) {
+  return IsKindOf2(value, "Argument") && IsNumber(value.index);
+}
+function IsArray4(value) {
+  return IsKindOf2(value, "Array") && value.type === "array" && IsOptionalString(value.$id) && IsSchema2(value.items) && IsOptionalNumber(value.minItems) && IsOptionalNumber(value.maxItems) && IsOptionalBoolean(value.uniqueItems) && IsOptionalSchema(value.contains) && IsOptionalNumber(value.minContains) && IsOptionalNumber(value.maxContains);
+}
+function IsAsyncIterator4(value) {
+  return IsKindOf2(value, "AsyncIterator") && value.type === "AsyncIterator" && IsOptionalString(value.$id) && IsSchema2(value.items);
+}
+function IsBigInt4(value) {
+  return IsKindOf2(value, "BigInt") && value.type === "bigint" && IsOptionalString(value.$id) && IsOptionalBigInt(value.exclusiveMaximum) && IsOptionalBigInt(value.exclusiveMinimum) && IsOptionalBigInt(value.maximum) && IsOptionalBigInt(value.minimum) && IsOptionalBigInt(value.multipleOf);
+}
+function IsBoolean4(value) {
+  return IsKindOf2(value, "Boolean") && value.type === "boolean" && IsOptionalString(value.$id);
+}
+function IsComputed2(value) {
+  return IsKindOf2(value, "Computed") && IsString(value.target) && IsArray(value.parameters) && value.parameters.every((schema) => IsSchema2(schema));
+}
+function IsConstructor2(value) {
+  return IsKindOf2(value, "Constructor") && value.type === "Constructor" && IsOptionalString(value.$id) && IsArray(value.parameters) && value.parameters.every((schema) => IsSchema2(schema)) && IsSchema2(value.returns);
+}
+function IsDate4(value) {
+  return IsKindOf2(value, "Date") && value.type === "Date" && IsOptionalString(value.$id) && IsOptionalNumber(value.exclusiveMaximumTimestamp) && IsOptionalNumber(value.exclusiveMinimumTimestamp) && IsOptionalNumber(value.maximumTimestamp) && IsOptionalNumber(value.minimumTimestamp) && IsOptionalNumber(value.multipleOfTimestamp);
+}
+function IsFunction4(value) {
+  return IsKindOf2(value, "Function") && value.type === "Function" && IsOptionalString(value.$id) && IsArray(value.parameters) && value.parameters.every((schema) => IsSchema2(schema)) && IsSchema2(value.returns);
+}
+function IsImport2(value) {
+  return IsKindOf2(value, "Import") && HasPropertyKey(value, "$defs") && IsObject(value.$defs) && IsProperties2(value.$defs) && HasPropertyKey(value, "$ref") && IsString(value.$ref) && value.$ref in value.$defs;
+}
+function IsInteger3(value) {
+  return IsKindOf2(value, "Integer") && value.type === "integer" && IsOptionalString(value.$id) && IsOptionalNumber(value.exclusiveMaximum) && IsOptionalNumber(value.exclusiveMinimum) && IsOptionalNumber(value.maximum) && IsOptionalNumber(value.minimum) && IsOptionalNumber(value.multipleOf);
+}
+function IsProperties2(value) {
+  return IsObject(value) && Object.entries(value).every(([key, schema]) => IsControlCharacterFree(key) && IsSchema2(schema));
+}
+function IsIntersect2(value) {
+  return IsKindOf2(value, "Intersect") && (IsString(value.type) && value.type !== "object" ? false : true) && IsArray(value.allOf) && value.allOf.every((schema) => IsSchema2(schema) && !IsTransform2(schema)) && IsOptionalString(value.type) && (IsOptionalBoolean(value.unevaluatedProperties) || IsOptionalSchema(value.unevaluatedProperties)) && IsOptionalString(value.$id);
+}
+function IsIterator4(value) {
+  return IsKindOf2(value, "Iterator") && value.type === "Iterator" && IsOptionalString(value.$id) && IsSchema2(value.items);
+}
+function IsKindOf2(value, kind) {
+  return IsObject(value) && Kind in value && value[Kind] === kind;
+}
+function IsLiteralString2(value) {
+  return IsLiteral2(value) && IsString(value.const);
+}
+function IsLiteralNumber2(value) {
+  return IsLiteral2(value) && IsNumber(value.const);
+}
+function IsLiteralBoolean2(value) {
+  return IsLiteral2(value) && IsBoolean(value.const);
+}
+function IsLiteral2(value) {
+  return IsKindOf2(value, "Literal") && IsOptionalString(value.$id) && IsLiteralValue2(value.const);
+}
+function IsLiteralValue2(value) {
+  return IsBoolean(value) || IsNumber(value) || IsString(value);
+}
+function IsMappedKey2(value) {
+  return IsKindOf2(value, "MappedKey") && IsArray(value.keys) && value.keys.every((key) => IsNumber(key) || IsString(key));
+}
+function IsMappedResult2(value) {
+  return IsKindOf2(value, "MappedResult") && IsProperties2(value.properties);
+}
+function IsNever2(value) {
+  return IsKindOf2(value, "Never") && IsObject(value.not) && Object.getOwnPropertyNames(value.not).length === 0;
+}
+function IsNot2(value) {
+  return IsKindOf2(value, "Not") && IsSchema2(value.not);
+}
+function IsNull4(value) {
+  return IsKindOf2(value, "Null") && value.type === "null" && IsOptionalString(value.$id);
+}
+function IsNumber4(value) {
+  return IsKindOf2(value, "Number") && value.type === "number" && IsOptionalString(value.$id) && IsOptionalNumber(value.exclusiveMaximum) && IsOptionalNumber(value.exclusiveMinimum) && IsOptionalNumber(value.maximum) && IsOptionalNumber(value.minimum) && IsOptionalNumber(value.multipleOf);
+}
+function IsObject4(value) {
+  return IsKindOf2(value, "Object") && value.type === "object" && IsOptionalString(value.$id) && IsProperties2(value.properties) && IsAdditionalProperties(value.additionalProperties) && IsOptionalNumber(value.minProperties) && IsOptionalNumber(value.maxProperties);
+}
+function IsPromise3(value) {
+  return IsKindOf2(value, "Promise") && value.type === "Promise" && IsOptionalString(value.$id) && IsSchema2(value.item);
+}
+function IsRecord2(value) {
+  return IsKindOf2(value, "Record") && value.type === "object" && IsOptionalString(value.$id) && IsAdditionalProperties(value.additionalProperties) && IsObject(value.patternProperties) && ((schema) => {
+    const keys = Object.getOwnPropertyNames(schema.patternProperties);
+    return keys.length === 1 && IsPattern(keys[0]) && IsObject(schema.patternProperties) && IsSchema2(schema.patternProperties[keys[0]]);
+  })(value);
+}
+function IsRecursive2(value) {
+  return IsObject(value) && Hint in value && value[Hint] === "Recursive";
+}
+function IsRef2(value) {
+  return IsKindOf2(value, "Ref") && IsOptionalString(value.$id) && IsString(value.$ref);
+}
+function IsRegExp4(value) {
+  return IsKindOf2(value, "RegExp") && IsOptionalString(value.$id) && IsString(value.source) && IsString(value.flags) && IsOptionalNumber(value.maxLength) && IsOptionalNumber(value.minLength);
+}
+function IsString4(value) {
+  return IsKindOf2(value, "String") && value.type === "string" && IsOptionalString(value.$id) && IsOptionalNumber(value.minLength) && IsOptionalNumber(value.maxLength) && IsOptionalPattern(value.pattern) && IsOptionalFormat(value.format);
+}
+function IsSymbol4(value) {
+  return IsKindOf2(value, "Symbol") && value.type === "symbol" && IsOptionalString(value.$id);
+}
+function IsTemplateLiteral2(value) {
+  return IsKindOf2(value, "TemplateLiteral") && value.type === "string" && IsString(value.pattern) && value.pattern[0] === "^" && value.pattern[value.pattern.length - 1] === "$";
+}
+function IsThis2(value) {
+  return IsKindOf2(value, "This") && IsOptionalString(value.$id) && IsString(value.$ref);
+}
+function IsTransform2(value) {
+  return IsObject(value) && TransformKind in value;
+}
+function IsTuple2(value) {
+  return IsKindOf2(value, "Tuple") && value.type === "array" && IsOptionalString(value.$id) && IsNumber(value.minItems) && IsNumber(value.maxItems) && value.minItems === value.maxItems && // empty
+  (IsUndefined(value.items) && IsUndefined(value.additionalItems) && value.minItems === 0 || IsArray(value.items) && value.items.every((schema) => IsSchema2(schema)));
+}
+function IsUndefined4(value) {
+  return IsKindOf2(value, "Undefined") && value.type === "undefined" && IsOptionalString(value.$id);
+}
+function IsUnionLiteral(value) {
+  return IsUnion2(value) && value.anyOf.every((schema) => IsLiteralString2(schema) || IsLiteralNumber2(schema));
+}
+function IsUnion2(value) {
+  return IsKindOf2(value, "Union") && IsOptionalString(value.$id) && IsObject(value) && IsArray(value.anyOf) && value.anyOf.every((schema) => IsSchema2(schema));
+}
+function IsUint8Array4(value) {
+  return IsKindOf2(value, "Uint8Array") && value.type === "Uint8Array" && IsOptionalString(value.$id) && IsOptionalNumber(value.minByteLength) && IsOptionalNumber(value.maxByteLength);
+}
+function IsUnknown2(value) {
+  return IsKindOf2(value, "Unknown") && IsOptionalString(value.$id);
+}
+function IsUnsafe2(value) {
+  return IsKindOf2(value, "Unsafe");
+}
+function IsVoid2(value) {
+  return IsKindOf2(value, "Void") && value.type === "void" && IsOptionalString(value.$id);
+}
+function IsKind2(value) {
+  return IsObject(value) && Kind in value && IsString(value[Kind]) && !KnownTypes.includes(value[Kind]);
+}
+function IsSchema2(value) {
+  return IsObject(value) && (IsAny2(value) || IsArgument2(value) || IsArray4(value) || IsBoolean4(value) || IsBigInt4(value) || IsAsyncIterator4(value) || IsComputed2(value) || IsConstructor2(value) || IsDate4(value) || IsFunction4(value) || IsInteger3(value) || IsIntersect2(value) || IsIterator4(value) || IsLiteral2(value) || IsMappedKey2(value) || IsMappedResult2(value) || IsNever2(value) || IsNot2(value) || IsNull4(value) || IsNumber4(value) || IsObject4(value) || IsPromise3(value) || IsRecord2(value) || IsRef2(value) || IsRegExp4(value) || IsString4(value) || IsSymbol4(value) || IsTemplateLiteral2(value) || IsThis2(value) || IsTuple2(value) || IsUndefined4(value) || IsUnion2(value) || IsUint8Array4(value) || IsUnknown2(value) || IsUnsafe2(value) || IsVoid2(value) || IsKind2(value));
+}
+var TypeGuardUnknownTypeError, KnownTypes;
+var init_type3 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/guard/type.mjs"() {
+    init_value();
+    init_symbols2();
+    init_error2();
+    TypeGuardUnknownTypeError = class extends TypeBoxError {
+      static {
+        __name(this, "TypeGuardUnknownTypeError");
+      }
+    };
+    KnownTypes = [
+      "Argument",
+      "Any",
+      "Array",
+      "AsyncIterator",
+      "BigInt",
+      "Boolean",
+      "Computed",
+      "Constructor",
+      "Date",
+      "Enum",
+      "Function",
+      "Integer",
+      "Intersect",
+      "Iterator",
+      "Literal",
+      "MappedKey",
+      "MappedResult",
+      "Not",
+      "Null",
+      "Number",
+      "Object",
+      "Promise",
+      "Record",
+      "Ref",
+      "RegExp",
+      "String",
+      "Symbol",
+      "TemplateLiteral",
+      "This",
+      "Tuple",
+      "Undefined",
+      "Union",
+      "Uint8Array",
+      "Unknown",
+      "Void"
+    ];
+    __name(IsPattern, "IsPattern");
+    __name(IsControlCharacterFree, "IsControlCharacterFree");
+    __name(IsAdditionalProperties, "IsAdditionalProperties");
+    __name(IsOptionalBigInt, "IsOptionalBigInt");
+    __name(IsOptionalNumber, "IsOptionalNumber");
+    __name(IsOptionalBoolean, "IsOptionalBoolean");
+    __name(IsOptionalString, "IsOptionalString");
+    __name(IsOptionalPattern, "IsOptionalPattern");
+    __name(IsOptionalFormat, "IsOptionalFormat");
+    __name(IsOptionalSchema, "IsOptionalSchema");
+    __name(IsReadonly2, "IsReadonly");
+    __name(IsOptional2, "IsOptional");
+    __name(IsAny2, "IsAny");
+    __name(IsArgument2, "IsArgument");
+    __name(IsArray4, "IsArray");
+    __name(IsAsyncIterator4, "IsAsyncIterator");
+    __name(IsBigInt4, "IsBigInt");
+    __name(IsBoolean4, "IsBoolean");
+    __name(IsComputed2, "IsComputed");
+    __name(IsConstructor2, "IsConstructor");
+    __name(IsDate4, "IsDate");
+    __name(IsFunction4, "IsFunction");
+    __name(IsImport2, "IsImport");
+    __name(IsInteger3, "IsInteger");
+    __name(IsProperties2, "IsProperties");
+    __name(IsIntersect2, "IsIntersect");
+    __name(IsIterator4, "IsIterator");
+    __name(IsKindOf2, "IsKindOf");
+    __name(IsLiteralString2, "IsLiteralString");
+    __name(IsLiteralNumber2, "IsLiteralNumber");
+    __name(IsLiteralBoolean2, "IsLiteralBoolean");
+    __name(IsLiteral2, "IsLiteral");
+    __name(IsLiteralValue2, "IsLiteralValue");
+    __name(IsMappedKey2, "IsMappedKey");
+    __name(IsMappedResult2, "IsMappedResult");
+    __name(IsNever2, "IsNever");
+    __name(IsNot2, "IsNot");
+    __name(IsNull4, "IsNull");
+    __name(IsNumber4, "IsNumber");
+    __name(IsObject4, "IsObject");
+    __name(IsPromise3, "IsPromise");
+    __name(IsRecord2, "IsRecord");
+    __name(IsRecursive2, "IsRecursive");
+    __name(IsRef2, "IsRef");
+    __name(IsRegExp4, "IsRegExp");
+    __name(IsString4, "IsString");
+    __name(IsSymbol4, "IsSymbol");
+    __name(IsTemplateLiteral2, "IsTemplateLiteral");
+    __name(IsThis2, "IsThis");
+    __name(IsTransform2, "IsTransform");
+    __name(IsTuple2, "IsTuple");
+    __name(IsUndefined4, "IsUndefined");
+    __name(IsUnionLiteral, "IsUnionLiteral");
+    __name(IsUnion2, "IsUnion");
+    __name(IsUint8Array4, "IsUint8Array");
+    __name(IsUnknown2, "IsUnknown");
+    __name(IsUnsafe2, "IsUnsafe");
+    __name(IsVoid2, "IsVoid");
+    __name(IsKind2, "IsKind");
+    __name(IsSchema2, "IsSchema");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/guard/index.mjs
+var init_guard3 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/guard/index.mjs"() {
+    init_kind();
+    init_type3();
+    init_value();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/helpers/helpers.mjs
+var init_helpers = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/helpers/helpers.mjs"() {
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/helpers/index.mjs
+var init_helpers2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/helpers/index.mjs"() {
+    init_helpers();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/patterns/patterns.mjs
+var PatternBoolean, PatternNumber, PatternString, PatternNever, PatternBooleanExact, PatternNumberExact, PatternStringExact, PatternNeverExact;
+var init_patterns = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/patterns/patterns.mjs"() {
+    PatternBoolean = "(true|false)";
+    PatternNumber = "(0|[1-9][0-9]*)";
+    PatternString = "(.*)";
+    PatternNever = "(?!.*)";
+    PatternBooleanExact = `^${PatternBoolean}$`;
+    PatternNumberExact = `^${PatternNumber}$`;
+    PatternStringExact = `^${PatternString}$`;
+    PatternNeverExact = `^${PatternNever}$`;
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/patterns/index.mjs
+var init_patterns2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/patterns/index.mjs"() {
+    init_patterns();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/registry/format.mjs
+var init_format = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/registry/format.mjs"() {
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/registry/type.mjs
+var init_type4 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/registry/type.mjs"() {
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/registry/index.mjs
+var init_registry = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/registry/index.mjs"() {
+    init_format();
+    init_type4();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/sets/set.mjs
+function SetIncludes(T, S) {
+  return T.includes(S);
+}
+function SetIsSubset(T, S) {
+  return T.every((L) => SetIncludes(S, L));
+}
+function SetDistinct(T) {
+  return [...new Set(T)];
+}
+function SetIntersect(T, S) {
+  return T.filter((L) => S.includes(L));
+}
+function SetUnion(T, S) {
+  return [...T, ...S];
+}
+function SetComplement(T, S) {
+  return T.filter((L) => !S.includes(L));
+}
+function SetIntersectManyResolve(T, Init) {
+  return T.reduce((Acc, L) => {
+    return SetIntersect(Acc, L);
+  }, Init);
+}
+function SetIntersectMany(T) {
+  return T.length === 1 ? T[0] : T.length > 1 ? SetIntersectManyResolve(T.slice(1), T[0]) : [];
+}
+function SetUnionMany(T) {
+  const Acc = [];
+  for (const L of T)
+    Acc.push(...L);
+  return Acc;
+}
+var init_set = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/sets/set.mjs"() {
+    __name(SetIncludes, "SetIncludes");
+    __name(SetIsSubset, "SetIsSubset");
+    __name(SetDistinct, "SetDistinct");
+    __name(SetIntersect, "SetIntersect");
+    __name(SetUnion, "SetUnion");
+    __name(SetComplement, "SetComplement");
+    __name(SetIntersectManyResolve, "SetIntersectManyResolve");
+    __name(SetIntersectMany, "SetIntersectMany");
+    __name(SetUnionMany, "SetUnionMany");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/sets/index.mjs
+var init_sets = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/sets/index.mjs"() {
+    init_set();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/any/any.mjs
+function Any(options) {
+  return CreateType({ [Kind]: "Any" }, options);
+}
+var init_any = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/any/any.mjs"() {
+    init_create();
+    init_symbols2();
+    __name(Any, "Any");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/any/index.mjs
+var init_any2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/any/index.mjs"() {
+    init_any();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/array/array.mjs
+function Array2(items, options) {
+  return CreateType({ [Kind]: "Array", type: "array", items }, options);
+}
+var init_array = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/array/array.mjs"() {
+    init_type2();
+    init_symbols2();
+    __name(Array2, "Array");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/array/index.mjs
+var init_array2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/array/index.mjs"() {
+    init_array();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/argument/argument.mjs
+function Argument(index) {
+  return CreateType({ [Kind]: "Argument", index });
+}
+var init_argument = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/argument/argument.mjs"() {
+    init_type2();
+    init_symbols2();
+    __name(Argument, "Argument");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/argument/index.mjs
+var init_argument2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/argument/index.mjs"() {
+    init_argument();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/async-iterator/async-iterator.mjs
+function AsyncIterator(items, options) {
+  return CreateType({ [Kind]: "AsyncIterator", type: "AsyncIterator", items }, options);
+}
+var init_async_iterator = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/async-iterator/async-iterator.mjs"() {
+    init_symbols2();
+    init_type2();
+    __name(AsyncIterator, "AsyncIterator");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/async-iterator/index.mjs
+var init_async_iterator2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/async-iterator/index.mjs"() {
+    init_async_iterator();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/computed/computed.mjs
+function Computed(target, parameters, options) {
+  return CreateType({ [Kind]: "Computed", target, parameters }, options);
+}
+var init_computed = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/computed/computed.mjs"() {
+    init_create();
+    init_symbols();
+    __name(Computed, "Computed");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/computed/index.mjs
+var init_computed2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/computed/index.mjs"() {
+    init_computed();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/discard/discard.mjs
+function DiscardKey(value, key) {
+  const { [key]: _, ...rest } = value;
+  return rest;
+}
+function Discard(value, keys) {
+  return keys.reduce((acc, key) => DiscardKey(acc, key), value);
+}
+var init_discard = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/discard/discard.mjs"() {
+    __name(DiscardKey, "DiscardKey");
+    __name(Discard, "Discard");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/discard/index.mjs
+var init_discard2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/discard/index.mjs"() {
+    init_discard();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/never/never.mjs
+function Never(options) {
+  return CreateType({ [Kind]: "Never", not: {} }, options);
+}
+var init_never = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/never/never.mjs"() {
+    init_type2();
+    init_symbols2();
+    __name(Never, "Never");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/never/index.mjs
+var init_never2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/never/index.mjs"() {
+    init_never();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/mapped/mapped-key.mjs
+var init_mapped_key = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/mapped/mapped-key.mjs"() {
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/mapped/mapped-result.mjs
+function MappedResult(properties) {
+  return CreateType({
+    [Kind]: "MappedResult",
+    properties
+  });
+}
+var init_mapped_result = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/mapped/mapped-result.mjs"() {
+    init_type2();
+    init_symbols2();
+    __name(MappedResult, "MappedResult");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/constructor/constructor.mjs
+function Constructor(parameters, returns, options) {
+  return CreateType({ [Kind]: "Constructor", type: "Constructor", parameters, returns }, options);
+}
+var init_constructor = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/constructor/constructor.mjs"() {
+    init_type2();
+    init_symbols2();
+    __name(Constructor, "Constructor");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/constructor/index.mjs
+var init_constructor2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/constructor/index.mjs"() {
+    init_constructor();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/function/function.mjs
+function Function2(parameters, returns, options) {
+  return CreateType({ [Kind]: "Function", type: "Function", parameters, returns }, options);
+}
+var init_function = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/function/function.mjs"() {
+    init_type2();
+    init_symbols2();
+    __name(Function2, "Function");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/function/index.mjs
+var init_function2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/function/index.mjs"() {
+    init_function();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/union/union-create.mjs
+function UnionCreate(T, options) {
+  return CreateType({ [Kind]: "Union", anyOf: T }, options);
+}
+var init_union_create = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/union/union-create.mjs"() {
+    init_type2();
+    init_symbols2();
+    __name(UnionCreate, "UnionCreate");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/union/union-evaluated.mjs
+function IsUnionOptional(types) {
+  return types.some((type) => IsOptional(type));
+}
+function RemoveOptionalFromRest(types) {
+  return types.map((left) => IsOptional(left) ? RemoveOptionalFromType(left) : left);
+}
+function RemoveOptionalFromType(T) {
+  return Discard(T, [OptionalKind]);
+}
+function ResolveUnion(types, options) {
+  const isOptional = IsUnionOptional(types);
+  return isOptional ? Optional(UnionCreate(RemoveOptionalFromRest(types), options)) : UnionCreate(RemoveOptionalFromRest(types), options);
+}
+function UnionEvaluated(T, options) {
+  return T.length === 1 ? CreateType(T[0], options) : T.length === 0 ? Never(options) : ResolveUnion(T, options);
+}
+var init_union_evaluated = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/union/union-evaluated.mjs"() {
+    init_type2();
+    init_symbols2();
+    init_discard2();
+    init_never2();
+    init_optional2();
+    init_union_create();
+    init_kind();
+    __name(IsUnionOptional, "IsUnionOptional");
+    __name(RemoveOptionalFromRest, "RemoveOptionalFromRest");
+    __name(RemoveOptionalFromType, "RemoveOptionalFromType");
+    __name(ResolveUnion, "ResolveUnion");
+    __name(UnionEvaluated, "UnionEvaluated");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/union/union-type.mjs
+var init_union_type = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/union/union-type.mjs"() {
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/union/union.mjs
+function Union(types, options) {
+  return types.length === 0 ? Never(options) : types.length === 1 ? CreateType(types[0], options) : UnionCreate(types, options);
+}
+var init_union = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/union/union.mjs"() {
+    init_never2();
+    init_type2();
+    init_union_create();
+    __name(Union, "Union");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/union/index.mjs
+var init_union2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/union/index.mjs"() {
+    init_union_evaluated();
+    init_union_type();
+    init_union();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/template-literal/parse.mjs
+function Unescape(pattern) {
+  return pattern.replace(/\\\$/g, "$").replace(/\\\*/g, "*").replace(/\\\^/g, "^").replace(/\\\|/g, "|").replace(/\\\(/g, "(").replace(/\\\)/g, ")");
+}
+function IsNonEscaped(pattern, index, char) {
+  return pattern[index] === char && pattern.charCodeAt(index - 1) !== 92;
+}
+function IsOpenParen(pattern, index) {
+  return IsNonEscaped(pattern, index, "(");
+}
+function IsCloseParen(pattern, index) {
+  return IsNonEscaped(pattern, index, ")");
+}
+function IsSeparator(pattern, index) {
+  return IsNonEscaped(pattern, index, "|");
+}
+function IsGroup(pattern) {
+  if (!(IsOpenParen(pattern, 0) && IsCloseParen(pattern, pattern.length - 1)))
+    return false;
+  let count = 0;
+  for (let index = 0; index < pattern.length; index++) {
+    if (IsOpenParen(pattern, index))
+      count += 1;
+    if (IsCloseParen(pattern, index))
+      count -= 1;
+    if (count === 0 && index !== pattern.length - 1)
+      return false;
+  }
+  return true;
+}
+function InGroup(pattern) {
+  return pattern.slice(1, pattern.length - 1);
+}
+function IsPrecedenceOr(pattern) {
+  let count = 0;
+  for (let index = 0; index < pattern.length; index++) {
+    if (IsOpenParen(pattern, index))
+      count += 1;
+    if (IsCloseParen(pattern, index))
+      count -= 1;
+    if (IsSeparator(pattern, index) && count === 0)
+      return true;
+  }
+  return false;
+}
+function IsPrecedenceAnd(pattern) {
+  for (let index = 0; index < pattern.length; index++) {
+    if (IsOpenParen(pattern, index))
+      return true;
+  }
+  return false;
+}
+function Or(pattern) {
+  let [count, start] = [0, 0];
+  const expressions = [];
+  for (let index = 0; index < pattern.length; index++) {
+    if (IsOpenParen(pattern, index))
+      count += 1;
+    if (IsCloseParen(pattern, index))
+      count -= 1;
+    if (IsSeparator(pattern, index) && count === 0) {
+      const range2 = pattern.slice(start, index);
+      if (range2.length > 0)
+        expressions.push(TemplateLiteralParse(range2));
+      start = index + 1;
+    }
+  }
+  const range = pattern.slice(start);
+  if (range.length > 0)
+    expressions.push(TemplateLiteralParse(range));
+  if (expressions.length === 0)
+    return { type: "const", const: "" };
+  if (expressions.length === 1)
+    return expressions[0];
+  return { type: "or", expr: expressions };
+}
+function And(pattern) {
+  function Group(value, index) {
+    if (!IsOpenParen(value, index))
+      throw new TemplateLiteralParserError(`TemplateLiteralParser: Index must point to open parens`);
+    let count = 0;
+    for (let scan = index; scan < value.length; scan++) {
+      if (IsOpenParen(value, scan))
+        count += 1;
+      if (IsCloseParen(value, scan))
+        count -= 1;
+      if (count === 0)
+        return [index, scan];
+    }
+    throw new TemplateLiteralParserError(`TemplateLiteralParser: Unclosed group parens in expression`);
+  }
+  __name(Group, "Group");
+  function Range(pattern2, index) {
+    for (let scan = index; scan < pattern2.length; scan++) {
+      if (IsOpenParen(pattern2, scan))
+        return [index, scan];
+    }
+    return [index, pattern2.length];
+  }
+  __name(Range, "Range");
+  const expressions = [];
+  for (let index = 0; index < pattern.length; index++) {
+    if (IsOpenParen(pattern, index)) {
+      const [start, end] = Group(pattern, index);
+      const range = pattern.slice(start, end + 1);
+      expressions.push(TemplateLiteralParse(range));
+      index = end;
+    } else {
+      const [start, end] = Range(pattern, index);
+      const range = pattern.slice(start, end);
+      if (range.length > 0)
+        expressions.push(TemplateLiteralParse(range));
+      index = end - 1;
+    }
+  }
+  return expressions.length === 0 ? { type: "const", const: "" } : expressions.length === 1 ? expressions[0] : { type: "and", expr: expressions };
+}
+function TemplateLiteralParse(pattern) {
+  return IsGroup(pattern) ? TemplateLiteralParse(InGroup(pattern)) : IsPrecedenceOr(pattern) ? Or(pattern) : IsPrecedenceAnd(pattern) ? And(pattern) : { type: "const", const: Unescape(pattern) };
+}
+function TemplateLiteralParseExact(pattern) {
+  return TemplateLiteralParse(pattern.slice(1, pattern.length - 1));
+}
+var TemplateLiteralParserError;
+var init_parse = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/template-literal/parse.mjs"() {
+    init_error2();
+    TemplateLiteralParserError = class extends TypeBoxError {
+      static {
+        __name(this, "TemplateLiteralParserError");
+      }
+    };
+    __name(Unescape, "Unescape");
+    __name(IsNonEscaped, "IsNonEscaped");
+    __name(IsOpenParen, "IsOpenParen");
+    __name(IsCloseParen, "IsCloseParen");
+    __name(IsSeparator, "IsSeparator");
+    __name(IsGroup, "IsGroup");
+    __name(InGroup, "InGroup");
+    __name(IsPrecedenceOr, "IsPrecedenceOr");
+    __name(IsPrecedenceAnd, "IsPrecedenceAnd");
+    __name(Or, "Or");
+    __name(And, "And");
+    __name(TemplateLiteralParse, "TemplateLiteralParse");
+    __name(TemplateLiteralParseExact, "TemplateLiteralParseExact");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/template-literal/finite.mjs
+function IsNumberExpression(expression) {
+  return expression.type === "or" && expression.expr.length === 2 && expression.expr[0].type === "const" && expression.expr[0].const === "0" && expression.expr[1].type === "const" && expression.expr[1].const === "[1-9][0-9]*";
+}
+function IsBooleanExpression(expression) {
+  return expression.type === "or" && expression.expr.length === 2 && expression.expr[0].type === "const" && expression.expr[0].const === "true" && expression.expr[1].type === "const" && expression.expr[1].const === "false";
+}
+function IsStringExpression(expression) {
+  return expression.type === "const" && expression.const === ".*";
+}
+function IsTemplateLiteralExpressionFinite(expression) {
+  return IsNumberExpression(expression) || IsStringExpression(expression) ? false : IsBooleanExpression(expression) ? true : expression.type === "and" ? expression.expr.every((expr) => IsTemplateLiteralExpressionFinite(expr)) : expression.type === "or" ? expression.expr.every((expr) => IsTemplateLiteralExpressionFinite(expr)) : expression.type === "const" ? true : (() => {
+    throw new TemplateLiteralFiniteError(`Unknown expression type`);
+  })();
+}
+function IsTemplateLiteralFinite(schema) {
+  const expression = TemplateLiteralParseExact(schema.pattern);
+  return IsTemplateLiteralExpressionFinite(expression);
+}
+var TemplateLiteralFiniteError;
+var init_finite = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/template-literal/finite.mjs"() {
+    init_parse();
+    init_error2();
+    TemplateLiteralFiniteError = class extends TypeBoxError {
+      static {
+        __name(this, "TemplateLiteralFiniteError");
+      }
+    };
+    __name(IsNumberExpression, "IsNumberExpression");
+    __name(IsBooleanExpression, "IsBooleanExpression");
+    __name(IsStringExpression, "IsStringExpression");
+    __name(IsTemplateLiteralExpressionFinite, "IsTemplateLiteralExpressionFinite");
+    __name(IsTemplateLiteralFinite, "IsTemplateLiteralFinite");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/template-literal/generate.mjs
+function* GenerateReduce(buffer) {
+  if (buffer.length === 1)
+    return yield* buffer[0];
+  for (const left of buffer[0]) {
+    for (const right of GenerateReduce(buffer.slice(1))) {
+      yield `${left}${right}`;
+    }
+  }
+}
+function* GenerateAnd(expression) {
+  return yield* GenerateReduce(expression.expr.map((expr) => [...TemplateLiteralExpressionGenerate(expr)]));
+}
+function* GenerateOr(expression) {
+  for (const expr of expression.expr)
+    yield* TemplateLiteralExpressionGenerate(expr);
+}
+function* GenerateConst(expression) {
+  return yield expression.const;
+}
+function* TemplateLiteralExpressionGenerate(expression) {
+  return expression.type === "and" ? yield* GenerateAnd(expression) : expression.type === "or" ? yield* GenerateOr(expression) : expression.type === "const" ? yield* GenerateConst(expression) : (() => {
+    throw new TemplateLiteralGenerateError("Unknown expression");
+  })();
+}
+function TemplateLiteralGenerate(schema) {
+  const expression = TemplateLiteralParseExact(schema.pattern);
+  return IsTemplateLiteralExpressionFinite(expression) ? [...TemplateLiteralExpressionGenerate(expression)] : [];
+}
+var TemplateLiteralGenerateError;
+var init_generate = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/template-literal/generate.mjs"() {
+    init_finite();
+    init_parse();
+    init_error2();
+    TemplateLiteralGenerateError = class extends TypeBoxError {
+      static {
+        __name(this, "TemplateLiteralGenerateError");
+      }
+    };
+    __name(GenerateReduce, "GenerateReduce");
+    __name(GenerateAnd, "GenerateAnd");
+    __name(GenerateOr, "GenerateOr");
+    __name(GenerateConst, "GenerateConst");
+    __name(TemplateLiteralExpressionGenerate, "TemplateLiteralExpressionGenerate");
+    __name(TemplateLiteralGenerate, "TemplateLiteralGenerate");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/literal/literal.mjs
+function Literal(value, options) {
+  return CreateType({
+    [Kind]: "Literal",
+    const: value,
+    type: typeof value
+  }, options);
+}
+var init_literal = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/literal/literal.mjs"() {
+    init_type2();
+    init_symbols2();
+    __name(Literal, "Literal");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/literal/index.mjs
+var init_literal2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/literal/index.mjs"() {
+    init_literal();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/boolean/boolean.mjs
+function Boolean(options) {
+  return CreateType({ [Kind]: "Boolean", type: "boolean" }, options);
+}
+var init_boolean = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/boolean/boolean.mjs"() {
+    init_symbols2();
+    init_create();
+    __name(Boolean, "Boolean");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/boolean/index.mjs
+var init_boolean2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/boolean/index.mjs"() {
+    init_boolean();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/bigint/bigint.mjs
+function BigInt(options) {
+  return CreateType({ [Kind]: "BigInt", type: "bigint" }, options);
+}
+var init_bigint = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/bigint/bigint.mjs"() {
+    init_symbols2();
+    init_create();
+    __name(BigInt, "BigInt");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/bigint/index.mjs
+var init_bigint2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/bigint/index.mjs"() {
+    init_bigint();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/number/number.mjs
+function Number2(options) {
+  return CreateType({ [Kind]: "Number", type: "number" }, options);
+}
+var init_number = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/number/number.mjs"() {
+    init_type2();
+    init_symbols2();
+    __name(Number2, "Number");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/number/index.mjs
+var init_number2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/number/index.mjs"() {
+    init_number();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/string/string.mjs
+function String2(options) {
+  return CreateType({ [Kind]: "String", type: "string" }, options);
+}
+var init_string = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/string/string.mjs"() {
+    init_type2();
+    init_symbols2();
+    __name(String2, "String");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/string/index.mjs
+var init_string2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/string/index.mjs"() {
+    init_string();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/template-literal/syntax.mjs
+function* FromUnion(syntax) {
+  const trim = syntax.trim().replace(/"|'/g, "");
+  return trim === "boolean" ? yield Boolean() : trim === "number" ? yield Number2() : trim === "bigint" ? yield BigInt() : trim === "string" ? yield String2() : yield (() => {
+    const literals = trim.split("|").map((literal) => Literal(literal.trim()));
+    return literals.length === 0 ? Never() : literals.length === 1 ? literals[0] : UnionEvaluated(literals);
+  })();
+}
+function* FromTerminal(syntax) {
+  if (syntax[1] !== "{") {
+    const L = Literal("$");
+    const R = FromSyntax(syntax.slice(1));
+    return yield* [L, ...R];
+  }
+  for (let i = 2; i < syntax.length; i++) {
+    if (syntax[i] === "}") {
+      const L = FromUnion(syntax.slice(2, i));
+      const R = FromSyntax(syntax.slice(i + 1));
+      return yield* [...L, ...R];
+    }
+  }
+  yield Literal(syntax);
+}
+function* FromSyntax(syntax) {
+  for (let i = 0; i < syntax.length; i++) {
+    if (syntax[i] === "$") {
+      const L = Literal(syntax.slice(0, i));
+      const R = FromTerminal(syntax.slice(i));
+      return yield* [L, ...R];
+    }
+  }
+  yield Literal(syntax);
+}
+function TemplateLiteralSyntax(syntax) {
+  return [...FromSyntax(syntax)];
+}
+var init_syntax = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/template-literal/syntax.mjs"() {
+    init_literal2();
+    init_boolean2();
+    init_bigint2();
+    init_number2();
+    init_string2();
+    init_union2();
+    init_never2();
+    __name(FromUnion, "FromUnion");
+    __name(FromTerminal, "FromTerminal");
+    __name(FromSyntax, "FromSyntax");
+    __name(TemplateLiteralSyntax, "TemplateLiteralSyntax");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/template-literal/pattern.mjs
+function Escape(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+function Visit2(schema, acc) {
+  return IsTemplateLiteral(schema) ? schema.pattern.slice(1, schema.pattern.length - 1) : IsUnion(schema) ? `(${schema.anyOf.map((schema2) => Visit2(schema2, acc)).join("|")})` : IsNumber3(schema) ? `${acc}${PatternNumber}` : IsInteger2(schema) ? `${acc}${PatternNumber}` : IsBigInt3(schema) ? `${acc}${PatternNumber}` : IsString3(schema) ? `${acc}${PatternString}` : IsLiteral(schema) ? `${acc}${Escape(schema.const.toString())}` : IsBoolean3(schema) ? `${acc}${PatternBoolean}` : (() => {
+    throw new TemplateLiteralPatternError(`Unexpected Kind '${schema[Kind]}'`);
+  })();
+}
+function TemplateLiteralPattern(kinds) {
+  return `^${kinds.map((schema) => Visit2(schema, "")).join("")}$`;
+}
+var TemplateLiteralPatternError;
+var init_pattern = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/template-literal/pattern.mjs"() {
+    init_patterns2();
+    init_symbols2();
+    init_error2();
+    init_kind();
+    TemplateLiteralPatternError = class extends TypeBoxError {
+      static {
+        __name(this, "TemplateLiteralPatternError");
+      }
+    };
+    __name(Escape, "Escape");
+    __name(Visit2, "Visit");
+    __name(TemplateLiteralPattern, "TemplateLiteralPattern");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/template-literal/union.mjs
+function TemplateLiteralToUnion(schema) {
+  const R = TemplateLiteralGenerate(schema);
+  const L = R.map((S) => Literal(S));
+  return UnionEvaluated(L);
+}
+var init_union3 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/template-literal/union.mjs"() {
+    init_union2();
+    init_literal2();
+    init_generate();
+    __name(TemplateLiteralToUnion, "TemplateLiteralToUnion");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/template-literal/template-literal.mjs
+function TemplateLiteral(unresolved, options) {
+  const pattern = IsString(unresolved) ? TemplateLiteralPattern(TemplateLiteralSyntax(unresolved)) : TemplateLiteralPattern(unresolved);
+  return CreateType({ [Kind]: "TemplateLiteral", type: "string", pattern }, options);
+}
+var init_template_literal = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/template-literal/template-literal.mjs"() {
+    init_type2();
+    init_syntax();
+    init_pattern();
+    init_value();
+    init_symbols2();
+    __name(TemplateLiteral, "TemplateLiteral");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/template-literal/index.mjs
+var init_template_literal2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/template-literal/index.mjs"() {
+    init_finite();
+    init_generate();
+    init_syntax();
+    init_parse();
+    init_pattern();
+    init_union3();
+    init_template_literal();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/indexed/indexed-property-keys.mjs
+function FromTemplateLiteral(templateLiteral) {
+  const keys = TemplateLiteralGenerate(templateLiteral);
+  return keys.map((key) => key.toString());
+}
+function FromUnion2(types) {
+  const result = [];
+  for (const type of types)
+    result.push(...IndexPropertyKeys(type));
+  return result;
+}
+function FromLiteral(literalValue) {
+  return [literalValue.toString()];
+}
+function IndexPropertyKeys(type) {
+  return [...new Set(IsTemplateLiteral(type) ? FromTemplateLiteral(type) : IsUnion(type) ? FromUnion2(type.anyOf) : IsLiteral(type) ? FromLiteral(type.const) : IsNumber3(type) ? ["[number]"] : IsInteger2(type) ? ["[number]"] : [])];
+}
+var init_indexed_property_keys = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/indexed/indexed-property-keys.mjs"() {
+    init_template_literal2();
+    init_kind();
+    __name(FromTemplateLiteral, "FromTemplateLiteral");
+    __name(FromUnion2, "FromUnion");
+    __name(FromLiteral, "FromLiteral");
+    __name(IndexPropertyKeys, "IndexPropertyKeys");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/indexed/indexed-from-mapped-result.mjs
+function FromProperties(type, properties, options) {
+  const result = {};
+  for (const K2 of Object.getOwnPropertyNames(properties)) {
+    result[K2] = Index(type, IndexPropertyKeys(properties[K2]), options);
+  }
+  return result;
+}
+function FromMappedResult(type, mappedResult, options) {
+  return FromProperties(type, mappedResult.properties, options);
+}
+function IndexFromMappedResult(type, mappedResult, options) {
+  const properties = FromMappedResult(type, mappedResult, options);
+  return MappedResult(properties);
+}
+var init_indexed_from_mapped_result = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/indexed/indexed-from-mapped-result.mjs"() {
+    init_mapped2();
+    init_indexed_property_keys();
+    init_indexed2();
+    __name(FromProperties, "FromProperties");
+    __name(FromMappedResult, "FromMappedResult");
+    __name(IndexFromMappedResult, "IndexFromMappedResult");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/indexed/indexed.mjs
+function FromRest(types, key) {
+  return types.map((type) => IndexFromPropertyKey(type, key));
+}
+function FromIntersectRest(types) {
+  return types.filter((type) => !IsNever(type));
+}
+function FromIntersect(types, key) {
+  return IntersectEvaluated(FromIntersectRest(FromRest(types, key)));
+}
+function FromUnionRest(types) {
+  return types.some((L) => IsNever(L)) ? [] : types;
+}
+function FromUnion3(types, key) {
+  return UnionEvaluated(FromUnionRest(FromRest(types, key)));
+}
+function FromTuple(types, key) {
+  return key in types ? types[key] : key === "[number]" ? UnionEvaluated(types) : Never();
+}
+function FromArray(type, key) {
+  return key === "[number]" ? type : Never();
+}
+function FromProperty(properties, propertyKey) {
+  return propertyKey in properties ? properties[propertyKey] : Never();
+}
+function IndexFromPropertyKey(type, propertyKey) {
+  return IsIntersect(type) ? FromIntersect(type.allOf, propertyKey) : IsUnion(type) ? FromUnion3(type.anyOf, propertyKey) : IsTuple(type) ? FromTuple(type.items ?? [], propertyKey) : IsArray3(type) ? FromArray(type.items, propertyKey) : IsObject3(type) ? FromProperty(type.properties, propertyKey) : Never();
+}
+function IndexFromPropertyKeys(type, propertyKeys) {
+  return propertyKeys.map((propertyKey) => IndexFromPropertyKey(type, propertyKey));
+}
+function FromSchema(type, propertyKeys) {
+  return UnionEvaluated(IndexFromPropertyKeys(type, propertyKeys));
+}
+function IndexFromComputed(type, key) {
+  return Computed("Index", [type, key]);
+}
+function Index(type, key, options) {
+  if (IsRef(type) || IsRef(key)) {
+    const error = `Index types using Ref parameters require both Type and Key to be of TSchema`;
+    if (!IsSchema(type) || !IsSchema(key))
+      throw new TypeBoxError(error);
+    return Computed("Index", [type, key]);
+  }
+  if (IsMappedResult(key))
+    return IndexFromMappedResult(type, key, options);
+  if (IsMappedKey(key))
+    return IndexFromMappedKey(type, key, options);
+  return CreateType(IsSchema(key) ? FromSchema(type, IndexPropertyKeys(key)) : FromSchema(type, key), options);
+}
+var init_indexed = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/indexed/indexed.mjs"() {
+    init_type2();
+    init_error2();
+    init_computed2();
+    init_never2();
+    init_intersect2();
+    init_union2();
+    init_indexed_property_keys();
+    init_indexed_from_mapped_key();
+    init_indexed_from_mapped_result();
+    init_kind();
+    __name(FromRest, "FromRest");
+    __name(FromIntersectRest, "FromIntersectRest");
+    __name(FromIntersect, "FromIntersect");
+    __name(FromUnionRest, "FromUnionRest");
+    __name(FromUnion3, "FromUnion");
+    __name(FromTuple, "FromTuple");
+    __name(FromArray, "FromArray");
+    __name(FromProperty, "FromProperty");
+    __name(IndexFromPropertyKey, "IndexFromPropertyKey");
+    __name(IndexFromPropertyKeys, "IndexFromPropertyKeys");
+    __name(FromSchema, "FromSchema");
+    __name(IndexFromComputed, "IndexFromComputed");
+    __name(Index, "Index");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/indexed/indexed-from-mapped-key.mjs
+function MappedIndexPropertyKey(type, key, options) {
+  return { [key]: Index(type, [key], Clone(options)) };
+}
+function MappedIndexPropertyKeys(type, propertyKeys, options) {
+  return propertyKeys.reduce((result, left) => {
+    return { ...result, ...MappedIndexPropertyKey(type, left, options) };
+  }, {});
+}
+function MappedIndexProperties(type, mappedKey, options) {
+  return MappedIndexPropertyKeys(type, mappedKey.keys, options);
+}
+function IndexFromMappedKey(type, mappedKey, options) {
+  const properties = MappedIndexProperties(type, mappedKey, options);
+  return MappedResult(properties);
+}
+var init_indexed_from_mapped_key = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/indexed/indexed-from-mapped-key.mjs"() {
+    init_indexed();
+    init_mapped2();
+    init_value2();
+    __name(MappedIndexPropertyKey, "MappedIndexPropertyKey");
+    __name(MappedIndexPropertyKeys, "MappedIndexPropertyKeys");
+    __name(MappedIndexProperties, "MappedIndexProperties");
+    __name(IndexFromMappedKey, "IndexFromMappedKey");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/indexed/index.mjs
+var init_indexed2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/indexed/index.mjs"() {
+    init_indexed_from_mapped_key();
+    init_indexed_from_mapped_result();
+    init_indexed_property_keys();
+    init_indexed();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/iterator/iterator.mjs
+function Iterator(items, options) {
+  return CreateType({ [Kind]: "Iterator", type: "Iterator", items }, options);
+}
+var init_iterator = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/iterator/iterator.mjs"() {
+    init_type2();
+    init_symbols2();
+    __name(Iterator, "Iterator");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/iterator/index.mjs
+var init_iterator2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/iterator/index.mjs"() {
+    init_iterator();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/object/object.mjs
+function RequiredKeys(properties) {
+  const keys = [];
+  for (let key in properties) {
+    if (!IsOptional(properties[key]))
+      keys.push(key);
+  }
+  return keys;
+}
+function _Object(properties, options) {
+  const required = RequiredKeys(properties);
+  const schematic = required.length > 0 ? { [Kind]: "Object", type: "object", properties, required } : { [Kind]: "Object", type: "object", properties };
+  return CreateType(schematic, options);
+}
+var Object2;
+var init_object = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/object/object.mjs"() {
+    init_type2();
+    init_symbols2();
+    init_kind();
+    __name(RequiredKeys, "RequiredKeys");
+    __name(_Object, "_Object");
+    Object2 = _Object;
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/object/index.mjs
+var init_object2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/object/index.mjs"() {
+    init_object();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/promise/promise.mjs
+function Promise2(item, options) {
+  return CreateType({ [Kind]: "Promise", type: "Promise", item }, options);
+}
+var init_promise = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/promise/promise.mjs"() {
+    init_type2();
+    init_symbols2();
+    __name(Promise2, "Promise");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/promise/index.mjs
+var init_promise2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/promise/index.mjs"() {
+    init_promise();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/readonly/readonly.mjs
+function RemoveReadonly(schema) {
+  return CreateType(Discard(schema, [ReadonlyKind]));
+}
+function AddReadonly(schema) {
+  return CreateType({ ...schema, [ReadonlyKind]: "Readonly" });
+}
+function ReadonlyWithFlag(schema, F) {
+  return F === false ? RemoveReadonly(schema) : AddReadonly(schema);
+}
+function Readonly(schema, enable) {
+  const F = enable ?? true;
+  return IsMappedResult(schema) ? ReadonlyFromMappedResult(schema, F) : ReadonlyWithFlag(schema, F);
+}
+var init_readonly = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/readonly/readonly.mjs"() {
+    init_type2();
+    init_symbols2();
+    init_discard2();
+    init_readonly_from_mapped_result();
+    init_kind();
+    __name(RemoveReadonly, "RemoveReadonly");
+    __name(AddReadonly, "AddReadonly");
+    __name(ReadonlyWithFlag, "ReadonlyWithFlag");
+    __name(Readonly, "Readonly");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/readonly/readonly-from-mapped-result.mjs
+function FromProperties2(K, F) {
+  const Acc = {};
+  for (const K2 of globalThis.Object.getOwnPropertyNames(K))
+    Acc[K2] = Readonly(K[K2], F);
+  return Acc;
+}
+function FromMappedResult2(R, F) {
+  return FromProperties2(R.properties, F);
+}
+function ReadonlyFromMappedResult(R, F) {
+  const P = FromMappedResult2(R, F);
+  return MappedResult(P);
+}
+var init_readonly_from_mapped_result = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/readonly/readonly-from-mapped-result.mjs"() {
+    init_mapped2();
+    init_readonly();
+    __name(FromProperties2, "FromProperties");
+    __name(FromMappedResult2, "FromMappedResult");
+    __name(ReadonlyFromMappedResult, "ReadonlyFromMappedResult");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/readonly/index.mjs
+var init_readonly2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/readonly/index.mjs"() {
+    init_readonly_from_mapped_result();
+    init_readonly();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/tuple/tuple.mjs
+function Tuple(types, options) {
+  return CreateType(types.length > 0 ? { [Kind]: "Tuple", type: "array", items: types, additionalItems: false, minItems: types.length, maxItems: types.length } : { [Kind]: "Tuple", type: "array", minItems: types.length, maxItems: types.length }, options);
+}
+var init_tuple = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/tuple/tuple.mjs"() {
+    init_type2();
+    init_symbols2();
+    __name(Tuple, "Tuple");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/tuple/index.mjs
+var init_tuple2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/tuple/index.mjs"() {
+    init_tuple();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/mapped/mapped.mjs
+function FromMappedResult3(K, P) {
+  return K in P ? FromSchemaType(K, P[K]) : MappedResult(P);
+}
+function MappedKeyToKnownMappedResultProperties(K) {
+  return { [K]: Literal(K) };
+}
+function MappedKeyToUnknownMappedResultProperties(P) {
+  const Acc = {};
+  for (const L of P)
+    Acc[L] = Literal(L);
+  return Acc;
+}
+function MappedKeyToMappedResultProperties(K, P) {
+  return SetIncludes(P, K) ? MappedKeyToKnownMappedResultProperties(K) : MappedKeyToUnknownMappedResultProperties(P);
+}
+function FromMappedKey(K, P) {
+  const R = MappedKeyToMappedResultProperties(K, P);
+  return FromMappedResult3(K, R);
+}
+function FromRest2(K, T) {
+  return T.map((L) => FromSchemaType(K, L));
+}
+function FromProperties3(K, T) {
+  const Acc = {};
+  for (const K2 of globalThis.Object.getOwnPropertyNames(T))
+    Acc[K2] = FromSchemaType(K, T[K2]);
+  return Acc;
+}
+function FromSchemaType(K, T) {
+  const options = { ...T };
+  return (
+    // unevaluated modifier types
+    IsOptional(T) ? Optional(FromSchemaType(K, Discard(T, [OptionalKind]))) : IsReadonly(T) ? Readonly(FromSchemaType(K, Discard(T, [ReadonlyKind]))) : (
+      // unevaluated mapped types
+      IsMappedResult(T) ? FromMappedResult3(K, T.properties) : IsMappedKey(T) ? FromMappedKey(K, T.keys) : (
+        // unevaluated types
+        IsConstructor(T) ? Constructor(FromRest2(K, T.parameters), FromSchemaType(K, T.returns), options) : IsFunction3(T) ? Function2(FromRest2(K, T.parameters), FromSchemaType(K, T.returns), options) : IsAsyncIterator3(T) ? AsyncIterator(FromSchemaType(K, T.items), options) : IsIterator3(T) ? Iterator(FromSchemaType(K, T.items), options) : IsIntersect(T) ? Intersect(FromRest2(K, T.allOf), options) : IsUnion(T) ? Union(FromRest2(K, T.anyOf), options) : IsTuple(T) ? Tuple(FromRest2(K, T.items ?? []), options) : IsObject3(T) ? Object2(FromProperties3(K, T.properties), options) : IsArray3(T) ? Array2(FromSchemaType(K, T.items), options) : IsPromise2(T) ? Promise2(FromSchemaType(K, T.item), options) : T
+      )
+    )
+  );
+}
+function MappedFunctionReturnType(K, T) {
+  const Acc = {};
+  for (const L of K)
+    Acc[L] = FromSchemaType(L, T);
+  return Acc;
+}
+function Mapped(key, map, options) {
+  const K = IsSchema(key) ? IndexPropertyKeys(key) : key;
+  const RT = map({ [Kind]: "MappedKey", keys: K });
+  const R = MappedFunctionReturnType(K, RT);
+  return Object2(R, options);
+}
+var init_mapped = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/mapped/mapped.mjs"() {
+    init_symbols2();
+    init_discard2();
+    init_array2();
+    init_async_iterator2();
+    init_constructor2();
+    init_function2();
+    init_indexed2();
+    init_intersect2();
+    init_iterator2();
+    init_literal2();
+    init_object2();
+    init_optional2();
+    init_promise2();
+    init_readonly2();
+    init_tuple2();
+    init_union2();
+    init_sets();
+    init_mapped_result();
+    init_kind();
+    __name(FromMappedResult3, "FromMappedResult");
+    __name(MappedKeyToKnownMappedResultProperties, "MappedKeyToKnownMappedResultProperties");
+    __name(MappedKeyToUnknownMappedResultProperties, "MappedKeyToUnknownMappedResultProperties");
+    __name(MappedKeyToMappedResultProperties, "MappedKeyToMappedResultProperties");
+    __name(FromMappedKey, "FromMappedKey");
+    __name(FromRest2, "FromRest");
+    __name(FromProperties3, "FromProperties");
+    __name(FromSchemaType, "FromSchemaType");
+    __name(MappedFunctionReturnType, "MappedFunctionReturnType");
+    __name(Mapped, "Mapped");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/mapped/index.mjs
+var init_mapped2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/mapped/index.mjs"() {
+    init_mapped_key();
+    init_mapped_result();
+    init_mapped();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/optional/optional.mjs
+function RemoveOptional(schema) {
+  return CreateType(Discard(schema, [OptionalKind]));
+}
+function AddOptional(schema) {
+  return CreateType({ ...schema, [OptionalKind]: "Optional" });
+}
+function OptionalWithFlag(schema, F) {
+  return F === false ? RemoveOptional(schema) : AddOptional(schema);
+}
+function Optional(schema, enable) {
+  const F = enable ?? true;
+  return IsMappedResult(schema) ? OptionalFromMappedResult(schema, F) : OptionalWithFlag(schema, F);
+}
+var init_optional = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/optional/optional.mjs"() {
+    init_type2();
+    init_symbols2();
+    init_discard2();
+    init_optional_from_mapped_result();
+    init_kind();
+    __name(RemoveOptional, "RemoveOptional");
+    __name(AddOptional, "AddOptional");
+    __name(OptionalWithFlag, "OptionalWithFlag");
+    __name(Optional, "Optional");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/optional/optional-from-mapped-result.mjs
+function FromProperties4(P, F) {
+  const Acc = {};
+  for (const K2 of globalThis.Object.getOwnPropertyNames(P))
+    Acc[K2] = Optional(P[K2], F);
+  return Acc;
+}
+function FromMappedResult4(R, F) {
+  return FromProperties4(R.properties, F);
+}
+function OptionalFromMappedResult(R, F) {
+  const P = FromMappedResult4(R, F);
+  return MappedResult(P);
+}
+var init_optional_from_mapped_result = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/optional/optional-from-mapped-result.mjs"() {
+    init_mapped2();
+    init_optional();
+    __name(FromProperties4, "FromProperties");
+    __name(FromMappedResult4, "FromMappedResult");
+    __name(OptionalFromMappedResult, "OptionalFromMappedResult");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/optional/index.mjs
+var init_optional2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/optional/index.mjs"() {
+    init_optional_from_mapped_result();
+    init_optional();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/intersect/intersect-create.mjs
+function IntersectCreate(T, options = {}) {
+  const allObjects = T.every((schema) => IsObject3(schema));
+  const clonedUnevaluatedProperties = IsSchema(options.unevaluatedProperties) ? { unevaluatedProperties: options.unevaluatedProperties } : {};
+  return CreateType(options.unevaluatedProperties === false || IsSchema(options.unevaluatedProperties) || allObjects ? { ...clonedUnevaluatedProperties, [Kind]: "Intersect", type: "object", allOf: T } : { ...clonedUnevaluatedProperties, [Kind]: "Intersect", allOf: T }, options);
+}
+var init_intersect_create = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/intersect/intersect-create.mjs"() {
+    init_type2();
+    init_symbols2();
+    init_kind();
+    __name(IntersectCreate, "IntersectCreate");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/intersect/intersect-evaluated.mjs
+function IsIntersectOptional(types) {
+  return types.every((left) => IsOptional(left));
+}
+function RemoveOptionalFromType2(type) {
+  return Discard(type, [OptionalKind]);
+}
+function RemoveOptionalFromRest2(types) {
+  return types.map((left) => IsOptional(left) ? RemoveOptionalFromType2(left) : left);
+}
+function ResolveIntersect(types, options) {
+  return IsIntersectOptional(types) ? Optional(IntersectCreate(RemoveOptionalFromRest2(types), options)) : IntersectCreate(RemoveOptionalFromRest2(types), options);
+}
+function IntersectEvaluated(types, options = {}) {
+  if (types.length === 1)
+    return CreateType(types[0], options);
+  if (types.length === 0)
+    return Never(options);
+  if (types.some((schema) => IsTransform(schema)))
+    throw new Error("Cannot intersect transform types");
+  return ResolveIntersect(types, options);
+}
+var init_intersect_evaluated = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/intersect/intersect-evaluated.mjs"() {
+    init_symbols2();
+    init_type2();
+    init_discard2();
+    init_never2();
+    init_optional2();
+    init_intersect_create();
+    init_kind();
+    __name(IsIntersectOptional, "IsIntersectOptional");
+    __name(RemoveOptionalFromType2, "RemoveOptionalFromType");
+    __name(RemoveOptionalFromRest2, "RemoveOptionalFromRest");
+    __name(ResolveIntersect, "ResolveIntersect");
+    __name(IntersectEvaluated, "IntersectEvaluated");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/intersect/intersect-type.mjs
+var init_intersect_type = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/intersect/intersect-type.mjs"() {
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/intersect/intersect.mjs
+function Intersect(types, options) {
+  if (types.length === 1)
+    return CreateType(types[0], options);
+  if (types.length === 0)
+    return Never(options);
+  if (types.some((schema) => IsTransform(schema)))
+    throw new Error("Cannot intersect transform types");
+  return IntersectCreate(types, options);
+}
+var init_intersect = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/intersect/intersect.mjs"() {
+    init_type2();
+    init_never2();
+    init_intersect_create();
+    init_kind();
+    __name(Intersect, "Intersect");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/intersect/index.mjs
+var init_intersect2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/intersect/index.mjs"() {
+    init_intersect_evaluated();
+    init_intersect_type();
+    init_intersect();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/ref/ref.mjs
+function Ref(...args) {
+  const [$ref, options] = typeof args[0] === "string" ? [args[0], args[1]] : [args[0].$id, args[1]];
+  if (typeof $ref !== "string")
+    throw new TypeBoxError("Ref: $ref must be a string");
+  return CreateType({ [Kind]: "Ref", $ref }, options);
+}
+var init_ref = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/ref/ref.mjs"() {
+    init_error2();
+    init_type2();
+    init_symbols2();
+    __name(Ref, "Ref");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/ref/index.mjs
+var init_ref2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/ref/index.mjs"() {
+    init_ref();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/awaited/awaited.mjs
+function FromComputed(target, parameters) {
+  return Computed("Awaited", [Computed(target, parameters)]);
+}
+function FromRef($ref) {
+  return Computed("Awaited", [Ref($ref)]);
+}
+function FromIntersect2(types) {
+  return Intersect(FromRest3(types));
+}
+function FromUnion4(types) {
+  return Union(FromRest3(types));
+}
+function FromPromise(type) {
+  return Awaited(type);
+}
+function FromRest3(types) {
+  return types.map((type) => Awaited(type));
+}
+function Awaited(type, options) {
+  return CreateType(IsComputed(type) ? FromComputed(type.target, type.parameters) : IsIntersect(type) ? FromIntersect2(type.allOf) : IsUnion(type) ? FromUnion4(type.anyOf) : IsPromise2(type) ? FromPromise(type.item) : IsRef(type) ? FromRef(type.$ref) : type, options);
+}
+var init_awaited = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/awaited/awaited.mjs"() {
+    init_type2();
+    init_computed2();
+    init_intersect2();
+    init_union2();
+    init_ref2();
+    init_kind();
+    __name(FromComputed, "FromComputed");
+    __name(FromRef, "FromRef");
+    __name(FromIntersect2, "FromIntersect");
+    __name(FromUnion4, "FromUnion");
+    __name(FromPromise, "FromPromise");
+    __name(FromRest3, "FromRest");
+    __name(Awaited, "Awaited");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/awaited/index.mjs
+var init_awaited2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/awaited/index.mjs"() {
+    init_awaited();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/keyof/keyof-property-keys.mjs
+function FromRest4(types) {
+  const result = [];
+  for (const L of types)
+    result.push(KeyOfPropertyKeys(L));
+  return result;
+}
+function FromIntersect3(types) {
+  const propertyKeysArray = FromRest4(types);
+  const propertyKeys = SetUnionMany(propertyKeysArray);
+  return propertyKeys;
+}
+function FromUnion5(types) {
+  const propertyKeysArray = FromRest4(types);
+  const propertyKeys = SetIntersectMany(propertyKeysArray);
+  return propertyKeys;
+}
+function FromTuple2(types) {
+  return types.map((_, indexer) => indexer.toString());
+}
+function FromArray2(_) {
+  return ["[number]"];
+}
+function FromProperties5(T) {
+  return globalThis.Object.getOwnPropertyNames(T);
+}
+function FromPatternProperties(patternProperties) {
+  if (!includePatternProperties)
+    return [];
+  const patternPropertyKeys = globalThis.Object.getOwnPropertyNames(patternProperties);
+  return patternPropertyKeys.map((key) => {
+    return key[0] === "^" && key[key.length - 1] === "$" ? key.slice(1, key.length - 1) : key;
+  });
+}
+function KeyOfPropertyKeys(type) {
+  return IsIntersect(type) ? FromIntersect3(type.allOf) : IsUnion(type) ? FromUnion5(type.anyOf) : IsTuple(type) ? FromTuple2(type.items ?? []) : IsArray3(type) ? FromArray2(type.items) : IsObject3(type) ? FromProperties5(type.properties) : IsRecord(type) ? FromPatternProperties(type.patternProperties) : [];
+}
+function KeyOfPattern(schema) {
+  includePatternProperties = true;
+  const keys = KeyOfPropertyKeys(schema);
+  includePatternProperties = false;
+  const pattern = keys.map((key) => `(${key})`);
+  return `^(${pattern.join("|")})$`;
+}
+var includePatternProperties;
+var init_keyof_property_keys = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/keyof/keyof-property-keys.mjs"() {
+    init_sets();
+    init_kind();
+    __name(FromRest4, "FromRest");
+    __name(FromIntersect3, "FromIntersect");
+    __name(FromUnion5, "FromUnion");
+    __name(FromTuple2, "FromTuple");
+    __name(FromArray2, "FromArray");
+    __name(FromProperties5, "FromProperties");
+    __name(FromPatternProperties, "FromPatternProperties");
+    __name(KeyOfPropertyKeys, "KeyOfPropertyKeys");
+    includePatternProperties = false;
+    __name(KeyOfPattern, "KeyOfPattern");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/keyof/keyof.mjs
+function FromComputed2(target, parameters) {
+  return Computed("KeyOf", [Computed(target, parameters)]);
+}
+function FromRef2($ref) {
+  return Computed("KeyOf", [Ref($ref)]);
+}
+function KeyOfFromType(type, options) {
+  const propertyKeys = KeyOfPropertyKeys(type);
+  const propertyKeyTypes = KeyOfPropertyKeysToRest(propertyKeys);
+  const result = UnionEvaluated(propertyKeyTypes);
+  return CreateType(result, options);
+}
+function KeyOfPropertyKeysToRest(propertyKeys) {
+  return propertyKeys.map((L) => L === "[number]" ? Number2() : Literal(L));
+}
+function KeyOf(type, options) {
+  return IsComputed(type) ? FromComputed2(type.target, type.parameters) : IsRef(type) ? FromRef2(type.$ref) : IsMappedResult(type) ? KeyOfFromMappedResult(type, options) : KeyOfFromType(type, options);
+}
+var init_keyof = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/keyof/keyof.mjs"() {
+    init_type2();
+    init_literal2();
+    init_number2();
+    init_computed2();
+    init_ref2();
+    init_keyof_property_keys();
+    init_union2();
+    init_keyof_from_mapped_result();
+    init_kind();
+    __name(FromComputed2, "FromComputed");
+    __name(FromRef2, "FromRef");
+    __name(KeyOfFromType, "KeyOfFromType");
+    __name(KeyOfPropertyKeysToRest, "KeyOfPropertyKeysToRest");
+    __name(KeyOf, "KeyOf");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/keyof/keyof-from-mapped-result.mjs
+function FromProperties6(properties, options) {
+  const result = {};
+  for (const K2 of globalThis.Object.getOwnPropertyNames(properties))
+    result[K2] = KeyOf(properties[K2], Clone(options));
+  return result;
+}
+function FromMappedResult5(mappedResult, options) {
+  return FromProperties6(mappedResult.properties, options);
+}
+function KeyOfFromMappedResult(mappedResult, options) {
+  const properties = FromMappedResult5(mappedResult, options);
+  return MappedResult(properties);
+}
+var init_keyof_from_mapped_result = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/keyof/keyof-from-mapped-result.mjs"() {
+    init_mapped2();
+    init_keyof();
+    init_value2();
+    __name(FromProperties6, "FromProperties");
+    __name(FromMappedResult5, "FromMappedResult");
+    __name(KeyOfFromMappedResult, "KeyOfFromMappedResult");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/keyof/keyof-property-entries.mjs
+var init_keyof_property_entries = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/keyof/keyof-property-entries.mjs"() {
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/keyof/index.mjs
+var init_keyof2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/keyof/index.mjs"() {
+    init_keyof_from_mapped_result();
+    init_keyof_property_entries();
+    init_keyof_property_keys();
+    init_keyof();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/composite/composite.mjs
+function CompositeKeys(T) {
+  const Acc = [];
+  for (const L of T)
+    Acc.push(...KeyOfPropertyKeys(L));
+  return SetDistinct(Acc);
+}
+function FilterNever(T) {
+  return T.filter((L) => !IsNever(L));
+}
+function CompositeProperty(T, K) {
+  const Acc = [];
+  for (const L of T)
+    Acc.push(...IndexFromPropertyKeys(L, [K]));
+  return FilterNever(Acc);
+}
+function CompositeProperties(T, K) {
+  const Acc = {};
+  for (const L of K) {
+    Acc[L] = IntersectEvaluated(CompositeProperty(T, L));
+  }
+  return Acc;
+}
+function Composite(T, options) {
+  const K = CompositeKeys(T);
+  const P = CompositeProperties(T, K);
+  const R = Object2(P, options);
+  return R;
+}
+var init_composite = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/composite/composite.mjs"() {
+    init_intersect2();
+    init_indexed2();
+    init_keyof2();
+    init_object2();
+    init_sets();
+    init_kind();
+    __name(CompositeKeys, "CompositeKeys");
+    __name(FilterNever, "FilterNever");
+    __name(CompositeProperty, "CompositeProperty");
+    __name(CompositeProperties, "CompositeProperties");
+    __name(Composite, "Composite");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/composite/index.mjs
+var init_composite2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/composite/index.mjs"() {
+    init_composite();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/date/date.mjs
+function Date2(options) {
+  return CreateType({ [Kind]: "Date", type: "Date" }, options);
+}
+var init_date = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/date/date.mjs"() {
+    init_symbols2();
+    init_type2();
+    __name(Date2, "Date");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/date/index.mjs
+var init_date2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/date/index.mjs"() {
+    init_date();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/null/null.mjs
+function Null(options) {
+  return CreateType({ [Kind]: "Null", type: "null" }, options);
+}
+var init_null = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/null/null.mjs"() {
+    init_type2();
+    init_symbols2();
+    __name(Null, "Null");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/null/index.mjs
+var init_null2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/null/index.mjs"() {
+    init_null();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/symbol/symbol.mjs
+function Symbol2(options) {
+  return CreateType({ [Kind]: "Symbol", type: "symbol" }, options);
+}
+var init_symbol = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/symbol/symbol.mjs"() {
+    init_type2();
+    init_symbols2();
+    __name(Symbol2, "Symbol");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/symbol/index.mjs
+var init_symbol2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/symbol/index.mjs"() {
+    init_symbol();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/undefined/undefined.mjs
+function Undefined(options) {
+  return CreateType({ [Kind]: "Undefined", type: "undefined" }, options);
+}
+var init_undefined = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/undefined/undefined.mjs"() {
+    init_type2();
+    init_symbols2();
+    __name(Undefined, "Undefined");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/undefined/index.mjs
+var init_undefined2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/undefined/index.mjs"() {
+    init_undefined();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/uint8array/uint8array.mjs
+function Uint8Array2(options) {
+  return CreateType({ [Kind]: "Uint8Array", type: "Uint8Array" }, options);
+}
+var init_uint8array = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/uint8array/uint8array.mjs"() {
+    init_type2();
+    init_symbols2();
+    __name(Uint8Array2, "Uint8Array");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/uint8array/index.mjs
+var init_uint8array2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/uint8array/index.mjs"() {
+    init_uint8array();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/unknown/unknown.mjs
+function Unknown(options) {
+  return CreateType({ [Kind]: "Unknown" }, options);
+}
+var init_unknown = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/unknown/unknown.mjs"() {
+    init_type2();
+    init_symbols2();
+    __name(Unknown, "Unknown");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/unknown/index.mjs
+var init_unknown2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/unknown/index.mjs"() {
+    init_unknown();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/const/const.mjs
+function FromArray3(T) {
+  return T.map((L) => FromValue(L, false));
+}
+function FromProperties7(value) {
+  const Acc = {};
+  for (const K of globalThis.Object.getOwnPropertyNames(value))
+    Acc[K] = Readonly(FromValue(value[K], false));
+  return Acc;
+}
+function ConditionalReadonly(T, root) {
+  return root === true ? T : Readonly(T);
+}
+function FromValue(value, root) {
+  return IsAsyncIterator(value) ? ConditionalReadonly(Any(), root) : IsIterator(value) ? ConditionalReadonly(Any(), root) : IsArray(value) ? Readonly(Tuple(FromArray3(value))) : IsUint8Array(value) ? Uint8Array2() : IsDate(value) ? Date2() : IsObject(value) ? ConditionalReadonly(Object2(FromProperties7(value)), root) : IsFunction(value) ? ConditionalReadonly(Function2([], Unknown()), root) : IsUndefined(value) ? Undefined() : IsNull(value) ? Null() : IsSymbol(value) ? Symbol2() : IsBigInt(value) ? BigInt() : IsNumber(value) ? Literal(value) : IsBoolean(value) ? Literal(value) : IsString(value) ? Literal(value) : Object2({});
+}
+function Const(T, options) {
+  return CreateType(FromValue(T, true), options);
+}
+var init_const = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/const/const.mjs"() {
+    init_any2();
+    init_bigint2();
+    init_date2();
+    init_function2();
+    init_literal2();
+    init_null2();
+    init_object2();
+    init_symbol2();
+    init_tuple2();
+    init_readonly2();
+    init_undefined2();
+    init_uint8array2();
+    init_unknown2();
+    init_create();
+    init_value();
+    __name(FromArray3, "FromArray");
+    __name(FromProperties7, "FromProperties");
+    __name(ConditionalReadonly, "ConditionalReadonly");
+    __name(FromValue, "FromValue");
+    __name(Const, "Const");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/const/index.mjs
+var init_const2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/const/index.mjs"() {
+    init_const();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/constructor-parameters/constructor-parameters.mjs
+function ConstructorParameters(schema, options) {
+  return IsConstructor(schema) ? Tuple(schema.parameters, options) : Never(options);
+}
+var init_constructor_parameters = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/constructor-parameters/constructor-parameters.mjs"() {
+    init_tuple2();
+    init_never2();
+    init_kind();
+    __name(ConstructorParameters, "ConstructorParameters");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/constructor-parameters/index.mjs
+var init_constructor_parameters2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/constructor-parameters/index.mjs"() {
+    init_constructor_parameters();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/enum/enum.mjs
+function Enum(item, options) {
+  if (IsUndefined(item))
+    throw new Error("Enum undefined or empty");
+  const values1 = globalThis.Object.getOwnPropertyNames(item).filter((key) => isNaN(key)).map((key) => item[key]);
+  const values2 = [...new Set(values1)];
+  const anyOf = values2.map((value) => Literal(value));
+  return Union(anyOf, { ...options, [Hint]: "Enum" });
+}
+var init_enum = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/enum/enum.mjs"() {
+    init_literal2();
+    init_symbols2();
+    init_union2();
+    init_value();
+    __name(Enum, "Enum");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/enum/index.mjs
+var init_enum2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/enum/index.mjs"() {
+    init_enum();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/extends/extends-check.mjs
+function IntoBooleanResult(result) {
+  return result === ExtendsResult.False ? result : ExtendsResult.True;
+}
+function Throw(message) {
+  throw new ExtendsResolverError(message);
+}
+function IsStructuralRight(right) {
+  return type_exports.IsNever(right) || type_exports.IsIntersect(right) || type_exports.IsUnion(right) || type_exports.IsUnknown(right) || type_exports.IsAny(right);
+}
+function StructuralRight(left, right) {
+  return type_exports.IsNever(right) ? FromNeverRight(left, right) : type_exports.IsIntersect(right) ? FromIntersectRight(left, right) : type_exports.IsUnion(right) ? FromUnionRight(left, right) : type_exports.IsUnknown(right) ? FromUnknownRight(left, right) : type_exports.IsAny(right) ? FromAnyRight(left, right) : Throw("StructuralRight");
+}
+function FromAnyRight(left, right) {
+  return ExtendsResult.True;
+}
+function FromAny(left, right) {
+  return type_exports.IsIntersect(right) ? FromIntersectRight(left, right) : type_exports.IsUnion(right) && right.anyOf.some((schema) => type_exports.IsAny(schema) || type_exports.IsUnknown(schema)) ? ExtendsResult.True : type_exports.IsUnion(right) ? ExtendsResult.Union : type_exports.IsUnknown(right) ? ExtendsResult.True : type_exports.IsAny(right) ? ExtendsResult.True : ExtendsResult.Union;
+}
+function FromArrayRight(left, right) {
+  return type_exports.IsUnknown(left) ? ExtendsResult.False : type_exports.IsAny(left) ? ExtendsResult.Union : type_exports.IsNever(left) ? ExtendsResult.True : ExtendsResult.False;
+}
+function FromArray4(left, right) {
+  return type_exports.IsObject(right) && IsObjectArrayLike(right) ? ExtendsResult.True : IsStructuralRight(right) ? StructuralRight(left, right) : !type_exports.IsArray(right) ? ExtendsResult.False : IntoBooleanResult(Visit3(left.items, right.items));
+}
+function FromAsyncIterator(left, right) {
+  return IsStructuralRight(right) ? StructuralRight(left, right) : !type_exports.IsAsyncIterator(right) ? ExtendsResult.False : IntoBooleanResult(Visit3(left.items, right.items));
+}
+function FromBigInt(left, right) {
+  return IsStructuralRight(right) ? StructuralRight(left, right) : type_exports.IsObject(right) ? FromObjectRight(left, right) : type_exports.IsRecord(right) ? FromRecordRight(left, right) : type_exports.IsBigInt(right) ? ExtendsResult.True : ExtendsResult.False;
+}
+function FromBooleanRight(left, right) {
+  return type_exports.IsLiteralBoolean(left) ? ExtendsResult.True : type_exports.IsBoolean(left) ? ExtendsResult.True : ExtendsResult.False;
+}
+function FromBoolean(left, right) {
+  return IsStructuralRight(right) ? StructuralRight(left, right) : type_exports.IsObject(right) ? FromObjectRight(left, right) : type_exports.IsRecord(right) ? FromRecordRight(left, right) : type_exports.IsBoolean(right) ? ExtendsResult.True : ExtendsResult.False;
+}
+function FromConstructor(left, right) {
+  return IsStructuralRight(right) ? StructuralRight(left, right) : type_exports.IsObject(right) ? FromObjectRight(left, right) : !type_exports.IsConstructor(right) ? ExtendsResult.False : left.parameters.length > right.parameters.length ? ExtendsResult.False : !left.parameters.every((schema, index) => IntoBooleanResult(Visit3(right.parameters[index], schema)) === ExtendsResult.True) ? ExtendsResult.False : IntoBooleanResult(Visit3(left.returns, right.returns));
+}
+function FromDate(left, right) {
+  return IsStructuralRight(right) ? StructuralRight(left, right) : type_exports.IsObject(right) ? FromObjectRight(left, right) : type_exports.IsRecord(right) ? FromRecordRight(left, right) : type_exports.IsDate(right) ? ExtendsResult.True : ExtendsResult.False;
+}
+function FromFunction(left, right) {
+  return IsStructuralRight(right) ? StructuralRight(left, right) : type_exports.IsObject(right) ? FromObjectRight(left, right) : !type_exports.IsFunction(right) ? ExtendsResult.False : left.parameters.length > right.parameters.length ? ExtendsResult.False : !left.parameters.every((schema, index) => IntoBooleanResult(Visit3(right.parameters[index], schema)) === ExtendsResult.True) ? ExtendsResult.False : IntoBooleanResult(Visit3(left.returns, right.returns));
+}
+function FromIntegerRight(left, right) {
+  return type_exports.IsLiteral(left) && value_exports.IsNumber(left.const) ? ExtendsResult.True : type_exports.IsNumber(left) || type_exports.IsInteger(left) ? ExtendsResult.True : ExtendsResult.False;
+}
+function FromInteger(left, right) {
+  return type_exports.IsInteger(right) || type_exports.IsNumber(right) ? ExtendsResult.True : IsStructuralRight(right) ? StructuralRight(left, right) : type_exports.IsObject(right) ? FromObjectRight(left, right) : type_exports.IsRecord(right) ? FromRecordRight(left, right) : ExtendsResult.False;
+}
+function FromIntersectRight(left, right) {
+  return right.allOf.every((schema) => Visit3(left, schema) === ExtendsResult.True) ? ExtendsResult.True : ExtendsResult.False;
+}
+function FromIntersect4(left, right) {
+  return left.allOf.some((schema) => Visit3(schema, right) === ExtendsResult.True) ? ExtendsResult.True : ExtendsResult.False;
+}
+function FromIterator(left, right) {
+  return IsStructuralRight(right) ? StructuralRight(left, right) : !type_exports.IsIterator(right) ? ExtendsResult.False : IntoBooleanResult(Visit3(left.items, right.items));
+}
+function FromLiteral2(left, right) {
+  return type_exports.IsLiteral(right) && right.const === left.const ? ExtendsResult.True : IsStructuralRight(right) ? StructuralRight(left, right) : type_exports.IsObject(right) ? FromObjectRight(left, right) : type_exports.IsRecord(right) ? FromRecordRight(left, right) : type_exports.IsString(right) ? FromStringRight(left, right) : type_exports.IsNumber(right) ? FromNumberRight(left, right) : type_exports.IsInteger(right) ? FromIntegerRight(left, right) : type_exports.IsBoolean(right) ? FromBooleanRight(left, right) : ExtendsResult.False;
+}
+function FromNeverRight(left, right) {
+  return ExtendsResult.False;
+}
+function FromNever(left, right) {
+  return ExtendsResult.True;
+}
+function UnwrapTNot(schema) {
+  let [current, depth] = [schema, 0];
+  while (true) {
+    if (!type_exports.IsNot(current))
+      break;
+    current = current.not;
+    depth += 1;
+  }
+  return depth % 2 === 0 ? current : Unknown();
+}
+function FromNot(left, right) {
+  return type_exports.IsNot(left) ? Visit3(UnwrapTNot(left), right) : type_exports.IsNot(right) ? Visit3(left, UnwrapTNot(right)) : Throw("Invalid fallthrough for Not");
+}
+function FromNull(left, right) {
+  return IsStructuralRight(right) ? StructuralRight(left, right) : type_exports.IsObject(right) ? FromObjectRight(left, right) : type_exports.IsRecord(right) ? FromRecordRight(left, right) : type_exports.IsNull(right) ? ExtendsResult.True : ExtendsResult.False;
+}
+function FromNumberRight(left, right) {
+  return type_exports.IsLiteralNumber(left) ? ExtendsResult.True : type_exports.IsNumber(left) || type_exports.IsInteger(left) ? ExtendsResult.True : ExtendsResult.False;
+}
+function FromNumber(left, right) {
+  return IsStructuralRight(right) ? StructuralRight(left, right) : type_exports.IsObject(right) ? FromObjectRight(left, right) : type_exports.IsRecord(right) ? FromRecordRight(left, right) : type_exports.IsInteger(right) || type_exports.IsNumber(right) ? ExtendsResult.True : ExtendsResult.False;
+}
+function IsObjectPropertyCount(schema, count) {
+  return Object.getOwnPropertyNames(schema.properties).length === count;
+}
+function IsObjectStringLike(schema) {
+  return IsObjectArrayLike(schema);
+}
+function IsObjectSymbolLike(schema) {
+  return IsObjectPropertyCount(schema, 0) || IsObjectPropertyCount(schema, 1) && "description" in schema.properties && type_exports.IsUnion(schema.properties.description) && schema.properties.description.anyOf.length === 2 && (type_exports.IsString(schema.properties.description.anyOf[0]) && type_exports.IsUndefined(schema.properties.description.anyOf[1]) || type_exports.IsString(schema.properties.description.anyOf[1]) && type_exports.IsUndefined(schema.properties.description.anyOf[0]));
+}
+function IsObjectNumberLike(schema) {
+  return IsObjectPropertyCount(schema, 0);
+}
+function IsObjectBooleanLike(schema) {
+  return IsObjectPropertyCount(schema, 0);
+}
+function IsObjectBigIntLike(schema) {
+  return IsObjectPropertyCount(schema, 0);
+}
+function IsObjectDateLike(schema) {
+  return IsObjectPropertyCount(schema, 0);
+}
+function IsObjectUint8ArrayLike(schema) {
+  return IsObjectArrayLike(schema);
+}
+function IsObjectFunctionLike(schema) {
+  const length = Number2();
+  return IsObjectPropertyCount(schema, 0) || IsObjectPropertyCount(schema, 1) && "length" in schema.properties && IntoBooleanResult(Visit3(schema.properties["length"], length)) === ExtendsResult.True;
+}
+function IsObjectConstructorLike(schema) {
+  return IsObjectPropertyCount(schema, 0);
+}
+function IsObjectArrayLike(schema) {
+  const length = Number2();
+  return IsObjectPropertyCount(schema, 0) || IsObjectPropertyCount(schema, 1) && "length" in schema.properties && IntoBooleanResult(Visit3(schema.properties["length"], length)) === ExtendsResult.True;
+}
+function IsObjectPromiseLike(schema) {
+  const then = Function2([Any()], Any());
+  return IsObjectPropertyCount(schema, 0) || IsObjectPropertyCount(schema, 1) && "then" in schema.properties && IntoBooleanResult(Visit3(schema.properties["then"], then)) === ExtendsResult.True;
+}
+function Property(left, right) {
+  return Visit3(left, right) === ExtendsResult.False ? ExtendsResult.False : type_exports.IsOptional(left) && !type_exports.IsOptional(right) ? ExtendsResult.False : ExtendsResult.True;
+}
+function FromObjectRight(left, right) {
+  return type_exports.IsUnknown(left) ? ExtendsResult.False : type_exports.IsAny(left) ? ExtendsResult.Union : type_exports.IsNever(left) || type_exports.IsLiteralString(left) && IsObjectStringLike(right) || type_exports.IsLiteralNumber(left) && IsObjectNumberLike(right) || type_exports.IsLiteralBoolean(left) && IsObjectBooleanLike(right) || type_exports.IsSymbol(left) && IsObjectSymbolLike(right) || type_exports.IsBigInt(left) && IsObjectBigIntLike(right) || type_exports.IsString(left) && IsObjectStringLike(right) || type_exports.IsSymbol(left) && IsObjectSymbolLike(right) || type_exports.IsNumber(left) && IsObjectNumberLike(right) || type_exports.IsInteger(left) && IsObjectNumberLike(right) || type_exports.IsBoolean(left) && IsObjectBooleanLike(right) || type_exports.IsUint8Array(left) && IsObjectUint8ArrayLike(right) || type_exports.IsDate(left) && IsObjectDateLike(right) || type_exports.IsConstructor(left) && IsObjectConstructorLike(right) || type_exports.IsFunction(left) && IsObjectFunctionLike(right) ? ExtendsResult.True : type_exports.IsRecord(left) && type_exports.IsString(RecordKey(left)) ? (() => {
+    return right[Hint] === "Record" ? ExtendsResult.True : ExtendsResult.False;
+  })() : type_exports.IsRecord(left) && type_exports.IsNumber(RecordKey(left)) ? (() => {
+    return IsObjectPropertyCount(right, 0) ? ExtendsResult.True : ExtendsResult.False;
+  })() : ExtendsResult.False;
+}
+function FromObject(left, right) {
+  return IsStructuralRight(right) ? StructuralRight(left, right) : type_exports.IsRecord(right) ? FromRecordRight(left, right) : !type_exports.IsObject(right) ? ExtendsResult.False : (() => {
+    for (const key of Object.getOwnPropertyNames(right.properties)) {
+      if (!(key in left.properties) && !type_exports.IsOptional(right.properties[key])) {
+        return ExtendsResult.False;
+      }
+      if (type_exports.IsOptional(right.properties[key])) {
+        return ExtendsResult.True;
+      }
+      if (Property(left.properties[key], right.properties[key]) === ExtendsResult.False) {
+        return ExtendsResult.False;
+      }
+    }
+    return ExtendsResult.True;
+  })();
+}
+function FromPromise2(left, right) {
+  return IsStructuralRight(right) ? StructuralRight(left, right) : type_exports.IsObject(right) && IsObjectPromiseLike(right) ? ExtendsResult.True : !type_exports.IsPromise(right) ? ExtendsResult.False : IntoBooleanResult(Visit3(left.item, right.item));
+}
+function RecordKey(schema) {
+  return PatternNumberExact in schema.patternProperties ? Number2() : PatternStringExact in schema.patternProperties ? String2() : Throw("Unknown record key pattern");
+}
+function RecordValue(schema) {
+  return PatternNumberExact in schema.patternProperties ? schema.patternProperties[PatternNumberExact] : PatternStringExact in schema.patternProperties ? schema.patternProperties[PatternStringExact] : Throw("Unable to get record value schema");
+}
+function FromRecordRight(left, right) {
+  const [Key, Value] = [RecordKey(right), RecordValue(right)];
+  return type_exports.IsLiteralString(left) && type_exports.IsNumber(Key) && IntoBooleanResult(Visit3(left, Value)) === ExtendsResult.True ? ExtendsResult.True : type_exports.IsUint8Array(left) && type_exports.IsNumber(Key) ? Visit3(left, Value) : type_exports.IsString(left) && type_exports.IsNumber(Key) ? Visit3(left, Value) : type_exports.IsArray(left) && type_exports.IsNumber(Key) ? Visit3(left, Value) : type_exports.IsObject(left) ? (() => {
+    for (const key of Object.getOwnPropertyNames(left.properties)) {
+      if (Property(Value, left.properties[key]) === ExtendsResult.False) {
+        return ExtendsResult.False;
+      }
+    }
+    return ExtendsResult.True;
+  })() : ExtendsResult.False;
+}
+function FromRecord(left, right) {
+  return IsStructuralRight(right) ? StructuralRight(left, right) : type_exports.IsObject(right) ? FromObjectRight(left, right) : !type_exports.IsRecord(right) ? ExtendsResult.False : Visit3(RecordValue(left), RecordValue(right));
+}
+function FromRegExp(left, right) {
+  const L = type_exports.IsRegExp(left) ? String2() : left;
+  const R = type_exports.IsRegExp(right) ? String2() : right;
+  return Visit3(L, R);
+}
+function FromStringRight(left, right) {
+  return type_exports.IsLiteral(left) && value_exports.IsString(left.const) ? ExtendsResult.True : type_exports.IsString(left) ? ExtendsResult.True : ExtendsResult.False;
+}
+function FromString(left, right) {
+  return IsStructuralRight(right) ? StructuralRight(left, right) : type_exports.IsObject(right) ? FromObjectRight(left, right) : type_exports.IsRecord(right) ? FromRecordRight(left, right) : type_exports.IsString(right) ? ExtendsResult.True : ExtendsResult.False;
+}
+function FromSymbol(left, right) {
+  return IsStructuralRight(right) ? StructuralRight(left, right) : type_exports.IsObject(right) ? FromObjectRight(left, right) : type_exports.IsRecord(right) ? FromRecordRight(left, right) : type_exports.IsSymbol(right) ? ExtendsResult.True : ExtendsResult.False;
+}
+function FromTemplateLiteral2(left, right) {
+  return type_exports.IsTemplateLiteral(left) ? Visit3(TemplateLiteralToUnion(left), right) : type_exports.IsTemplateLiteral(right) ? Visit3(left, TemplateLiteralToUnion(right)) : Throw("Invalid fallthrough for TemplateLiteral");
+}
+function IsArrayOfTuple(left, right) {
+  return type_exports.IsArray(right) && left.items !== void 0 && left.items.every((schema) => Visit3(schema, right.items) === ExtendsResult.True);
+}
+function FromTupleRight(left, right) {
+  return type_exports.IsNever(left) ? ExtendsResult.True : type_exports.IsUnknown(left) ? ExtendsResult.False : type_exports.IsAny(left) ? ExtendsResult.Union : ExtendsResult.False;
+}
+function FromTuple3(left, right) {
+  return IsStructuralRight(right) ? StructuralRight(left, right) : type_exports.IsObject(right) && IsObjectArrayLike(right) ? ExtendsResult.True : type_exports.IsArray(right) && IsArrayOfTuple(left, right) ? ExtendsResult.True : !type_exports.IsTuple(right) ? ExtendsResult.False : value_exports.IsUndefined(left.items) && !value_exports.IsUndefined(right.items) || !value_exports.IsUndefined(left.items) && value_exports.IsUndefined(right.items) ? ExtendsResult.False : value_exports.IsUndefined(left.items) && !value_exports.IsUndefined(right.items) ? ExtendsResult.True : left.items.every((schema, index) => Visit3(schema, right.items[index]) === ExtendsResult.True) ? ExtendsResult.True : ExtendsResult.False;
+}
+function FromUint8Array(left, right) {
+  return IsStructuralRight(right) ? StructuralRight(left, right) : type_exports.IsObject(right) ? FromObjectRight(left, right) : type_exports.IsRecord(right) ? FromRecordRight(left, right) : type_exports.IsUint8Array(right) ? ExtendsResult.True : ExtendsResult.False;
+}
+function FromUndefined(left, right) {
+  return IsStructuralRight(right) ? StructuralRight(left, right) : type_exports.IsObject(right) ? FromObjectRight(left, right) : type_exports.IsRecord(right) ? FromRecordRight(left, right) : type_exports.IsVoid(right) ? FromVoidRight(left, right) : type_exports.IsUndefined(right) ? ExtendsResult.True : ExtendsResult.False;
+}
+function FromUnionRight(left, right) {
+  return right.anyOf.some((schema) => Visit3(left, schema) === ExtendsResult.True) ? ExtendsResult.True : ExtendsResult.False;
+}
+function FromUnion6(left, right) {
+  return left.anyOf.every((schema) => Visit3(schema, right) === ExtendsResult.True) ? ExtendsResult.True : ExtendsResult.False;
+}
+function FromUnknownRight(left, right) {
+  return ExtendsResult.True;
+}
+function FromUnknown(left, right) {
+  return type_exports.IsNever(right) ? FromNeverRight(left, right) : type_exports.IsIntersect(right) ? FromIntersectRight(left, right) : type_exports.IsUnion(right) ? FromUnionRight(left, right) : type_exports.IsAny(right) ? FromAnyRight(left, right) : type_exports.IsString(right) ? FromStringRight(left, right) : type_exports.IsNumber(right) ? FromNumberRight(left, right) : type_exports.IsInteger(right) ? FromIntegerRight(left, right) : type_exports.IsBoolean(right) ? FromBooleanRight(left, right) : type_exports.IsArray(right) ? FromArrayRight(left, right) : type_exports.IsTuple(right) ? FromTupleRight(left, right) : type_exports.IsObject(right) ? FromObjectRight(left, right) : type_exports.IsUnknown(right) ? ExtendsResult.True : ExtendsResult.False;
+}
+function FromVoidRight(left, right) {
+  return type_exports.IsUndefined(left) ? ExtendsResult.True : type_exports.IsUndefined(left) ? ExtendsResult.True : ExtendsResult.False;
+}
+function FromVoid(left, right) {
+  return type_exports.IsIntersect(right) ? FromIntersectRight(left, right) : type_exports.IsUnion(right) ? FromUnionRight(left, right) : type_exports.IsUnknown(right) ? FromUnknownRight(left, right) : type_exports.IsAny(right) ? FromAnyRight(left, right) : type_exports.IsObject(right) ? FromObjectRight(left, right) : type_exports.IsVoid(right) ? ExtendsResult.True : ExtendsResult.False;
+}
+function Visit3(left, right) {
+  return (
+    // resolvable
+    type_exports.IsTemplateLiteral(left) || type_exports.IsTemplateLiteral(right) ? FromTemplateLiteral2(left, right) : type_exports.IsRegExp(left) || type_exports.IsRegExp(right) ? FromRegExp(left, right) : type_exports.IsNot(left) || type_exports.IsNot(right) ? FromNot(left, right) : (
+      // standard
+      type_exports.IsAny(left) ? FromAny(left, right) : type_exports.IsArray(left) ? FromArray4(left, right) : type_exports.IsBigInt(left) ? FromBigInt(left, right) : type_exports.IsBoolean(left) ? FromBoolean(left, right) : type_exports.IsAsyncIterator(left) ? FromAsyncIterator(left, right) : type_exports.IsConstructor(left) ? FromConstructor(left, right) : type_exports.IsDate(left) ? FromDate(left, right) : type_exports.IsFunction(left) ? FromFunction(left, right) : type_exports.IsInteger(left) ? FromInteger(left, right) : type_exports.IsIntersect(left) ? FromIntersect4(left, right) : type_exports.IsIterator(left) ? FromIterator(left, right) : type_exports.IsLiteral(left) ? FromLiteral2(left, right) : type_exports.IsNever(left) ? FromNever(left, right) : type_exports.IsNull(left) ? FromNull(left, right) : type_exports.IsNumber(left) ? FromNumber(left, right) : type_exports.IsObject(left) ? FromObject(left, right) : type_exports.IsRecord(left) ? FromRecord(left, right) : type_exports.IsString(left) ? FromString(left, right) : type_exports.IsSymbol(left) ? FromSymbol(left, right) : type_exports.IsTuple(left) ? FromTuple3(left, right) : type_exports.IsPromise(left) ? FromPromise2(left, right) : type_exports.IsUint8Array(left) ? FromUint8Array(left, right) : type_exports.IsUndefined(left) ? FromUndefined(left, right) : type_exports.IsUnion(left) ? FromUnion6(left, right) : type_exports.IsUnknown(left) ? FromUnknown(left, right) : type_exports.IsVoid(left) ? FromVoid(left, right) : Throw(`Unknown left type operand '${left[Kind]}'`)
+    )
+  );
+}
+function ExtendsCheck(left, right) {
+  return Visit3(left, right);
+}
+var ExtendsResolverError, ExtendsResult;
+var init_extends_check = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/extends/extends-check.mjs"() {
+    init_any2();
+    init_function2();
+    init_number2();
+    init_string2();
+    init_unknown2();
+    init_template_literal2();
+    init_patterns2();
+    init_symbols2();
+    init_error2();
+    init_guard3();
+    ExtendsResolverError = class extends TypeBoxError {
+      static {
+        __name(this, "ExtendsResolverError");
+      }
+    };
+    (function(ExtendsResult2) {
+      ExtendsResult2[ExtendsResult2["Union"] = 0] = "Union";
+      ExtendsResult2[ExtendsResult2["True"] = 1] = "True";
+      ExtendsResult2[ExtendsResult2["False"] = 2] = "False";
+    })(ExtendsResult || (ExtendsResult = {}));
+    __name(IntoBooleanResult, "IntoBooleanResult");
+    __name(Throw, "Throw");
+    __name(IsStructuralRight, "IsStructuralRight");
+    __name(StructuralRight, "StructuralRight");
+    __name(FromAnyRight, "FromAnyRight");
+    __name(FromAny, "FromAny");
+    __name(FromArrayRight, "FromArrayRight");
+    __name(FromArray4, "FromArray");
+    __name(FromAsyncIterator, "FromAsyncIterator");
+    __name(FromBigInt, "FromBigInt");
+    __name(FromBooleanRight, "FromBooleanRight");
+    __name(FromBoolean, "FromBoolean");
+    __name(FromConstructor, "FromConstructor");
+    __name(FromDate, "FromDate");
+    __name(FromFunction, "FromFunction");
+    __name(FromIntegerRight, "FromIntegerRight");
+    __name(FromInteger, "FromInteger");
+    __name(FromIntersectRight, "FromIntersectRight");
+    __name(FromIntersect4, "FromIntersect");
+    __name(FromIterator, "FromIterator");
+    __name(FromLiteral2, "FromLiteral");
+    __name(FromNeverRight, "FromNeverRight");
+    __name(FromNever, "FromNever");
+    __name(UnwrapTNot, "UnwrapTNot");
+    __name(FromNot, "FromNot");
+    __name(FromNull, "FromNull");
+    __name(FromNumberRight, "FromNumberRight");
+    __name(FromNumber, "FromNumber");
+    __name(IsObjectPropertyCount, "IsObjectPropertyCount");
+    __name(IsObjectStringLike, "IsObjectStringLike");
+    __name(IsObjectSymbolLike, "IsObjectSymbolLike");
+    __name(IsObjectNumberLike, "IsObjectNumberLike");
+    __name(IsObjectBooleanLike, "IsObjectBooleanLike");
+    __name(IsObjectBigIntLike, "IsObjectBigIntLike");
+    __name(IsObjectDateLike, "IsObjectDateLike");
+    __name(IsObjectUint8ArrayLike, "IsObjectUint8ArrayLike");
+    __name(IsObjectFunctionLike, "IsObjectFunctionLike");
+    __name(IsObjectConstructorLike, "IsObjectConstructorLike");
+    __name(IsObjectArrayLike, "IsObjectArrayLike");
+    __name(IsObjectPromiseLike, "IsObjectPromiseLike");
+    __name(Property, "Property");
+    __name(FromObjectRight, "FromObjectRight");
+    __name(FromObject, "FromObject");
+    __name(FromPromise2, "FromPromise");
+    __name(RecordKey, "RecordKey");
+    __name(RecordValue, "RecordValue");
+    __name(FromRecordRight, "FromRecordRight");
+    __name(FromRecord, "FromRecord");
+    __name(FromRegExp, "FromRegExp");
+    __name(FromStringRight, "FromStringRight");
+    __name(FromString, "FromString");
+    __name(FromSymbol, "FromSymbol");
+    __name(FromTemplateLiteral2, "FromTemplateLiteral");
+    __name(IsArrayOfTuple, "IsArrayOfTuple");
+    __name(FromTupleRight, "FromTupleRight");
+    __name(FromTuple3, "FromTuple");
+    __name(FromUint8Array, "FromUint8Array");
+    __name(FromUndefined, "FromUndefined");
+    __name(FromUnionRight, "FromUnionRight");
+    __name(FromUnion6, "FromUnion");
+    __name(FromUnknownRight, "FromUnknownRight");
+    __name(FromUnknown, "FromUnknown");
+    __name(FromVoidRight, "FromVoidRight");
+    __name(FromVoid, "FromVoid");
+    __name(Visit3, "Visit");
+    __name(ExtendsCheck, "ExtendsCheck");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/extends/extends-from-mapped-result.mjs
+function FromProperties8(P, Right, True, False, options) {
+  const Acc = {};
+  for (const K2 of globalThis.Object.getOwnPropertyNames(P))
+    Acc[K2] = Extends(P[K2], Right, True, False, Clone(options));
+  return Acc;
+}
+function FromMappedResult6(Left, Right, True, False, options) {
+  return FromProperties8(Left.properties, Right, True, False, options);
+}
+function ExtendsFromMappedResult(Left, Right, True, False, options) {
+  const P = FromMappedResult6(Left, Right, True, False, options);
+  return MappedResult(P);
+}
+var init_extends_from_mapped_result = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/extends/extends-from-mapped-result.mjs"() {
+    init_mapped2();
+    init_extends();
+    init_value2();
+    __name(FromProperties8, "FromProperties");
+    __name(FromMappedResult6, "FromMappedResult");
+    __name(ExtendsFromMappedResult, "ExtendsFromMappedResult");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/extends/extends.mjs
+function ExtendsResolve(left, right, trueType, falseType) {
+  const R = ExtendsCheck(left, right);
+  return R === ExtendsResult.Union ? Union([trueType, falseType]) : R === ExtendsResult.True ? trueType : falseType;
+}
+function Extends(L, R, T, F, options) {
+  return IsMappedResult(L) ? ExtendsFromMappedResult(L, R, T, F, options) : IsMappedKey(L) ? CreateType(ExtendsFromMappedKey(L, R, T, F, options)) : CreateType(ExtendsResolve(L, R, T, F), options);
+}
+var init_extends = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/extends/extends.mjs"() {
+    init_type2();
+    init_union2();
+    init_extends_check();
+    init_extends_from_mapped_key();
+    init_extends_from_mapped_result();
+    init_kind();
+    __name(ExtendsResolve, "ExtendsResolve");
+    __name(Extends, "Extends");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/extends/extends-from-mapped-key.mjs
+function FromPropertyKey(K, U, L, R, options) {
+  return {
+    [K]: Extends(Literal(K), U, L, R, Clone(options))
+  };
+}
+function FromPropertyKeys(K, U, L, R, options) {
+  return K.reduce((Acc, LK) => {
+    return { ...Acc, ...FromPropertyKey(LK, U, L, R, options) };
+  }, {});
+}
+function FromMappedKey2(K, U, L, R, options) {
+  return FromPropertyKeys(K.keys, U, L, R, options);
+}
+function ExtendsFromMappedKey(T, U, L, R, options) {
+  const P = FromMappedKey2(T, U, L, R, options);
+  return MappedResult(P);
+}
+var init_extends_from_mapped_key = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/extends/extends-from-mapped-key.mjs"() {
+    init_mapped2();
+    init_literal2();
+    init_extends();
+    init_value2();
+    __name(FromPropertyKey, "FromPropertyKey");
+    __name(FromPropertyKeys, "FromPropertyKeys");
+    __name(FromMappedKey2, "FromMappedKey");
+    __name(ExtendsFromMappedKey, "ExtendsFromMappedKey");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/extends/extends-undefined.mjs
+var init_extends_undefined = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/extends/extends-undefined.mjs"() {
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/extends/index.mjs
+var init_extends2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/extends/index.mjs"() {
+    init_extends_check();
+    init_extends_from_mapped_key();
+    init_extends_from_mapped_result();
+    init_extends_undefined();
+    init_extends();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/exclude/exclude-from-template-literal.mjs
+function ExcludeFromTemplateLiteral(L, R) {
+  return Exclude(TemplateLiteralToUnion(L), R);
+}
+var init_exclude_from_template_literal = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/exclude/exclude-from-template-literal.mjs"() {
+    init_exclude();
+    init_template_literal2();
+    __name(ExcludeFromTemplateLiteral, "ExcludeFromTemplateLiteral");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/exclude/exclude.mjs
+function ExcludeRest(L, R) {
+  const excluded = L.filter((inner) => ExtendsCheck(inner, R) === ExtendsResult.False);
+  return excluded.length === 1 ? excluded[0] : Union(excluded);
+}
+function Exclude(L, R, options = {}) {
+  if (IsTemplateLiteral(L))
+    return CreateType(ExcludeFromTemplateLiteral(L, R), options);
+  if (IsMappedResult(L))
+    return CreateType(ExcludeFromMappedResult(L, R), options);
+  return CreateType(IsUnion(L) ? ExcludeRest(L.anyOf, R) : ExtendsCheck(L, R) !== ExtendsResult.False ? Never() : L, options);
+}
+var init_exclude = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/exclude/exclude.mjs"() {
+    init_type2();
+    init_union2();
+    init_never2();
+    init_extends2();
+    init_exclude_from_mapped_result();
+    init_exclude_from_template_literal();
+    init_kind();
+    __name(ExcludeRest, "ExcludeRest");
+    __name(Exclude, "Exclude");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/exclude/exclude-from-mapped-result.mjs
+function FromProperties9(P, U) {
+  const Acc = {};
+  for (const K2 of globalThis.Object.getOwnPropertyNames(P))
+    Acc[K2] = Exclude(P[K2], U);
+  return Acc;
+}
+function FromMappedResult7(R, T) {
+  return FromProperties9(R.properties, T);
+}
+function ExcludeFromMappedResult(R, T) {
+  const P = FromMappedResult7(R, T);
+  return MappedResult(P);
+}
+var init_exclude_from_mapped_result = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/exclude/exclude-from-mapped-result.mjs"() {
+    init_mapped2();
+    init_exclude();
+    __name(FromProperties9, "FromProperties");
+    __name(FromMappedResult7, "FromMappedResult");
+    __name(ExcludeFromMappedResult, "ExcludeFromMappedResult");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/exclude/index.mjs
+var init_exclude2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/exclude/index.mjs"() {
+    init_exclude_from_mapped_result();
+    init_exclude_from_template_literal();
+    init_exclude();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/extract/extract-from-template-literal.mjs
+function ExtractFromTemplateLiteral(L, R) {
+  return Extract(TemplateLiteralToUnion(L), R);
+}
+var init_extract_from_template_literal = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/extract/extract-from-template-literal.mjs"() {
+    init_extract();
+    init_template_literal2();
+    __name(ExtractFromTemplateLiteral, "ExtractFromTemplateLiteral");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/extract/extract.mjs
+function ExtractRest(L, R) {
+  const extracted = L.filter((inner) => ExtendsCheck(inner, R) !== ExtendsResult.False);
+  return extracted.length === 1 ? extracted[0] : Union(extracted);
+}
+function Extract(L, R, options) {
+  if (IsTemplateLiteral(L))
+    return CreateType(ExtractFromTemplateLiteral(L, R), options);
+  if (IsMappedResult(L))
+    return CreateType(ExtractFromMappedResult(L, R), options);
+  return CreateType(IsUnion(L) ? ExtractRest(L.anyOf, R) : ExtendsCheck(L, R) !== ExtendsResult.False ? L : Never(), options);
+}
+var init_extract = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/extract/extract.mjs"() {
+    init_type2();
+    init_union2();
+    init_never2();
+    init_extends2();
+    init_extract_from_mapped_result();
+    init_extract_from_template_literal();
+    init_kind();
+    __name(ExtractRest, "ExtractRest");
+    __name(Extract, "Extract");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/extract/extract-from-mapped-result.mjs
+function FromProperties10(P, T) {
+  const Acc = {};
+  for (const K2 of globalThis.Object.getOwnPropertyNames(P))
+    Acc[K2] = Extract(P[K2], T);
+  return Acc;
+}
+function FromMappedResult8(R, T) {
+  return FromProperties10(R.properties, T);
+}
+function ExtractFromMappedResult(R, T) {
+  const P = FromMappedResult8(R, T);
+  return MappedResult(P);
+}
+var init_extract_from_mapped_result = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/extract/extract-from-mapped-result.mjs"() {
+    init_mapped2();
+    init_extract();
+    __name(FromProperties10, "FromProperties");
+    __name(FromMappedResult8, "FromMappedResult");
+    __name(ExtractFromMappedResult, "ExtractFromMappedResult");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/extract/index.mjs
+var init_extract2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/extract/index.mjs"() {
+    init_extract_from_mapped_result();
+    init_extract_from_template_literal();
+    init_extract();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/instance-type/instance-type.mjs
+function InstanceType(schema, options) {
+  return IsConstructor(schema) ? CreateType(schema.returns, options) : Never(options);
+}
+var init_instance_type = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/instance-type/instance-type.mjs"() {
+    init_type2();
+    init_never2();
+    init_kind();
+    __name(InstanceType, "InstanceType");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/instance-type/index.mjs
+var init_instance_type2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/instance-type/index.mjs"() {
+    init_instance_type();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/readonly-optional/readonly-optional.mjs
+function ReadonlyOptional(schema) {
+  return Readonly(Optional(schema));
+}
+var init_readonly_optional = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/readonly-optional/readonly-optional.mjs"() {
+    init_readonly2();
+    init_optional2();
+    __name(ReadonlyOptional, "ReadonlyOptional");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/readonly-optional/index.mjs
+var init_readonly_optional2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/readonly-optional/index.mjs"() {
+    init_readonly_optional();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/record/record.mjs
+function RecordCreateFromPattern(pattern, T, options) {
+  return CreateType({ [Kind]: "Record", type: "object", patternProperties: { [pattern]: T } }, options);
+}
+function RecordCreateFromKeys(K, T, options) {
+  const result = {};
+  for (const K2 of K)
+    result[K2] = T;
+  return Object2(result, { ...options, [Hint]: "Record" });
+}
+function FromTemplateLiteralKey(K, T, options) {
+  return IsTemplateLiteralFinite(K) ? RecordCreateFromKeys(IndexPropertyKeys(K), T, options) : RecordCreateFromPattern(K.pattern, T, options);
+}
+function FromUnionKey(key, type, options) {
+  return RecordCreateFromKeys(IndexPropertyKeys(Union(key)), type, options);
+}
+function FromLiteralKey(key, type, options) {
+  return RecordCreateFromKeys([key.toString()], type, options);
+}
+function FromRegExpKey(key, type, options) {
+  return RecordCreateFromPattern(key.source, type, options);
+}
+function FromStringKey(key, type, options) {
+  const pattern = IsUndefined(key.pattern) ? PatternStringExact : key.pattern;
+  return RecordCreateFromPattern(pattern, type, options);
+}
+function FromAnyKey(_, type, options) {
+  return RecordCreateFromPattern(PatternStringExact, type, options);
+}
+function FromNeverKey(_key, type, options) {
+  return RecordCreateFromPattern(PatternNeverExact, type, options);
+}
+function FromBooleanKey(_key, type, options) {
+  return Object2({ true: type, false: type }, options);
+}
+function FromIntegerKey(_key, type, options) {
+  return RecordCreateFromPattern(PatternNumberExact, type, options);
+}
+function FromNumberKey(_, type, options) {
+  return RecordCreateFromPattern(PatternNumberExact, type, options);
+}
+function Record(key, type, options = {}) {
+  return IsUnion(key) ? FromUnionKey(key.anyOf, type, options) : IsTemplateLiteral(key) ? FromTemplateLiteralKey(key, type, options) : IsLiteral(key) ? FromLiteralKey(key.const, type, options) : IsBoolean3(key) ? FromBooleanKey(key, type, options) : IsInteger2(key) ? FromIntegerKey(key, type, options) : IsNumber3(key) ? FromNumberKey(key, type, options) : IsRegExp3(key) ? FromRegExpKey(key, type, options) : IsString3(key) ? FromStringKey(key, type, options) : IsAny(key) ? FromAnyKey(key, type, options) : IsNever(key) ? FromNeverKey(key, type, options) : Never(options);
+}
+function RecordPattern(record) {
+  return globalThis.Object.getOwnPropertyNames(record.patternProperties)[0];
+}
+function RecordKey2(type) {
+  const pattern = RecordPattern(type);
+  return pattern === PatternStringExact ? String2() : pattern === PatternNumberExact ? Number2() : String2({ pattern });
+}
+function RecordValue2(type) {
+  return type.patternProperties[RecordPattern(type)];
+}
+var init_record = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/record/record.mjs"() {
+    init_type2();
+    init_symbols2();
+    init_never2();
+    init_number2();
+    init_object2();
+    init_string2();
+    init_union2();
+    init_template_literal2();
+    init_patterns2();
+    init_indexed2();
+    init_value();
+    init_kind();
+    __name(RecordCreateFromPattern, "RecordCreateFromPattern");
+    __name(RecordCreateFromKeys, "RecordCreateFromKeys");
+    __name(FromTemplateLiteralKey, "FromTemplateLiteralKey");
+    __name(FromUnionKey, "FromUnionKey");
+    __name(FromLiteralKey, "FromLiteralKey");
+    __name(FromRegExpKey, "FromRegExpKey");
+    __name(FromStringKey, "FromStringKey");
+    __name(FromAnyKey, "FromAnyKey");
+    __name(FromNeverKey, "FromNeverKey");
+    __name(FromBooleanKey, "FromBooleanKey");
+    __name(FromIntegerKey, "FromIntegerKey");
+    __name(FromNumberKey, "FromNumberKey");
+    __name(Record, "Record");
+    __name(RecordPattern, "RecordPattern");
+    __name(RecordKey2, "RecordKey");
+    __name(RecordValue2, "RecordValue");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/record/index.mjs
+var init_record2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/record/index.mjs"() {
+    init_record();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/instantiate/instantiate.mjs
+function FromConstructor2(args, type) {
+  type.parameters = FromTypes(args, type.parameters);
+  type.returns = FromType(args, type.returns);
+  return type;
+}
+function FromFunction2(args, type) {
+  type.parameters = FromTypes(args, type.parameters);
+  type.returns = FromType(args, type.returns);
+  return type;
+}
+function FromIntersect5(args, type) {
+  type.allOf = FromTypes(args, type.allOf);
+  return type;
+}
+function FromUnion7(args, type) {
+  type.anyOf = FromTypes(args, type.anyOf);
+  return type;
+}
+function FromTuple4(args, type) {
+  if (IsUndefined(type.items))
+    return type;
+  type.items = FromTypes(args, type.items);
+  return type;
+}
+function FromArray5(args, type) {
+  type.items = FromType(args, type.items);
+  return type;
+}
+function FromAsyncIterator2(args, type) {
+  type.items = FromType(args, type.items);
+  return type;
+}
+function FromIterator2(args, type) {
+  type.items = FromType(args, type.items);
+  return type;
+}
+function FromPromise3(args, type) {
+  type.item = FromType(args, type.item);
+  return type;
+}
+function FromObject2(args, type) {
+  const mappedProperties = FromProperties11(args, type.properties);
+  return { ...type, ...Object2(mappedProperties) };
+}
+function FromRecord2(args, type) {
+  const mappedKey = FromType(args, RecordKey2(type));
+  const mappedValue = FromType(args, RecordValue2(type));
+  const result = Record(mappedKey, mappedValue);
+  return { ...type, ...result };
+}
+function FromArgument(args, argument) {
+  return argument.index in args ? args[argument.index] : Unknown();
+}
+function FromProperty2(args, type) {
+  const isReadonly = IsReadonly(type);
+  const isOptional = IsOptional(type);
+  const mapped = FromType(args, type);
+  return isReadonly && isOptional ? ReadonlyOptional(mapped) : isReadonly && !isOptional ? Readonly(mapped) : !isReadonly && isOptional ? Optional(mapped) : mapped;
+}
+function FromProperties11(args, properties) {
+  return globalThis.Object.getOwnPropertyNames(properties).reduce((result, key) => {
+    return { ...result, [key]: FromProperty2(args, properties[key]) };
+  }, {});
+}
+function FromTypes(args, types) {
+  return types.map((type) => FromType(args, type));
+}
+function FromType(args, type) {
+  return IsConstructor(type) ? FromConstructor2(args, type) : IsFunction3(type) ? FromFunction2(args, type) : IsIntersect(type) ? FromIntersect5(args, type) : IsUnion(type) ? FromUnion7(args, type) : IsTuple(type) ? FromTuple4(args, type) : IsArray3(type) ? FromArray5(args, type) : IsAsyncIterator3(type) ? FromAsyncIterator2(args, type) : IsIterator3(type) ? FromIterator2(args, type) : IsPromise2(type) ? FromPromise3(args, type) : IsObject3(type) ? FromObject2(args, type) : IsRecord(type) ? FromRecord2(args, type) : IsArgument(type) ? FromArgument(args, type) : type;
+}
+function Instantiate(type, args) {
+  return FromType(args, CloneType(type));
+}
+var init_instantiate = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/instantiate/instantiate.mjs"() {
+    init_type();
+    init_unknown2();
+    init_readonly_optional2();
+    init_readonly2();
+    init_optional2();
+    init_object2();
+    init_record2();
+    init_value();
+    init_kind();
+    __name(FromConstructor2, "FromConstructor");
+    __name(FromFunction2, "FromFunction");
+    __name(FromIntersect5, "FromIntersect");
+    __name(FromUnion7, "FromUnion");
+    __name(FromTuple4, "FromTuple");
+    __name(FromArray5, "FromArray");
+    __name(FromAsyncIterator2, "FromAsyncIterator");
+    __name(FromIterator2, "FromIterator");
+    __name(FromPromise3, "FromPromise");
+    __name(FromObject2, "FromObject");
+    __name(FromRecord2, "FromRecord");
+    __name(FromArgument, "FromArgument");
+    __name(FromProperty2, "FromProperty");
+    __name(FromProperties11, "FromProperties");
+    __name(FromTypes, "FromTypes");
+    __name(FromType, "FromType");
+    __name(Instantiate, "Instantiate");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/instantiate/index.mjs
+var init_instantiate2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/instantiate/index.mjs"() {
+    init_instantiate();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/integer/integer.mjs
+function Integer(options) {
+  return CreateType({ [Kind]: "Integer", type: "integer" }, options);
+}
+var init_integer = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/integer/integer.mjs"() {
+    init_type2();
+    init_symbols2();
+    __name(Integer, "Integer");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/integer/index.mjs
+var init_integer2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/integer/index.mjs"() {
+    init_integer();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/intrinsic/intrinsic-from-mapped-key.mjs
+function MappedIntrinsicPropertyKey(K, M, options) {
+  return {
+    [K]: Intrinsic(Literal(K), M, Clone(options))
+  };
+}
+function MappedIntrinsicPropertyKeys(K, M, options) {
+  const result = K.reduce((Acc, L) => {
+    return { ...Acc, ...MappedIntrinsicPropertyKey(L, M, options) };
+  }, {});
+  return result;
+}
+function MappedIntrinsicProperties(T, M, options) {
+  return MappedIntrinsicPropertyKeys(T["keys"], M, options);
+}
+function IntrinsicFromMappedKey(T, M, options) {
+  const P = MappedIntrinsicProperties(T, M, options);
+  return MappedResult(P);
+}
+var init_intrinsic_from_mapped_key = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/intrinsic/intrinsic-from-mapped-key.mjs"() {
+    init_mapped2();
+    init_intrinsic();
+    init_literal2();
+    init_value2();
+    __name(MappedIntrinsicPropertyKey, "MappedIntrinsicPropertyKey");
+    __name(MappedIntrinsicPropertyKeys, "MappedIntrinsicPropertyKeys");
+    __name(MappedIntrinsicProperties, "MappedIntrinsicProperties");
+    __name(IntrinsicFromMappedKey, "IntrinsicFromMappedKey");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/intrinsic/intrinsic.mjs
+function ApplyUncapitalize(value) {
+  const [first, rest] = [value.slice(0, 1), value.slice(1)];
+  return [first.toLowerCase(), rest].join("");
+}
+function ApplyCapitalize(value) {
+  const [first, rest] = [value.slice(0, 1), value.slice(1)];
+  return [first.toUpperCase(), rest].join("");
+}
+function ApplyUppercase(value) {
+  return value.toUpperCase();
+}
+function ApplyLowercase(value) {
+  return value.toLowerCase();
+}
+function FromTemplateLiteral3(schema, mode, options) {
+  const expression = TemplateLiteralParseExact(schema.pattern);
+  const finite = IsTemplateLiteralExpressionFinite(expression);
+  if (!finite)
+    return { ...schema, pattern: FromLiteralValue(schema.pattern, mode) };
+  const strings = [...TemplateLiteralExpressionGenerate(expression)];
+  const literals = strings.map((value) => Literal(value));
+  const mapped = FromRest5(literals, mode);
+  const union = Union(mapped);
+  return TemplateLiteral([union], options);
+}
+function FromLiteralValue(value, mode) {
+  return typeof value === "string" ? mode === "Uncapitalize" ? ApplyUncapitalize(value) : mode === "Capitalize" ? ApplyCapitalize(value) : mode === "Uppercase" ? ApplyUppercase(value) : mode === "Lowercase" ? ApplyLowercase(value) : value : value.toString();
+}
+function FromRest5(T, M) {
+  return T.map((L) => Intrinsic(L, M));
+}
+function Intrinsic(schema, mode, options = {}) {
+  return (
+    // Intrinsic-Mapped-Inference
+    IsMappedKey(schema) ? IntrinsicFromMappedKey(schema, mode, options) : (
+      // Standard-Inference
+      IsTemplateLiteral(schema) ? FromTemplateLiteral3(schema, mode, options) : IsUnion(schema) ? Union(FromRest5(schema.anyOf, mode), options) : IsLiteral(schema) ? Literal(FromLiteralValue(schema.const, mode), options) : (
+        // Default Type
+        CreateType(schema, options)
+      )
+    )
+  );
+}
+var init_intrinsic = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/intrinsic/intrinsic.mjs"() {
+    init_type2();
+    init_template_literal2();
+    init_intrinsic_from_mapped_key();
+    init_literal2();
+    init_union2();
+    init_kind();
+    __name(ApplyUncapitalize, "ApplyUncapitalize");
+    __name(ApplyCapitalize, "ApplyCapitalize");
+    __name(ApplyUppercase, "ApplyUppercase");
+    __name(ApplyLowercase, "ApplyLowercase");
+    __name(FromTemplateLiteral3, "FromTemplateLiteral");
+    __name(FromLiteralValue, "FromLiteralValue");
+    __name(FromRest5, "FromRest");
+    __name(Intrinsic, "Intrinsic");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/intrinsic/capitalize.mjs
+function Capitalize(T, options = {}) {
+  return Intrinsic(T, "Capitalize", options);
+}
+var init_capitalize = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/intrinsic/capitalize.mjs"() {
+    init_intrinsic();
+    __name(Capitalize, "Capitalize");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/intrinsic/lowercase.mjs
+function Lowercase(T, options = {}) {
+  return Intrinsic(T, "Lowercase", options);
+}
+var init_lowercase = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/intrinsic/lowercase.mjs"() {
+    init_intrinsic();
+    __name(Lowercase, "Lowercase");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/intrinsic/uncapitalize.mjs
+function Uncapitalize(T, options = {}) {
+  return Intrinsic(T, "Uncapitalize", options);
+}
+var init_uncapitalize = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/intrinsic/uncapitalize.mjs"() {
+    init_intrinsic();
+    __name(Uncapitalize, "Uncapitalize");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/intrinsic/uppercase.mjs
+function Uppercase(T, options = {}) {
+  return Intrinsic(T, "Uppercase", options);
+}
+var init_uppercase = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/intrinsic/uppercase.mjs"() {
+    init_intrinsic();
+    __name(Uppercase, "Uppercase");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/intrinsic/index.mjs
+var init_intrinsic2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/intrinsic/index.mjs"() {
+    init_capitalize();
+    init_intrinsic_from_mapped_key();
+    init_intrinsic();
+    init_lowercase();
+    init_uncapitalize();
+    init_uppercase();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/omit/omit-from-mapped-result.mjs
+function FromProperties12(properties, propertyKeys, options) {
+  const result = {};
+  for (const K2 of globalThis.Object.getOwnPropertyNames(properties))
+    result[K2] = Omit(properties[K2], propertyKeys, Clone(options));
+  return result;
+}
+function FromMappedResult9(mappedResult, propertyKeys, options) {
+  return FromProperties12(mappedResult.properties, propertyKeys, options);
+}
+function OmitFromMappedResult(mappedResult, propertyKeys, options) {
+  const properties = FromMappedResult9(mappedResult, propertyKeys, options);
+  return MappedResult(properties);
+}
+var init_omit_from_mapped_result = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/omit/omit-from-mapped-result.mjs"() {
+    init_mapped2();
+    init_omit();
+    init_value2();
+    __name(FromProperties12, "FromProperties");
+    __name(FromMappedResult9, "FromMappedResult");
+    __name(OmitFromMappedResult, "OmitFromMappedResult");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/omit/omit.mjs
+function FromIntersect6(types, propertyKeys) {
+  return types.map((type) => OmitResolve(type, propertyKeys));
+}
+function FromUnion8(types, propertyKeys) {
+  return types.map((type) => OmitResolve(type, propertyKeys));
+}
+function FromProperty3(properties, key) {
+  const { [key]: _, ...R } = properties;
+  return R;
+}
+function FromProperties13(properties, propertyKeys) {
+  return propertyKeys.reduce((T, K2) => FromProperty3(T, K2), properties);
+}
+function FromObject3(properties, propertyKeys) {
+  const options = Discard(properties, [TransformKind, "$id", "required", "properties"]);
+  const omittedProperties = FromProperties13(properties["properties"], propertyKeys);
+  return Object2(omittedProperties, options);
+}
+function UnionFromPropertyKeys(propertyKeys) {
+  const result = propertyKeys.reduce((result2, key) => IsLiteralValue(key) ? [...result2, Literal(key)] : result2, []);
+  return Union(result);
+}
+function OmitResolve(properties, propertyKeys) {
+  return IsIntersect(properties) ? Intersect(FromIntersect6(properties.allOf, propertyKeys)) : IsUnion(properties) ? Union(FromUnion8(properties.anyOf, propertyKeys)) : IsObject3(properties) ? FromObject3(properties, propertyKeys) : Object2({});
+}
+function Omit(type, key, options) {
+  const typeKey = IsArray(key) ? UnionFromPropertyKeys(key) : key;
+  const propertyKeys = IsSchema(key) ? IndexPropertyKeys(key) : key;
+  const isTypeRef = IsRef(type);
+  const isKeyRef = IsRef(key);
+  return IsMappedResult(type) ? OmitFromMappedResult(type, propertyKeys, options) : IsMappedKey(key) ? OmitFromMappedKey(type, key, options) : isTypeRef && isKeyRef ? Computed("Omit", [type, typeKey], options) : !isTypeRef && isKeyRef ? Computed("Omit", [type, typeKey], options) : isTypeRef && !isKeyRef ? Computed("Omit", [type, typeKey], options) : CreateType({ ...OmitResolve(type, propertyKeys), ...options });
+}
+var init_omit = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/omit/omit.mjs"() {
+    init_type2();
+    init_discard();
+    init_symbols();
+    init_computed2();
+    init_literal2();
+    init_indexed2();
+    init_intersect2();
+    init_union2();
+    init_object2();
+    init_omit_from_mapped_key();
+    init_omit_from_mapped_result();
+    init_kind();
+    init_value();
+    __name(FromIntersect6, "FromIntersect");
+    __name(FromUnion8, "FromUnion");
+    __name(FromProperty3, "FromProperty");
+    __name(FromProperties13, "FromProperties");
+    __name(FromObject3, "FromObject");
+    __name(UnionFromPropertyKeys, "UnionFromPropertyKeys");
+    __name(OmitResolve, "OmitResolve");
+    __name(Omit, "Omit");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/omit/omit-from-mapped-key.mjs
+function FromPropertyKey2(type, key, options) {
+  return { [key]: Omit(type, [key], Clone(options)) };
+}
+function FromPropertyKeys2(type, propertyKeys, options) {
+  return propertyKeys.reduce((Acc, LK) => {
+    return { ...Acc, ...FromPropertyKey2(type, LK, options) };
+  }, {});
+}
+function FromMappedKey3(type, mappedKey, options) {
+  return FromPropertyKeys2(type, mappedKey.keys, options);
+}
+function OmitFromMappedKey(type, mappedKey, options) {
+  const properties = FromMappedKey3(type, mappedKey, options);
+  return MappedResult(properties);
+}
+var init_omit_from_mapped_key = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/omit/omit-from-mapped-key.mjs"() {
+    init_mapped2();
+    init_omit();
+    init_value2();
+    __name(FromPropertyKey2, "FromPropertyKey");
+    __name(FromPropertyKeys2, "FromPropertyKeys");
+    __name(FromMappedKey3, "FromMappedKey");
+    __name(OmitFromMappedKey, "OmitFromMappedKey");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/omit/index.mjs
+var init_omit2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/omit/index.mjs"() {
+    init_omit_from_mapped_key();
+    init_omit_from_mapped_result();
+    init_omit();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/pick/pick-from-mapped-result.mjs
+function FromProperties14(properties, propertyKeys, options) {
+  const result = {};
+  for (const K2 of globalThis.Object.getOwnPropertyNames(properties))
+    result[K2] = Pick(properties[K2], propertyKeys, Clone(options));
+  return result;
+}
+function FromMappedResult10(mappedResult, propertyKeys, options) {
+  return FromProperties14(mappedResult.properties, propertyKeys, options);
+}
+function PickFromMappedResult(mappedResult, propertyKeys, options) {
+  const properties = FromMappedResult10(mappedResult, propertyKeys, options);
+  return MappedResult(properties);
+}
+var init_pick_from_mapped_result = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/pick/pick-from-mapped-result.mjs"() {
+    init_mapped2();
+    init_pick();
+    init_value2();
+    __name(FromProperties14, "FromProperties");
+    __name(FromMappedResult10, "FromMappedResult");
+    __name(PickFromMappedResult, "PickFromMappedResult");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/pick/pick.mjs
+function FromIntersect7(types, propertyKeys) {
+  return types.map((type) => PickResolve(type, propertyKeys));
+}
+function FromUnion9(types, propertyKeys) {
+  return types.map((type) => PickResolve(type, propertyKeys));
+}
+function FromProperties15(properties, propertyKeys) {
+  const result = {};
+  for (const K2 of propertyKeys)
+    if (K2 in properties)
+      result[K2] = properties[K2];
+  return result;
+}
+function FromObject4(T, K) {
+  const options = Discard(T, [TransformKind, "$id", "required", "properties"]);
+  const properties = FromProperties15(T["properties"], K);
+  return Object2(properties, options);
+}
+function UnionFromPropertyKeys2(propertyKeys) {
+  const result = propertyKeys.reduce((result2, key) => IsLiteralValue(key) ? [...result2, Literal(key)] : result2, []);
+  return Union(result);
+}
+function PickResolve(properties, propertyKeys) {
+  return IsIntersect(properties) ? Intersect(FromIntersect7(properties.allOf, propertyKeys)) : IsUnion(properties) ? Union(FromUnion9(properties.anyOf, propertyKeys)) : IsObject3(properties) ? FromObject4(properties, propertyKeys) : Object2({});
+}
+function Pick(type, key, options) {
+  const typeKey = IsArray(key) ? UnionFromPropertyKeys2(key) : key;
+  const propertyKeys = IsSchema(key) ? IndexPropertyKeys(key) : key;
+  const isTypeRef = IsRef(type);
+  const isKeyRef = IsRef(key);
+  return IsMappedResult(type) ? PickFromMappedResult(type, propertyKeys, options) : IsMappedKey(key) ? PickFromMappedKey(type, key, options) : isTypeRef && isKeyRef ? Computed("Pick", [type, typeKey], options) : !isTypeRef && isKeyRef ? Computed("Pick", [type, typeKey], options) : isTypeRef && !isKeyRef ? Computed("Pick", [type, typeKey], options) : CreateType({ ...PickResolve(type, propertyKeys), ...options });
+}
+var init_pick = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/pick/pick.mjs"() {
+    init_type2();
+    init_discard();
+    init_computed2();
+    init_intersect2();
+    init_literal2();
+    init_object2();
+    init_union2();
+    init_indexed2();
+    init_symbols();
+    init_kind();
+    init_value();
+    init_pick_from_mapped_key();
+    init_pick_from_mapped_result();
+    __name(FromIntersect7, "FromIntersect");
+    __name(FromUnion9, "FromUnion");
+    __name(FromProperties15, "FromProperties");
+    __name(FromObject4, "FromObject");
+    __name(UnionFromPropertyKeys2, "UnionFromPropertyKeys");
+    __name(PickResolve, "PickResolve");
+    __name(Pick, "Pick");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/pick/pick-from-mapped-key.mjs
+function FromPropertyKey3(type, key, options) {
+  return {
+    [key]: Pick(type, [key], Clone(options))
+  };
+}
+function FromPropertyKeys3(type, propertyKeys, options) {
+  return propertyKeys.reduce((result, leftKey) => {
+    return { ...result, ...FromPropertyKey3(type, leftKey, options) };
+  }, {});
+}
+function FromMappedKey4(type, mappedKey, options) {
+  return FromPropertyKeys3(type, mappedKey.keys, options);
+}
+function PickFromMappedKey(type, mappedKey, options) {
+  const properties = FromMappedKey4(type, mappedKey, options);
+  return MappedResult(properties);
+}
+var init_pick_from_mapped_key = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/pick/pick-from-mapped-key.mjs"() {
+    init_mapped2();
+    init_pick();
+    init_value2();
+    __name(FromPropertyKey3, "FromPropertyKey");
+    __name(FromPropertyKeys3, "FromPropertyKeys");
+    __name(FromMappedKey4, "FromMappedKey");
+    __name(PickFromMappedKey, "PickFromMappedKey");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/pick/index.mjs
+var init_pick2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/pick/index.mjs"() {
+    init_pick_from_mapped_key();
+    init_pick_from_mapped_result();
+    init_pick();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/partial/partial.mjs
+function FromComputed3(target, parameters) {
+  return Computed("Partial", [Computed(target, parameters)]);
+}
+function FromRef3($ref) {
+  return Computed("Partial", [Ref($ref)]);
+}
+function FromProperties16(properties) {
+  const partialProperties = {};
+  for (const K of globalThis.Object.getOwnPropertyNames(properties))
+    partialProperties[K] = Optional(properties[K]);
+  return partialProperties;
+}
+function FromObject5(type) {
+  const options = Discard(type, [TransformKind, "$id", "required", "properties"]);
+  const properties = FromProperties16(type["properties"]);
+  return Object2(properties, options);
+}
+function FromRest6(types) {
+  return types.map((type) => PartialResolve(type));
+}
+function PartialResolve(type) {
+  return (
+    // Mappable
+    IsComputed(type) ? FromComputed3(type.target, type.parameters) : IsRef(type) ? FromRef3(type.$ref) : IsIntersect(type) ? Intersect(FromRest6(type.allOf)) : IsUnion(type) ? Union(FromRest6(type.anyOf)) : IsObject3(type) ? FromObject5(type) : (
+      // Intrinsic
+      IsBigInt3(type) ? type : IsBoolean3(type) ? type : IsInteger2(type) ? type : IsLiteral(type) ? type : IsNull3(type) ? type : IsNumber3(type) ? type : IsString3(type) ? type : IsSymbol3(type) ? type : IsUndefined3(type) ? type : (
+        // Passthrough
+        Object2({})
+      )
+    )
+  );
+}
+function Partial(type, options) {
+  if (IsMappedResult(type)) {
+    return PartialFromMappedResult(type, options);
+  } else {
+    return CreateType({ ...PartialResolve(type), ...options });
+  }
+}
+var init_partial = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/partial/partial.mjs"() {
+    init_type2();
+    init_computed2();
+    init_optional2();
+    init_object2();
+    init_intersect2();
+    init_union2();
+    init_ref2();
+    init_discard2();
+    init_symbols2();
+    init_partial_from_mapped_result();
+    init_kind();
+    __name(FromComputed3, "FromComputed");
+    __name(FromRef3, "FromRef");
+    __name(FromProperties16, "FromProperties");
+    __name(FromObject5, "FromObject");
+    __name(FromRest6, "FromRest");
+    __name(PartialResolve, "PartialResolve");
+    __name(Partial, "Partial");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/partial/partial-from-mapped-result.mjs
+function FromProperties17(K, options) {
+  const Acc = {};
+  for (const K2 of globalThis.Object.getOwnPropertyNames(K))
+    Acc[K2] = Partial(K[K2], Clone(options));
+  return Acc;
+}
+function FromMappedResult11(R, options) {
+  return FromProperties17(R.properties, options);
+}
+function PartialFromMappedResult(R, options) {
+  const P = FromMappedResult11(R, options);
+  return MappedResult(P);
+}
+var init_partial_from_mapped_result = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/partial/partial-from-mapped-result.mjs"() {
+    init_mapped2();
+    init_partial();
+    init_value2();
+    __name(FromProperties17, "FromProperties");
+    __name(FromMappedResult11, "FromMappedResult");
+    __name(PartialFromMappedResult, "PartialFromMappedResult");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/partial/index.mjs
+var init_partial2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/partial/index.mjs"() {
+    init_partial_from_mapped_result();
+    init_partial();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/required/required.mjs
+function FromComputed4(target, parameters) {
+  return Computed("Required", [Computed(target, parameters)]);
+}
+function FromRef4($ref) {
+  return Computed("Required", [Ref($ref)]);
+}
+function FromProperties18(properties) {
+  const requiredProperties = {};
+  for (const K of globalThis.Object.getOwnPropertyNames(properties))
+    requiredProperties[K] = Discard(properties[K], [OptionalKind]);
+  return requiredProperties;
+}
+function FromObject6(type) {
+  const options = Discard(type, [TransformKind, "$id", "required", "properties"]);
+  const properties = FromProperties18(type["properties"]);
+  return Object2(properties, options);
+}
+function FromRest7(types) {
+  return types.map((type) => RequiredResolve(type));
+}
+function RequiredResolve(type) {
+  return (
+    // Mappable
+    IsComputed(type) ? FromComputed4(type.target, type.parameters) : IsRef(type) ? FromRef4(type.$ref) : IsIntersect(type) ? Intersect(FromRest7(type.allOf)) : IsUnion(type) ? Union(FromRest7(type.anyOf)) : IsObject3(type) ? FromObject6(type) : (
+      // Intrinsic
+      IsBigInt3(type) ? type : IsBoolean3(type) ? type : IsInteger2(type) ? type : IsLiteral(type) ? type : IsNull3(type) ? type : IsNumber3(type) ? type : IsString3(type) ? type : IsSymbol3(type) ? type : IsUndefined3(type) ? type : (
+        // Passthrough
+        Object2({})
+      )
+    )
+  );
+}
+function Required(type, options) {
+  if (IsMappedResult(type)) {
+    return RequiredFromMappedResult(type, options);
+  } else {
+    return CreateType({ ...RequiredResolve(type), ...options });
+  }
+}
+var init_required = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/required/required.mjs"() {
+    init_type2();
+    init_computed2();
+    init_object2();
+    init_intersect2();
+    init_union2();
+    init_ref2();
+    init_symbols2();
+    init_discard2();
+    init_required_from_mapped_result();
+    init_kind();
+    __name(FromComputed4, "FromComputed");
+    __name(FromRef4, "FromRef");
+    __name(FromProperties18, "FromProperties");
+    __name(FromObject6, "FromObject");
+    __name(FromRest7, "FromRest");
+    __name(RequiredResolve, "RequiredResolve");
+    __name(Required, "Required");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/required/required-from-mapped-result.mjs
+function FromProperties19(P, options) {
+  const Acc = {};
+  for (const K2 of globalThis.Object.getOwnPropertyNames(P))
+    Acc[K2] = Required(P[K2], options);
+  return Acc;
+}
+function FromMappedResult12(R, options) {
+  return FromProperties19(R.properties, options);
+}
+function RequiredFromMappedResult(R, options) {
+  const P = FromMappedResult12(R, options);
+  return MappedResult(P);
+}
+var init_required_from_mapped_result = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/required/required-from-mapped-result.mjs"() {
+    init_mapped2();
+    init_required();
+    __name(FromProperties19, "FromProperties");
+    __name(FromMappedResult12, "FromMappedResult");
+    __name(RequiredFromMappedResult, "RequiredFromMappedResult");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/required/index.mjs
+var init_required2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/required/index.mjs"() {
+    init_required_from_mapped_result();
+    init_required();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/module/compute.mjs
+function DereferenceParameters(moduleProperties, types) {
+  return types.map((type) => {
+    return IsRef(type) ? Dereference(moduleProperties, type.$ref) : FromType2(moduleProperties, type);
+  });
+}
+function Dereference(moduleProperties, ref) {
+  return ref in moduleProperties ? IsRef(moduleProperties[ref]) ? Dereference(moduleProperties, moduleProperties[ref].$ref) : FromType2(moduleProperties, moduleProperties[ref]) : Never();
+}
+function FromAwaited(parameters) {
+  return Awaited(parameters[0]);
+}
+function FromIndex(parameters) {
+  return Index(parameters[0], parameters[1]);
+}
+function FromKeyOf(parameters) {
+  return KeyOf(parameters[0]);
+}
+function FromPartial(parameters) {
+  return Partial(parameters[0]);
+}
+function FromOmit(parameters) {
+  return Omit(parameters[0], parameters[1]);
+}
+function FromPick(parameters) {
+  return Pick(parameters[0], parameters[1]);
+}
+function FromRequired(parameters) {
+  return Required(parameters[0]);
+}
+function FromComputed5(moduleProperties, target, parameters) {
+  const dereferenced = DereferenceParameters(moduleProperties, parameters);
+  return target === "Awaited" ? FromAwaited(dereferenced) : target === "Index" ? FromIndex(dereferenced) : target === "KeyOf" ? FromKeyOf(dereferenced) : target === "Partial" ? FromPartial(dereferenced) : target === "Omit" ? FromOmit(dereferenced) : target === "Pick" ? FromPick(dereferenced) : target === "Required" ? FromRequired(dereferenced) : Never();
+}
+function FromArray6(moduleProperties, type) {
+  return Array2(FromType2(moduleProperties, type));
+}
+function FromAsyncIterator3(moduleProperties, type) {
+  return AsyncIterator(FromType2(moduleProperties, type));
+}
+function FromConstructor3(moduleProperties, parameters, instanceType) {
+  return Constructor(FromTypes2(moduleProperties, parameters), FromType2(moduleProperties, instanceType));
+}
+function FromFunction3(moduleProperties, parameters, returnType) {
+  return Function2(FromTypes2(moduleProperties, parameters), FromType2(moduleProperties, returnType));
+}
+function FromIntersect8(moduleProperties, types) {
+  return Intersect(FromTypes2(moduleProperties, types));
+}
+function FromIterator3(moduleProperties, type) {
+  return Iterator(FromType2(moduleProperties, type));
+}
+function FromObject7(moduleProperties, properties) {
+  return Object2(globalThis.Object.keys(properties).reduce((result, key) => {
+    return { ...result, [key]: FromType2(moduleProperties, properties[key]) };
+  }, {}));
+}
+function FromRecord3(moduleProperties, type) {
+  const [value, pattern] = [FromType2(moduleProperties, RecordValue2(type)), RecordPattern(type)];
+  const result = CloneType(type);
+  result.patternProperties[pattern] = value;
+  return result;
+}
+function FromTransform(moduleProperties, transform) {
+  return IsRef(transform) ? { ...Dereference(moduleProperties, transform.$ref), [TransformKind]: transform[TransformKind] } : transform;
+}
+function FromTuple5(moduleProperties, types) {
+  return Tuple(FromTypes2(moduleProperties, types));
+}
+function FromUnion10(moduleProperties, types) {
+  return Union(FromTypes2(moduleProperties, types));
+}
+function FromTypes2(moduleProperties, types) {
+  return types.map((type) => FromType2(moduleProperties, type));
+}
+function FromType2(moduleProperties, type) {
+  return (
+    // Modifiers
+    IsOptional(type) ? CreateType(FromType2(moduleProperties, Discard(type, [OptionalKind])), type) : IsReadonly(type) ? CreateType(FromType2(moduleProperties, Discard(type, [ReadonlyKind])), type) : (
+      // Transform
+      IsTransform(type) ? CreateType(FromTransform(moduleProperties, type), type) : (
+        // Types
+        IsArray3(type) ? CreateType(FromArray6(moduleProperties, type.items), type) : IsAsyncIterator3(type) ? CreateType(FromAsyncIterator3(moduleProperties, type.items), type) : IsComputed(type) ? CreateType(FromComputed5(moduleProperties, type.target, type.parameters)) : IsConstructor(type) ? CreateType(FromConstructor3(moduleProperties, type.parameters, type.returns), type) : IsFunction3(type) ? CreateType(FromFunction3(moduleProperties, type.parameters, type.returns), type) : IsIntersect(type) ? CreateType(FromIntersect8(moduleProperties, type.allOf), type) : IsIterator3(type) ? CreateType(FromIterator3(moduleProperties, type.items), type) : IsObject3(type) ? CreateType(FromObject7(moduleProperties, type.properties), type) : IsRecord(type) ? CreateType(FromRecord3(moduleProperties, type)) : IsTuple(type) ? CreateType(FromTuple5(moduleProperties, type.items || []), type) : IsUnion(type) ? CreateType(FromUnion10(moduleProperties, type.anyOf), type) : type
+      )
+    )
+  );
+}
+function ComputeType(moduleProperties, key) {
+  return key in moduleProperties ? FromType2(moduleProperties, moduleProperties[key]) : Never();
+}
+function ComputeModuleProperties(moduleProperties) {
+  return globalThis.Object.getOwnPropertyNames(moduleProperties).reduce((result, key) => {
+    return { ...result, [key]: ComputeType(moduleProperties, key) };
+  }, {});
+}
+var init_compute = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/module/compute.mjs"() {
+    init_create();
+    init_clone();
+    init_discard2();
+    init_array2();
+    init_awaited2();
+    init_async_iterator2();
+    init_constructor2();
+    init_indexed2();
+    init_function2();
+    init_intersect2();
+    init_iterator2();
+    init_keyof2();
+    init_object2();
+    init_omit2();
+    init_pick2();
+    init_never2();
+    init_partial2();
+    init_record2();
+    init_required2();
+    init_tuple2();
+    init_union2();
+    init_symbols2();
+    init_kind();
+    __name(DereferenceParameters, "DereferenceParameters");
+    __name(Dereference, "Dereference");
+    __name(FromAwaited, "FromAwaited");
+    __name(FromIndex, "FromIndex");
+    __name(FromKeyOf, "FromKeyOf");
+    __name(FromPartial, "FromPartial");
+    __name(FromOmit, "FromOmit");
+    __name(FromPick, "FromPick");
+    __name(FromRequired, "FromRequired");
+    __name(FromComputed5, "FromComputed");
+    __name(FromArray6, "FromArray");
+    __name(FromAsyncIterator3, "FromAsyncIterator");
+    __name(FromConstructor3, "FromConstructor");
+    __name(FromFunction3, "FromFunction");
+    __name(FromIntersect8, "FromIntersect");
+    __name(FromIterator3, "FromIterator");
+    __name(FromObject7, "FromObject");
+    __name(FromRecord3, "FromRecord");
+    __name(FromTransform, "FromTransform");
+    __name(FromTuple5, "FromTuple");
+    __name(FromUnion10, "FromUnion");
+    __name(FromTypes2, "FromTypes");
+    __name(FromType2, "FromType");
+    __name(ComputeType, "ComputeType");
+    __name(ComputeModuleProperties, "ComputeModuleProperties");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/module/module.mjs
+function Module(properties) {
+  return new TModule(properties);
+}
+var TModule;
+var init_module = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/module/module.mjs"() {
+    init_create();
+    init_symbols2();
+    init_compute();
+    TModule = class {
+      static {
+        __name(this, "TModule");
+      }
+      constructor($defs) {
+        const computed = ComputeModuleProperties($defs);
+        const identified = this.WithIdentifiers(computed);
+        this.$defs = identified;
+      }
+      /** `[Json]` Imports a Type by Key. */
+      Import(key, options) {
+        const $defs = { ...this.$defs, [key]: CreateType(this.$defs[key], options) };
+        return CreateType({ [Kind]: "Import", $defs, $ref: key });
+      }
+      // prettier-ignore
+      WithIdentifiers($defs) {
+        return globalThis.Object.getOwnPropertyNames($defs).reduce((result, key) => {
+          return { ...result, [key]: { ...$defs[key], $id: key } };
+        }, {});
+      }
+    };
+    __name(Module, "Module");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/module/index.mjs
+var init_module2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/module/index.mjs"() {
+    init_module();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/not/not.mjs
+function Not(type, options) {
+  return CreateType({ [Kind]: "Not", not: type }, options);
+}
+var init_not = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/not/not.mjs"() {
+    init_type2();
+    init_symbols2();
+    __name(Not, "Not");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/not/index.mjs
+var init_not2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/not/index.mjs"() {
+    init_not();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/parameters/parameters.mjs
+function Parameters(schema, options) {
+  return IsFunction3(schema) ? Tuple(schema.parameters, options) : Never();
+}
+var init_parameters = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/parameters/parameters.mjs"() {
+    init_tuple2();
+    init_never2();
+    init_kind();
+    __name(Parameters, "Parameters");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/parameters/index.mjs
+var init_parameters2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/parameters/index.mjs"() {
+    init_parameters();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/recursive/recursive.mjs
+function Recursive(callback, options = {}) {
+  if (IsUndefined(options.$id))
+    options.$id = `T${Ordinal++}`;
+  const thisType = CloneType(callback({ [Kind]: "This", $ref: `${options.$id}` }));
+  thisType.$id = options.$id;
+  return CreateType({ [Hint]: "Recursive", ...thisType }, options);
+}
+var Ordinal;
+var init_recursive = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/recursive/recursive.mjs"() {
+    init_type();
+    init_type2();
+    init_value();
+    init_symbols2();
+    Ordinal = 0;
+    __name(Recursive, "Recursive");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/recursive/index.mjs
+var init_recursive2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/recursive/index.mjs"() {
+    init_recursive();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/regexp/regexp.mjs
+function RegExp2(unresolved, options) {
+  const expr = IsString(unresolved) ? new globalThis.RegExp(unresolved) : unresolved;
+  return CreateType({ [Kind]: "RegExp", type: "RegExp", source: expr.source, flags: expr.flags }, options);
+}
+var init_regexp = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/regexp/regexp.mjs"() {
+    init_type2();
+    init_value();
+    init_symbols2();
+    __name(RegExp2, "RegExp");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/regexp/index.mjs
+var init_regexp2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/regexp/index.mjs"() {
+    init_regexp();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/rest/rest.mjs
+function RestResolve(T) {
+  return IsIntersect(T) ? T.allOf : IsUnion(T) ? T.anyOf : IsTuple(T) ? T.items ?? [] : [];
+}
+function Rest(T) {
+  return RestResolve(T);
+}
+var init_rest = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/rest/rest.mjs"() {
+    init_kind();
+    __name(RestResolve, "RestResolve");
+    __name(Rest, "Rest");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/rest/index.mjs
+var init_rest2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/rest/index.mjs"() {
+    init_rest();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/return-type/return-type.mjs
+function ReturnType(schema, options) {
+  return IsFunction3(schema) ? CreateType(schema.returns, options) : Never(options);
+}
+var init_return_type = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/return-type/return-type.mjs"() {
+    init_type2();
+    init_never2();
+    init_kind();
+    __name(ReturnType, "ReturnType");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/return-type/index.mjs
+var init_return_type2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/return-type/index.mjs"() {
+    init_return_type();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/schema/anyschema.mjs
+var init_anyschema = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/schema/anyschema.mjs"() {
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/schema/schema.mjs
+var init_schema = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/schema/schema.mjs"() {
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/schema/index.mjs
+var init_schema2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/schema/index.mjs"() {
+    init_anyschema();
+    init_schema();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/static/static.mjs
+var init_static = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/static/static.mjs"() {
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/static/index.mjs
+var init_static2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/static/index.mjs"() {
+    init_static();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/transform/transform.mjs
+function Transform(schema) {
+  return new TransformDecodeBuilder(schema);
+}
+var TransformDecodeBuilder, TransformEncodeBuilder;
+var init_transform = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/transform/transform.mjs"() {
+    init_symbols2();
+    init_kind();
+    TransformDecodeBuilder = class {
+      static {
+        __name(this, "TransformDecodeBuilder");
+      }
+      constructor(schema) {
+        this.schema = schema;
+      }
+      Decode(decode) {
+        return new TransformEncodeBuilder(this.schema, decode);
+      }
+    };
+    TransformEncodeBuilder = class {
+      static {
+        __name(this, "TransformEncodeBuilder");
+      }
+      constructor(schema, decode) {
+        this.schema = schema;
+        this.decode = decode;
+      }
+      EncodeTransform(encode, schema) {
+        const Encode = /* @__PURE__ */ __name((value) => schema[TransformKind].Encode(encode(value)), "Encode");
+        const Decode = /* @__PURE__ */ __name((value) => this.decode(schema[TransformKind].Decode(value)), "Decode");
+        const Codec = { Encode, Decode };
+        return { ...schema, [TransformKind]: Codec };
+      }
+      EncodeSchema(encode, schema) {
+        const Codec = { Decode: this.decode, Encode: encode };
+        return { ...schema, [TransformKind]: Codec };
+      }
+      Encode(encode) {
+        return IsTransform(this.schema) ? this.EncodeTransform(encode, this.schema) : this.EncodeSchema(encode, this.schema);
+      }
+    };
+    __name(Transform, "Transform");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/transform/index.mjs
+var init_transform2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/transform/index.mjs"() {
+    init_transform();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/unsafe/unsafe.mjs
+function Unsafe(options = {}) {
+  return CreateType({ [Kind]: options[Kind] ?? "Unsafe" }, options);
+}
+var init_unsafe = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/unsafe/unsafe.mjs"() {
+    init_type2();
+    init_symbols2();
+    __name(Unsafe, "Unsafe");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/unsafe/index.mjs
+var init_unsafe2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/unsafe/index.mjs"() {
+    init_unsafe();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/void/void.mjs
+function Void(options) {
+  return CreateType({ [Kind]: "Void", type: "void" }, options);
+}
+var init_void = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/void/void.mjs"() {
+    init_type2();
+    init_symbols2();
+    __name(Void, "Void");
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/void/index.mjs
+var init_void2 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/void/index.mjs"() {
+    init_void();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/type/json.mjs
+var JsonTypeBuilder;
+var init_json = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/type/json.mjs"() {
+    init_any2();
+    init_array2();
+    init_boolean2();
+    init_composite2();
+    init_const2();
+    init_enum2();
+    init_exclude2();
+    init_extends2();
+    init_extract2();
+    init_indexed2();
+    init_integer2();
+    init_intersect2();
+    init_intrinsic2();
+    init_keyof2();
+    init_literal2();
+    init_mapped2();
+    init_never2();
+    init_not2();
+    init_null2();
+    init_module2();
+    init_number2();
+    init_object2();
+    init_omit2();
+    init_optional2();
+    init_partial2();
+    init_pick2();
+    init_readonly2();
+    init_readonly_optional2();
+    init_record2();
+    init_recursive2();
+    init_ref2();
+    init_required2();
+    init_rest2();
+    init_string2();
+    init_template_literal2();
+    init_transform2();
+    init_tuple2();
+    init_union2();
+    init_unknown2();
+    init_unsafe2();
+    JsonTypeBuilder = class {
+      static {
+        __name(this, "JsonTypeBuilder");
+      }
+      // ------------------------------------------------------------------------
+      // Modifiers
+      // ------------------------------------------------------------------------
+      /** `[Json]` Creates a Readonly and Optional property */
+      ReadonlyOptional(type) {
+        return ReadonlyOptional(type);
+      }
+      /** `[Json]` Creates a Readonly property */
+      Readonly(type, enable) {
+        return Readonly(type, enable ?? true);
+      }
+      /** `[Json]` Creates a Optional property */
+      Optional(type, enable) {
+        return Optional(type, enable ?? true);
+      }
+      // ------------------------------------------------------------------------
+      // Types
+      // ------------------------------------------------------------------------
+      /** `[Json]` Creates an Any type */
+      Any(options) {
+        return Any(options);
+      }
+      /** `[Json]` Creates an Array type */
+      Array(items, options) {
+        return Array2(items, options);
+      }
+      /** `[Json]` Creates a Boolean type */
+      Boolean(options) {
+        return Boolean(options);
+      }
+      /** `[Json]` Intrinsic function to Capitalize LiteralString types */
+      Capitalize(schema, options) {
+        return Capitalize(schema, options);
+      }
+      /** `[Json]` Creates a Composite object type */
+      Composite(schemas, options) {
+        return Composite(schemas, options);
+      }
+      /** `[JavaScript]` Creates a readonly const type from the given value. */
+      Const(value, options) {
+        return Const(value, options);
+      }
+      /** `[Json]` Creates a Enum type */
+      Enum(item, options) {
+        return Enum(item, options);
+      }
+      /** `[Json]` Constructs a type by excluding from unionType all union members that are assignable to excludedMembers */
+      Exclude(unionType, excludedMembers, options) {
+        return Exclude(unionType, excludedMembers, options);
+      }
+      /** `[Json]` Creates a Conditional type */
+      Extends(L, R, T, F, options) {
+        return Extends(L, R, T, F, options);
+      }
+      /** `[Json]` Constructs a type by extracting from type all union members that are assignable to union */
+      Extract(type, union, options) {
+        return Extract(type, union, options);
+      }
+      /** `[Json]` Returns an Indexed property type for the given keys */
+      Index(type, key, options) {
+        return Index(type, key, options);
+      }
+      /** `[Json]` Creates an Integer type */
+      Integer(options) {
+        return Integer(options);
+      }
+      /** `[Json]` Creates an Intersect type */
+      Intersect(types, options) {
+        return Intersect(types, options);
+      }
+      /** `[Json]` Creates a KeyOf type */
+      KeyOf(type, options) {
+        return KeyOf(type, options);
+      }
+      /** `[Json]` Creates a Literal type */
+      Literal(literalValue, options) {
+        return Literal(literalValue, options);
+      }
+      /** `[Json]` Intrinsic function to Lowercase LiteralString types */
+      Lowercase(type, options) {
+        return Lowercase(type, options);
+      }
+      /** `[Json]` Creates a Mapped object type */
+      Mapped(key, map, options) {
+        return Mapped(key, map, options);
+      }
+      /** `[Json]` Creates a Type Definition Module. */
+      Module(properties) {
+        return Module(properties);
+      }
+      /** `[Json]` Creates a Never type */
+      Never(options) {
+        return Never(options);
+      }
+      /** `[Json]` Creates a Not type */
+      Not(type, options) {
+        return Not(type, options);
+      }
+      /** `[Json]` Creates a Null type */
+      Null(options) {
+        return Null(options);
+      }
+      /** `[Json]` Creates a Number type */
+      Number(options) {
+        return Number2(options);
+      }
+      /** `[Json]` Creates an Object type */
+      Object(properties, options) {
+        return Object2(properties, options);
+      }
+      /** `[Json]` Constructs a type whose keys are omitted from the given type */
+      Omit(schema, selector, options) {
+        return Omit(schema, selector, options);
+      }
+      /** `[Json]` Constructs a type where all properties are optional */
+      Partial(type, options) {
+        return Partial(type, options);
+      }
+      /** `[Json]` Constructs a type whose keys are picked from the given type */
+      Pick(type, key, options) {
+        return Pick(type, key, options);
+      }
+      /** `[Json]` Creates a Record type */
+      Record(key, value, options) {
+        return Record(key, value, options);
+      }
+      /** `[Json]` Creates a Recursive type */
+      Recursive(callback, options) {
+        return Recursive(callback, options);
+      }
+      /** `[Json]` Creates a Ref type. The referenced type must contain a $id */
+      Ref(...args) {
+        return Ref(args[0], args[1]);
+      }
+      /** `[Json]` Constructs a type where all properties are required */
+      Required(type, options) {
+        return Required(type, options);
+      }
+      /** `[Json]` Extracts interior Rest elements from Tuple, Intersect and Union types */
+      Rest(type) {
+        return Rest(type);
+      }
+      /** `[Json]` Creates a String type */
+      String(options) {
+        return String2(options);
+      }
+      /** `[Json]` Creates a TemplateLiteral type */
+      TemplateLiteral(unresolved, options) {
+        return TemplateLiteral(unresolved, options);
+      }
+      /** `[Json]` Creates a Transform type */
+      Transform(type) {
+        return Transform(type);
+      }
+      /** `[Json]` Creates a Tuple type */
+      Tuple(types, options) {
+        return Tuple(types, options);
+      }
+      /** `[Json]` Intrinsic function to Uncapitalize LiteralString types */
+      Uncapitalize(type, options) {
+        return Uncapitalize(type, options);
+      }
+      /** `[Json]` Creates a Union type */
+      Union(types, options) {
+        return Union(types, options);
+      }
+      /** `[Json]` Creates an Unknown type */
+      Unknown(options) {
+        return Unknown(options);
+      }
+      /** `[Json]` Creates a Unsafe type that will infers as the generic argument T */
+      Unsafe(options) {
+        return Unsafe(options);
+      }
+      /** `[Json]` Intrinsic function to Uppercase LiteralString types */
+      Uppercase(schema, options) {
+        return Uppercase(schema, options);
+      }
+    };
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/type/type.mjs
+var type_exports3 = {};
+__export(type_exports3, {
+  Any: () => Any,
+  Argument: () => Argument,
+  Array: () => Array2,
+  AsyncIterator: () => AsyncIterator,
+  Awaited: () => Awaited,
+  BigInt: () => BigInt,
+  Boolean: () => Boolean,
+  Capitalize: () => Capitalize,
+  Composite: () => Composite,
+  Const: () => Const,
+  Constructor: () => Constructor,
+  ConstructorParameters: () => ConstructorParameters,
+  Date: () => Date2,
+  Enum: () => Enum,
+  Exclude: () => Exclude,
+  Extends: () => Extends,
+  Extract: () => Extract,
+  Function: () => Function2,
+  Index: () => Index,
+  InstanceType: () => InstanceType,
+  Instantiate: () => Instantiate,
+  Integer: () => Integer,
+  Intersect: () => Intersect,
+  Iterator: () => Iterator,
+  KeyOf: () => KeyOf,
+  Literal: () => Literal,
+  Lowercase: () => Lowercase,
+  Mapped: () => Mapped,
+  Module: () => Module,
+  Never: () => Never,
+  Not: () => Not,
+  Null: () => Null,
+  Number: () => Number2,
+  Object: () => Object2,
+  Omit: () => Omit,
+  Optional: () => Optional,
+  Parameters: () => Parameters,
+  Partial: () => Partial,
+  Pick: () => Pick,
+  Promise: () => Promise2,
+  Readonly: () => Readonly,
+  ReadonlyOptional: () => ReadonlyOptional,
+  Record: () => Record,
+  Recursive: () => Recursive,
+  Ref: () => Ref,
+  RegExp: () => RegExp2,
+  Required: () => Required,
+  Rest: () => Rest,
+  ReturnType: () => ReturnType,
+  String: () => String2,
+  Symbol: () => Symbol2,
+  TemplateLiteral: () => TemplateLiteral,
+  Transform: () => Transform,
+  Tuple: () => Tuple,
+  Uint8Array: () => Uint8Array2,
+  Uncapitalize: () => Uncapitalize,
+  Undefined: () => Undefined,
+  Union: () => Union,
+  Unknown: () => Unknown,
+  Unsafe: () => Unsafe,
+  Uppercase: () => Uppercase,
+  Void: () => Void
+});
+var init_type5 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/type/type.mjs"() {
+    init_any2();
+    init_argument2();
+    init_array2();
+    init_async_iterator2();
+    init_awaited2();
+    init_bigint2();
+    init_boolean2();
+    init_composite2();
+    init_const2();
+    init_constructor2();
+    init_constructor_parameters2();
+    init_date2();
+    init_enum2();
+    init_exclude2();
+    init_extends2();
+    init_extract2();
+    init_function2();
+    init_indexed2();
+    init_instance_type2();
+    init_instantiate2();
+    init_integer2();
+    init_intersect2();
+    init_intrinsic2();
+    init_iterator2();
+    init_keyof2();
+    init_literal2();
+    init_mapped2();
+    init_module2();
+    init_never2();
+    init_not2();
+    init_null2();
+    init_number2();
+    init_object2();
+    init_omit2();
+    init_optional2();
+    init_parameters2();
+    init_partial2();
+    init_pick2();
+    init_promise2();
+    init_readonly2();
+    init_readonly_optional2();
+    init_record2();
+    init_recursive2();
+    init_ref2();
+    init_regexp2();
+    init_required2();
+    init_rest2();
+    init_return_type2();
+    init_string2();
+    init_symbol2();
+    init_template_literal2();
+    init_transform2();
+    init_tuple2();
+    init_uint8array2();
+    init_undefined2();
+    init_union2();
+    init_unknown2();
+    init_unsafe2();
+    init_void2();
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/type/javascript.mjs
+var JavaScriptTypeBuilder;
+var init_javascript = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/type/javascript.mjs"() {
+    init_json();
+    init_argument2();
+    init_async_iterator2();
+    init_awaited2();
+    init_bigint2();
+    init_constructor2();
+    init_constructor_parameters2();
+    init_date2();
+    init_function2();
+    init_instance_type2();
+    init_instantiate2();
+    init_iterator2();
+    init_parameters2();
+    init_promise2();
+    init_regexp2();
+    init_return_type2();
+    init_symbol2();
+    init_uint8array2();
+    init_undefined2();
+    init_void2();
+    JavaScriptTypeBuilder = class extends JsonTypeBuilder {
+      static {
+        __name(this, "JavaScriptTypeBuilder");
+      }
+      /** `[JavaScript]` Creates a Generic Argument Type */
+      Argument(index) {
+        return Argument(index);
+      }
+      /** `[JavaScript]` Creates a AsyncIterator type */
+      AsyncIterator(items, options) {
+        return AsyncIterator(items, options);
+      }
+      /** `[JavaScript]` Constructs a type by recursively unwrapping Promise types */
+      Awaited(schema, options) {
+        return Awaited(schema, options);
+      }
+      /** `[JavaScript]` Creates a BigInt type */
+      BigInt(options) {
+        return BigInt(options);
+      }
+      /** `[JavaScript]` Extracts the ConstructorParameters from the given Constructor type */
+      ConstructorParameters(schema, options) {
+        return ConstructorParameters(schema, options);
+      }
+      /** `[JavaScript]` Creates a Constructor type */
+      Constructor(parameters, instanceType, options) {
+        return Constructor(parameters, instanceType, options);
+      }
+      /** `[JavaScript]` Creates a Date type */
+      Date(options = {}) {
+        return Date2(options);
+      }
+      /** `[JavaScript]` Creates a Function type */
+      Function(parameters, returnType, options) {
+        return Function2(parameters, returnType, options);
+      }
+      /** `[JavaScript]` Extracts the InstanceType from the given Constructor type */
+      InstanceType(schema, options) {
+        return InstanceType(schema, options);
+      }
+      /** `[JavaScript]` Instantiates a type with the given parameters */
+      Instantiate(schema, parameters) {
+        return Instantiate(schema, parameters);
+      }
+      /** `[JavaScript]` Creates an Iterator type */
+      Iterator(items, options) {
+        return Iterator(items, options);
+      }
+      /** `[JavaScript]` Extracts the Parameters from the given Function type */
+      Parameters(schema, options) {
+        return Parameters(schema, options);
+      }
+      /** `[JavaScript]` Creates a Promise type */
+      Promise(item, options) {
+        return Promise2(item, options);
+      }
+      /** `[JavaScript]` Creates a RegExp type */
+      RegExp(unresolved, options) {
+        return RegExp2(unresolved, options);
+      }
+      /** `[JavaScript]` Extracts the ReturnType from the given Function type */
+      ReturnType(type, options) {
+        return ReturnType(type, options);
+      }
+      /** `[JavaScript]` Creates a Symbol type */
+      Symbol(options) {
+        return Symbol2(options);
+      }
+      /** `[JavaScript]` Creates a Undefined type */
+      Undefined(options) {
+        return Undefined(options);
+      }
+      /** `[JavaScript]` Creates a Uint8Array type */
+      Uint8Array(options) {
+        return Uint8Array2(options);
+      }
+      /** `[JavaScript]` Creates a Void type */
+      Void(options) {
+        return Void(options);
+      }
+    };
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/type/type/index.mjs
+var Type;
+var init_type6 = __esm({
+  "node_modules/@sinclair/typebox/build/esm/type/type/index.mjs"() {
+    init_json();
+    init_type5();
+    init_javascript();
+    Type = type_exports3;
+  }
+});
+
+// node_modules/@sinclair/typebox/build/esm/index.mjs
+var init_esm = __esm({
+  "node_modules/@sinclair/typebox/build/esm/index.mjs"() {
+    init_clone();
+    init_create();
+    init_error2();
+    init_guard3();
+    init_helpers2();
+    init_patterns2();
+    init_registry();
+    init_sets();
+    init_symbols2();
+    init_any2();
+    init_array2();
+    init_argument2();
+    init_async_iterator2();
+    init_awaited2();
+    init_bigint2();
+    init_boolean2();
+    init_composite2();
+    init_const2();
+    init_constructor2();
+    init_constructor_parameters2();
+    init_date2();
+    init_enum2();
+    init_exclude2();
+    init_extends2();
+    init_extract2();
+    init_function2();
+    init_indexed2();
+    init_instance_type2();
+    init_instantiate2();
+    init_integer2();
+    init_intersect2();
+    init_iterator2();
+    init_intrinsic2();
+    init_keyof2();
+    init_literal2();
+    init_module2();
+    init_mapped2();
+    init_never2();
+    init_not2();
+    init_null2();
+    init_number2();
+    init_object2();
+    init_omit2();
+    init_optional2();
+    init_parameters2();
+    init_partial2();
+    init_pick2();
+    init_promise2();
+    init_readonly2();
+    init_readonly_optional2();
+    init_record2();
+    init_recursive2();
+    init_ref2();
+    init_regexp2();
+    init_required2();
+    init_rest2();
+    init_return_type2();
+    init_schema2();
+    init_static2();
+    init_string2();
+    init_symbol2();
+    init_template_literal2();
+    init_transform2();
+    init_tuple2();
+    init_uint8array2();
+    init_undefined2();
+    init_union2();
+    init_unknown2();
+    init_unsafe2();
+    init_void2();
+    init_type6();
+  }
+});
+
+// src/core/schemas/message.ts
+var message_default;
+var init_message = __esm({
+  "src/core/schemas/message.ts"() {
     "use strict";
-    InputsSchema = {
-      type: "object",
-      properties: {
-        host: {
-          type: "string"
-        }
-      },
-      required: ["host"]
-    };
-    remote_server_inputs_schema_default = InputsSchema;
+    init_esm();
+    message_default = Type.Object({
+      payload: Type.Optional(Type.String()),
+      topic: Type.Optional(Type.String()),
+      _msgid: Type.Optional(Type.String())
+    });
   }
 });
 
-// _server.ts
+// src/core/constants.ts
+var TYPED_INPUT_TYPES;
+var init_constants = __esm({
+  "src/core/constants.ts"() {
+    "use strict";
+    TYPED_INPUT_TYPES = [
+      "msg",
+      "flow",
+      "global",
+      "str",
+      "num",
+      "bool",
+      "json",
+      "bin",
+      "re",
+      "jsonata",
+      "date",
+      "env",
+      "node",
+      "cred"
+    ];
+  }
+});
+
+// src/core/schemas/typed-input.ts
+var TypedInputTypeLiterals, typed_input_default;
+var init_typed_input = __esm({
+  "src/core/schemas/typed-input.ts"() {
+    "use strict";
+    init_esm();
+    init_constants();
+    TypedInputTypeLiterals = TYPED_INPUT_TYPES.map(
+      (type) => Type.Literal(type)
+    );
+    typed_input_default = Type.Object(
+      {
+        value: Type.Union(
+          [Type.String(), Type.Number(), Type.Boolean(), Type.Null()],
+          {
+            description: "The actual value entered or selected.",
+            default: ""
+          }
+        ),
+        type: Type.Union(TypedInputTypeLiterals, {
+          description: "The type of the value (string, number, message property, etc.)",
+          default: "str"
+        })
+      },
+      {
+        description: "Represents a Node-RED TypedInput value and its type.",
+        default: {}
+      }
+    );
+  }
+});
+
+// src/nodes/your-node/schemas.ts
+var schemas_exports = {};
+__export(schemas_exports, {
+  ConfigsSchema: () => ConfigsSchema,
+  CredentialsSchema: () => CredentialsSchema,
+  InputMessageSchema: () => InputMessageSchema,
+  OutputMessageSchema: () => OutputMessageSchema
+});
+var ConfigsSchema, CredentialsSchema, InputMessageSchema, OutputMessageSchema;
+var init_schemas = __esm({
+  "src/nodes/your-node/schemas.ts"() {
+    "use strict";
+    init_esm();
+    init_message();
+    init_typed_input();
+    ConfigsSchema = Type.Object({
+      name: Type.String({ default: "your-node" }),
+      myProperty: typed_input_default,
+      myProperty2: typed_input_default,
+      remoteServer: Type.String({ nodeType: "remote-server" }),
+      anotherRemoteServer: Type.Optional(
+        Type.String({ nodeType: "remote-server" })
+      ),
+      country: Type.String({ default: "brazil" }),
+      fruit: Type.Array(Type.String(), { default: ["apple", "melon"] }),
+      number: Type.String({ default: "1" }),
+      object: Type.Array(Type.String(), {
+        default: [JSON.stringify({ test: "a" }), JSON.stringify({ test: "b" })]
+      }),
+      array: Type.String({
+        default: '["a"]'
+      }),
+      jsontest: Type.String({ default: "" }),
+      csstest: Type.String({ default: "" })
+    });
+    CredentialsSchema = Type.Object({
+      password: Type.Optional(
+        Type.String({
+          default: "",
+          minLength: 8,
+          maxLength: 20,
+          pattern: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/.source,
+          format: "password"
+        })
+      ),
+      password2: Type.Optional(
+        Type.String({
+          default: "",
+          pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.source,
+          format: "password"
+        })
+      ),
+      username: Type.Optional(
+        Type.String({ default: "", maxLength: 10, minLength: 5 })
+      )
+    });
+    InputMessageSchema = Type.Intersect(
+      [
+        message_default,
+        Type.Object({
+          myVariable: Type.Optional(Type.String())
+        })
+      ],
+      {
+        $id: "InputMessageSchema"
+      }
+    );
+    OutputMessageSchema = Type.Intersect(
+      [
+        message_default,
+        Type.Object({
+          originalType: Type.Union([
+            Type.Literal("string"),
+            Type.Literal("number")
+          ]),
+          processedTime: Type.Number()
+        }),
+        Type.Unknown()
+      ],
+      { $id: "OutputMessageSchema" }
+    );
+  }
+});
+
+// src/nodes/your-node/server/index.ts
 var require_server = __commonJS({
-  "_server.ts"(exports2) {
+  "src/nodes/your-node/server/index.ts"(exports2) {
     "use strict";
     var __decorate = exports2 && exports2.__decorate || function(decorators, target, key, desc) {
       var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -1334,377 +5581,127 @@ var require_server = __commonJS({
       else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
       return c > 3 && r && Object.defineProperty(target, key, r), r;
     };
-    var __metadata = exports2 && exports2.__metadata || function(k, v) {
-      if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    var decorators_1 = (init_decorators(), __toCommonJS(decorators_exports));
+    var node_1 = (init_node(), __toCommonJS(node_exports));
+    var schemas_1 = (init_schemas(), __toCommonJS(schemas_exports));
+    var YourNode2 = class YourNode extends node_1.Node {
+      static {
+        __name(this, "YourNode");
+      }
+      static async init() {
+        console.log("testing your node init");
+      }
+      async onInput(msg, send, done) {
+        console.log(this);
+        console.log(msg);
+        const server = node_1.Node.getNode(this.configs.remoteServer);
+        console.log(server?.users);
+      }
+      async onClose(removed, done) {
+        console.log("removing node");
+        done();
+      }
     };
-    var __importDefault = exports2 && exports2.__importDefault || function(mod) {
-      return mod && mod.__esModule ? mod : { "default": mod };
+    YourNode2 = __decorate([
+      (0, decorators_1.node)({
+        validation: {
+          configs: schemas_1.ConfigsSchema,
+          credentials: schemas_1.CredentialsSchema,
+          input: schemas_1.InputMessageSchema,
+          outputs: schemas_1.OutputMessageSchema
+        }
+      })
+    ], YourNode2);
+    exports2.default = YourNode2;
+  }
+});
+
+// src/core/server/config-node.ts
+var config_node_exports = {};
+__export(config_node_exports, {
+  ConfigNode: () => ConfigNode
+});
+var ConfigNode;
+var init_config_node = __esm({
+  "src/core/server/config-node.ts"() {
+    "use strict";
+    ConfigNode = class _ConfigNode {
+      static {
+        __name(this, "ConfigNode");
+      }
+      static RED;
+      id;
+      type;
+      name;
+      users;
+      configs;
+      credentials;
+      constructor(configs) {
+        _ConfigNode.RED.nodes.createNode(this, configs);
+        this.configs = configs;
+        this.users = configs._users;
+        this.z = configs.z;
+        this.g = configs.g;
+      }
+      static init() {
+        console.log("not implemented");
+      }
+      static getNode(id) {
+        return this.RED.nodes.getNode(id);
+      }
+    };
+  }
+});
+
+// src/nodes/remote-server/schemas.ts
+var schemas_exports2 = {};
+__export(schemas_exports2, {
+  ConfigsSchema: () => ConfigsSchema2
+});
+var ConfigsSchema2;
+var init_schemas2 = __esm({
+  "src/nodes/remote-server/schemas.ts"() {
+    "use strict";
+    init_esm();
+    ConfigsSchema2 = Type.Object({
+      name: Type.String({ default: "remote-server", minLength: 10 }),
+      host: Type.String({ default: "localhost" })
+    });
+  }
+});
+
+// src/nodes/remote-server/server/index.ts
+var require_server2 = __commonJS({
+  "src/nodes/remote-server/server/index.ts"(exports2) {
+    "use strict";
+    var __decorate = exports2 && exports2.__decorate || function(decorators, target, key, desc) {
+      var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+      if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+      else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+      return c > 3 && r && Object.defineProperty(target, key, r), r;
     };
     Object.defineProperty(exports2, "__esModule", { value: true });
-    exports2.RemoteServerConfigNode = void 0;
     var decorators_1 = (init_decorators(), __toCommonJS(decorators_exports));
     var config_node_1 = (init_config_node(), __toCommonJS(config_node_exports));
-    var remote_server_inputs_schema_1 = __importDefault((init_remote_server_inputs_schema(), __toCommonJS(remote_server_inputs_schema_exports)));
+    var schemas_1 = (init_schemas2(), __toCommonJS(schemas_exports2));
     var RemoteServerConfigNode2 = class RemoteServerConfigNode extends config_node_1.ConfigNode {
       static {
         __name(this, "RemoteServerConfigNode");
       }
-      host;
       // NOTE: run only once when node type is registered
       static init() {
         console.log("server-node");
       }
     };
-    exports2.RemoteServerConfigNode = RemoteServerConfigNode2;
-    __decorate([
-      decorators_1.config,
-      __metadata("design:type", String)
-    ], RemoteServerConfigNode2.prototype, "host", void 0);
-    exports2.RemoteServerConfigNode = RemoteServerConfigNode2 = __decorate([
+    RemoteServerConfigNode2 = __decorate([
       (0, decorators_1.node)({
-        type: "remote-server",
         validation: {
-          inputs: remote_server_inputs_schema_1.default
+          configs: schemas_1.ConfigsSchema
         }
       })
     ], RemoteServerConfigNode2);
-  }
-});
-
-// typed-input.ts
-var typed_input_exports = {};
-__export(typed_input_exports, {
-  TypedInput: () => TypedInput
-});
-var import_node2, TypedInput;
-var init_typed_input = __esm({
-  "typed-input.ts"() {
-    "use strict";
-    import_node2 = __toESM(require_node());
-    TypedInput = class {
-      static {
-        __name(this, "TypedInput");
-      }
-      constructor(parent, typedInput) {
-        this.parent = parent;
-        this.value = typedInput.value;
-        this.type = typedInput.type;
-      }
-      evaluate(msg) {
-        const RED = import_node2.Node.RED;
-        return new Promise((resolve, reject) => {
-          RED.util.evaluateNodeProperty(
-            this.value,
-            this.type,
-            RED,
-            msg,
-            (err, result) => {
-              if (err) return reject(err);
-              this.type === "node" ? resolve(RED.nodes.getNode(result)) : resolve(result);
-            }
-          );
-        });
-      }
-    };
-  }
-});
-
-// credential.ts
-var credential_exports = {};
-__export(credential_exports, {
-  Password: () => Password,
-  Text: () => Text
-});
-var Text, Password;
-var init_credential = __esm({
-  "credential.ts"() {
-    "use strict";
-    Text = class {
-      static {
-        __name(this, "Text");
-      }
-      value;
-      constructor(value) {
-        this.value = value;
-      }
-    };
-    Password = class {
-      static {
-        __name(this, "Password");
-      }
-      value;
-      constructor(value) {
-        this.value = value;
-      }
-    };
-  }
-});
-
-// typed-input-schema.ts
-var TypedInputSchema, typed_input_schema_default;
-var init_typed_input_schema = __esm({
-  "typed-input-schema.ts"() {
-    "use strict";
-    TypedInputSchema = {
-      type: "object",
-      title: "Typed Input Value/Type Pair",
-      description: "Represents a value and its associated type selected via a Node-RED TypedInput widget.",
-      properties: {
-        value: {
-          type: "string",
-          title: "Value",
-          description: "The value entered or selected in the TypedInput.",
-          default: ""
-        },
-        type: {
-          type: "string",
-          title: "Value Type",
-          description: "The type selected in the TypedInput.",
-          enum: [
-            "msg",
-            "flow",
-            "global",
-            "str",
-            "num",
-            "bool",
-            "json",
-            "env",
-            "bin",
-            "date",
-            "jsonata"
-          ],
-          default: "msg"
-        }
-      },
-      required: ["value", "type"]
-    };
-    typed_input_schema_default = TypedInputSchema;
-  }
-});
-
-// inputs-schema.ts
-var inputs_schema_exports = {};
-__export(inputs_schema_exports, {
-  default: () => inputs_schema_default
-});
-var InputsSchema2, inputs_schema_default;
-var init_inputs_schema = __esm({
-  "inputs-schema.ts"() {
-    "use strict";
-    init_typed_input_schema();
-    InputsSchema2 = {
-      type: "object",
-      properties: {
-        name: {
-          type: "string"
-        },
-        myProperty: {
-          ...typed_input_schema_default
-        },
-        remoteServer: {
-          type: "string"
-        },
-        username: {
-          type: "number"
-        },
-        password: {
-          type: "string"
-        },
-        number: {
-          type: "number"
-        }
-      },
-      required: ["myProperty", "remoteServer", "username", "password", "number"]
-    };
-    inputs_schema_default = InputsSchema2;
-  }
-});
-
-// message-schema.ts
-var message_schema_exports = {};
-__export(message_schema_exports, {
-  default: () => message_schema_default
-});
-var MessageSchema, message_schema_default;
-var init_message_schema = __esm({
-  "message-schema.ts"() {
-    "use strict";
-    MessageSchema = {
-      type: "object",
-      properties: {
-        payload: {
-          type: "string",
-          format: "date-time"
-        }
-      },
-      required: ["payload"]
-    };
-    message_schema_default = MessageSchema;
-  }
-});
-
-// _yournode.ts
-var require_yournode = __commonJS({
-  "_yournode.ts"(exports2) {
-    "use strict";
-    var __createBinding = exports2 && exports2.__createBinding || (Object.create ? function(o, m, k, k2) {
-      if (k2 === void 0) k2 = k;
-      var desc = Object.getOwnPropertyDescriptor(m, k);
-      if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-        desc = { enumerable: true, get: /* @__PURE__ */ __name(function() {
-          return m[k];
-        }, "get") };
-      }
-      Object.defineProperty(o, k2, desc);
-    } : function(o, m, k, k2) {
-      if (k2 === void 0) k2 = k;
-      o[k2] = m[k];
-    });
-    var __setModuleDefault = exports2 && exports2.__setModuleDefault || (Object.create ? function(o, v) {
-      Object.defineProperty(o, "default", { enumerable: true, value: v });
-    } : function(o, v) {
-      o["default"] = v;
-    });
-    var __decorate = exports2 && exports2.__decorate || function(decorators, target, key, desc) {
-      var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-      if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-      else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-      return c > 3 && r && Object.defineProperty(target, key, r), r;
-    };
-    var __importStar = exports2 && exports2.__importStar || /* @__PURE__ */ function() {
-      var ownKeys = /* @__PURE__ */ __name(function(o) {
-        ownKeys = Object.getOwnPropertyNames || function(o2) {
-          var ar = [];
-          for (var k in o2) if (Object.prototype.hasOwnProperty.call(o2, k)) ar[ar.length] = k;
-          return ar;
-        };
-        return ownKeys(o);
-      }, "ownKeys");
-      return function(mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) {
-          for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        }
-        __setModuleDefault(result, mod);
-        return result;
-      };
-    }();
-    var __metadata = exports2 && exports2.__metadata || function(k, v) {
-      if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-    };
-    var __importDefault = exports2 && exports2.__importDefault || function(mod) {
-      return mod && mod.__esModule ? mod : { "default": mod };
-    };
-    var _a;
-    var _b;
-    var _c;
-    var _d;
-    var _e;
-    Object.defineProperty(exports2, "__esModule", { value: true });
-    exports2.YourNode = void 0;
-    var decorators_1 = (init_decorators(), __toCommonJS(decorators_exports));
-    var _server_1 = require_server();
-    var node_1 = require_node();
-    var typed_input_1 = (init_typed_input(), __toCommonJS(typed_input_exports));
-    var Credential = __importStar((init_credential(), __toCommonJS(credential_exports)));
-    var inputs_schema_1 = __importDefault((init_inputs_schema(), __toCommonJS(inputs_schema_exports)));
-    var message_schema_1 = __importDefault((init_message_schema(), __toCommonJS(message_schema_exports)));
-    var YourNode2 = class YourNode extends node_1.Node {
-      static {
-        __name(this, "YourNode");
-      }
-      myProperty;
-      remoteServer;
-      fruit;
-      country;
-      number;
-      object;
-      array;
-      jsontest;
-      csstest;
-      username;
-      password;
-      // NOTE: run only once when node type is registered
-      static async init() {
-        await fetch("https://google.com");
-        console.log("fetched google");
-      }
-      async onInput(msg, send, done) {
-        console.log(this);
-        console.log(msg);
-        console.log(this.myProperty.type);
-        console.log(this.myProperty.value);
-        console.log(await this.myProperty.evaluate(msg));
-        console.log(this.remoteServer.type);
-        console.log(this.remoteServer.host);
-        console.log(this.username);
-        console.log(this.password);
-        console.log(this.number);
-        console.log(this.object);
-        console.log(this.object.test);
-        console.log(this.array);
-        console.log(this.array[0]);
-        console.log(typeof this.number);
-        console.log(typeof this.object);
-        console.log(Array.isArray(this.array));
-        done();
-      }
-    };
-    exports2.YourNode = YourNode2;
-    __decorate([
-      decorators_1.config,
-      __metadata("design:type", typeof (_a = typeof typed_input_1.TypedInput !== "undefined" && typed_input_1.TypedInput) === "function" ? _a : Object)
-    ], YourNode2.prototype, "myProperty", void 0);
-    __decorate([
-      decorators_1.config,
-      __metadata("design:type", typeof (_b = typeof _server_1.RemoteServerConfigNode !== "undefined" && _server_1.RemoteServerConfigNode) === "function" ? _b : Object)
-    ], YourNode2.prototype, "remoteServer", void 0);
-    __decorate([
-      decorators_1.config,
-      __metadata("design:type", String)
-    ], YourNode2.prototype, "fruit", void 0);
-    __decorate([
-      decorators_1.config,
-      __metadata("design:type", String)
-    ], YourNode2.prototype, "country", void 0);
-    __decorate([
-      decorators_1.config,
-      __metadata("design:type", Number)
-    ], YourNode2.prototype, "number", void 0);
-    __decorate([
-      decorators_1.config,
-      __metadata("design:type", Object)
-    ], YourNode2.prototype, "object", void 0);
-    __decorate([
-      decorators_1.config,
-      __metadata("design:type", typeof (_c = typeof Array !== "undefined" && Array) === "function" ? _c : Object)
-    ], YourNode2.prototype, "array", void 0);
-    __decorate([
-      decorators_1.config,
-      __metadata("design:type", String)
-    ], YourNode2.prototype, "jsontest", void 0);
-    __decorate([
-      decorators_1.config,
-      __metadata("design:type", String)
-    ], YourNode2.prototype, "csstest", void 0);
-    __decorate([
-      decorators_1.config,
-      __metadata("design:type", typeof (_d = typeof Credential !== "undefined" && Credential.Text) === "function" ? _d : Object)
-    ], YourNode2.prototype, "username", void 0);
-    __decorate([
-      decorators_1.config,
-      __metadata("design:type", typeof (_e = typeof Credential !== "undefined" && Credential.Password) === "function" ? _e : Object)
-    ], YourNode2.prototype, "password", void 0);
-    exports2.YourNode = YourNode2 = __decorate([
-      (0, decorators_1.node)({
-        type: "your-node",
-        validation: {
-          inputs: inputs_schema_1.default,
-          message: message_schema_1.default
-        }
-      })
-    ], YourNode2);
+    exports2.default = RemoteServerConfigNode2;
   }
 });
 
@@ -2098,7 +6095,7 @@ var require_codegen = __commonJS({
       AND: new code_1._Code("&&"),
       ADD: new code_1._Code("+")
     };
-    var Node3 = class {
+    var Node2 = class {
       static {
         __name(this, "Node");
       }
@@ -2109,7 +6106,7 @@ var require_codegen = __commonJS({
         return this;
       }
     };
-    var Def = class extends Node3 {
+    var Def = class extends Node2 {
       static {
         __name(this, "Def");
       }
@@ -2135,7 +6132,7 @@ var require_codegen = __commonJS({
         return this.rhs instanceof code_1._CodeOrName ? this.rhs.names : {};
       }
     };
-    var Assign = class extends Node3 {
+    var Assign = class extends Node2 {
       static {
         __name(this, "Assign");
       }
@@ -2171,7 +6168,7 @@ var require_codegen = __commonJS({
         return `${this.lhs} ${this.op}= ${this.rhs};` + _n;
       }
     };
-    var Label = class extends Node3 {
+    var Label = class extends Node2 {
       static {
         __name(this, "Label");
       }
@@ -2184,7 +6181,7 @@ var require_codegen = __commonJS({
         return `${this.label}:` + _n;
       }
     };
-    var Break = class extends Node3 {
+    var Break = class extends Node2 {
       static {
         __name(this, "Break");
       }
@@ -2198,7 +6195,7 @@ var require_codegen = __commonJS({
         return `break${label};` + _n;
       }
     };
-    var Throw = class extends Node3 {
+    var Throw2 = class extends Node2 {
       static {
         __name(this, "Throw");
       }
@@ -2213,7 +6210,7 @@ var require_codegen = __commonJS({
         return this.error.names;
       }
     };
-    var AnyCode = class extends Node3 {
+    var AnyCode = class extends Node2 {
       static {
         __name(this, "AnyCode");
       }
@@ -2235,7 +6232,7 @@ var require_codegen = __commonJS({
         return this.code instanceof code_1._CodeOrName ? this.code.names : {};
       }
     };
-    var ParentNode = class extends Node3 {
+    var ParentNode = class extends Node2 {
       static {
         __name(this, "ParentNode");
       }
@@ -2694,7 +6691,7 @@ var require_codegen = __commonJS({
       }
       // `throw` statement
       throw(error) {
-        return this._leafNode(new Throw(error));
+        return this._leafNode(new Throw2(error));
       }
       // start self-balancing block
       block(body, nodeCount) {
@@ -2867,12 +6864,12 @@ var require_util = __commonJS({
     __name(alwaysValidSchema, "alwaysValidSchema");
     exports2.alwaysValidSchema = alwaysValidSchema;
     function checkUnknownRules(it, schema = it.schema) {
-      const { opts, self: self2 } = it;
+      const { opts, self } = it;
       if (!opts.strictSchema)
         return;
       if (typeof schema === "boolean")
         return;
-      const rules = self2.RULES.keywords;
+      const rules = self.RULES.keywords;
       for (const key in schema) {
         if (!rules[key])
           checkStrictMode(it, `unknown keyword: "${key}"`);
@@ -2997,14 +6994,14 @@ var require_util = __commonJS({
     }
     __name(useFunc, "useFunc");
     exports2.useFunc = useFunc;
-    var Type;
-    (function(Type2) {
-      Type2[Type2["Num"] = 0] = "Num";
-      Type2[Type2["Str"] = 1] = "Str";
-    })(Type || (exports2.Type = Type = {}));
+    var Type3;
+    (function(Type4) {
+      Type4[Type4["Num"] = 0] = "Num";
+      Type4[Type4["Str"] = 1] = "Str";
+    })(Type3 || (exports2.Type = Type3 = {}));
     function getErrorPath(dataProp, dataPropType, jsPropertySyntax) {
       if (dataProp instanceof codegen_1.Name) {
-        const isNumber = dataPropType === Type.Num;
+        const isNumber = dataPropType === Type3.Num;
         return jsPropertySyntax ? isNumber ? (0, codegen_1._)`"[" + ${dataProp} + "]"` : (0, codegen_1._)`"['" + ${dataProp} + "']"` : isNumber ? (0, codegen_1._)`"/" + ${dataProp}` : (0, codegen_1._)`"/" + ${dataProp}.replace(/~/g, "~0").replace(/\\//g, "~1")`;
       }
       return jsPropertySyntax ? (0, codegen_1.getProperty)(dataProp).toString() : "/" + escapeJsonPointer(dataProp);
@@ -3289,8 +7286,8 @@ var require_applicability = __commonJS({
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.shouldUseRule = exports2.shouldUseGroup = exports2.schemaHasRulesForType = void 0;
-    function schemaHasRulesForType({ schema, self: self2 }, type) {
-      const group = self2.RULES.types[type];
+    function schemaHasRulesForType({ schema, self }, type) {
+      const group = self.RULES.types[type];
       return group && group !== true && shouldUseGroup(schema, group);
     }
     __name(schemaHasRulesForType, "schemaHasRulesForType");
@@ -3798,7 +7795,7 @@ var require_keyword = __commonJS({
     }
     __name(validSchemaType, "validSchemaType");
     exports2.validSchemaType = validSchemaType;
-    function validateKeywordUsage({ schema, opts, self: self2, errSchemaPath }, def, keyword) {
+    function validateKeywordUsage({ schema, opts, self, errSchemaPath }, def, keyword) {
       if (Array.isArray(def.keyword) ? !def.keyword.includes(keyword) : def.keyword !== keyword) {
         throw new Error("ajv implementation error");
       }
@@ -3809,9 +7806,9 @@ var require_keyword = __commonJS({
       if (def.validateSchema) {
         const valid = def.validateSchema(schema[keyword]);
         if (!valid) {
-          const msg = `keyword "${keyword}" value is invalid at path "${errSchemaPath}": ` + self2.errorsText(def.validateSchema.errors);
+          const msg = `keyword "${keyword}" value is invalid at path "${errSchemaPath}": ` + self.errorsText(def.validateSchema.errors);
           if (opts.validateSchema === "log")
-            self2.logger.error(msg);
+            self.logger.error(msg);
           else
             throw new Error(msg);
         }
@@ -4305,11 +8302,11 @@ var require_validate = __commonJS({
       (0, boolSchema_1.boolOrEmptySchema)(it, valid);
     }
     __name(subschemaCode, "subschemaCode");
-    function schemaCxtHasRules({ schema, self: self2 }) {
+    function schemaCxtHasRules({ schema, self }) {
       if (typeof schema == "boolean")
         return !schema;
       for (const key in schema)
-        if (self2.RULES.all[key])
+        if (self.RULES.all[key])
           return true;
       return false;
     }
@@ -4343,9 +8340,9 @@ var require_validate = __commonJS({
     }
     __name(typeAndKeywords, "typeAndKeywords");
     function checkRefsAndKeywords(it) {
-      const { schema, errSchemaPath, opts, self: self2 } = it;
-      if (schema.$ref && opts.ignoreKeywordsWithRef && (0, util_1.schemaHasRulesButRef)(schema, self2.RULES)) {
-        self2.logger.warn(`$ref: keywords ignored in schema at path "${errSchemaPath}"`);
+      const { schema, errSchemaPath, opts, self } = it;
+      if (schema.$ref && opts.ignoreKeywordsWithRef && (0, util_1.schemaHasRulesButRef)(schema, self.RULES)) {
+        self.logger.warn(`$ref: keywords ignored in schema at path "${errSchemaPath}"`);
       }
     }
     __name(checkRefsAndKeywords, "checkRefsAndKeywords");
@@ -4398,8 +8395,8 @@ var require_validate = __commonJS({
     }
     __name(assignEvaluated, "assignEvaluated");
     function schemaKeywords(it, types, typeErrors, errsCount) {
-      const { gen, schema, data, allErrors, opts, self: self2 } = it;
-      const { RULES } = self2;
+      const { gen, schema, data, allErrors, opts, self } = it;
+      const { RULES } = self;
       if (schema.$ref && (opts.ignoreKeywordsWithRef || !(0, util_1.schemaHasRulesButRef)(schema, RULES))) {
         gen.block(() => keywordCode(it, "$ref", RULES.all.$ref.definition));
         return;
@@ -5306,6 +9303,7 @@ var require_utils = __commonJS({
       return uriTokens.length ? uriTokens.join("") : void 0;
     }
     __name(recomposeAuthority, "recomposeAuthority");
+    ;
     module2.exports = {
       recomposeAuthority,
       normalizeComponentEncoding,
@@ -5856,7 +9854,7 @@ var require_core = __commonJS({
       };
     }
     __name(requiredOptions, "requiredOptions");
-    var Ajv = class {
+    var Ajv2 = class {
       static {
         __name(this, "Ajv");
       }
@@ -6235,9 +10233,9 @@ var require_core = __commonJS({
         }
       }
     };
-    Ajv.ValidationError = validation_error_1.default;
-    Ajv.MissingRefError = ref_error_1.default;
-    exports2.default = Ajv;
+    Ajv2.ValidationError = validation_error_1.default;
+    Ajv2.MissingRefError = ref_error_1.default;
+    exports2.default = Ajv2;
     function checkOptions(checkOpts, options, msg, log = "error") {
       for (const key in checkOpts) {
         const opt = key;
@@ -6412,11 +10410,11 @@ var require_ref = __commonJS({
       schemaType: "string",
       code(cxt) {
         const { gen, schema: $ref, it } = cxt;
-        const { baseId, schemaEnv: env, validateName, opts, self: self2 } = it;
+        const { baseId, schemaEnv: env, validateName, opts, self } = it;
         const { root } = env;
         if (($ref === "#" || $ref === "#/") && baseId === root.baseId)
           return callRootRef();
-        const schOrEnv = compile_1.resolveRef.call(self2, root, baseId, $ref);
+        const schOrEnv = compile_1.resolveRef.call(self, root, baseId, $ref);
         if (schOrEnv === void 0)
           throw new ref_error_1.default(it.opts.uriResolver, baseId, $ref);
         if (schOrEnv instanceof compile_1.SchemaEnv)
@@ -7980,7 +11978,7 @@ var require_format = __commonJS({
       error,
       code(cxt, ruleType) {
         const { gen, data, $data, schema, schemaCode, it } = cxt;
-        const { opts, errSchemaPath, schemaEnv, self: self2 } = it;
+        const { opts, errSchemaPath, schemaEnv, self } = it;
         if (!opts.validateFormats)
           return;
         if ($data)
@@ -7989,7 +11987,7 @@ var require_format = __commonJS({
           validateFormat();
         function validate$DataFormat() {
           const fmts = gen.scopeValue("formats", {
-            ref: self2.formats,
+            ref: self.formats,
             code: opts.code.formats
           });
           const fDef = gen.const("fDef", (0, codegen_1._)`${fmts}[${schemaCode}]`);
@@ -8012,7 +12010,7 @@ var require_format = __commonJS({
         }
         __name(validate$DataFormat, "validate$DataFormat");
         function validateFormat() {
-          const formatDef = self2.formats[schema];
+          const formatDef = self.formats[schema];
           if (!formatDef) {
             unknownFormat();
             return;
@@ -8024,7 +12022,7 @@ var require_format = __commonJS({
             cxt.pass(validCondition());
           function unknownFormat() {
             if (opts.strictSchema === false) {
-              self2.logger.warn(unknownMsg());
+              self.logger.warn(unknownMsg());
               return;
             }
             throw new Error(unknownMsg());
@@ -8410,7 +12408,7 @@ var require_ajv = __commonJS({
     var draft7MetaSchema = require_json_schema_draft_07();
     var META_SUPPORT_DATA = ["/properties"];
     var META_SCHEMA_ID = "http://json-schema.org/draft-07/schema";
-    var Ajv = class extends core_1.default {
+    var Ajv2 = class extends core_1.default {
       static {
         __name(this, "Ajv");
       }
@@ -8432,11 +12430,11 @@ var require_ajv = __commonJS({
         return this.opts.defaultMeta = super.defaultMeta() || (this.getSchema(META_SCHEMA_ID) ? META_SCHEMA_ID : void 0);
       }
     };
-    exports2.Ajv = Ajv;
-    module2.exports = exports2 = Ajv;
-    module2.exports.Ajv = Ajv;
+    exports2.Ajv = Ajv2;
+    module2.exports = exports2 = Ajv2;
+    module2.exports.Ajv = Ajv2;
     Object.defineProperty(exports2, "__esModule", { value: true });
-    exports2.default = Ajv;
+    exports2.default = Ajv2;
     var validate_1 = require_validate();
     Object.defineProperty(exports2, "KeywordCxt", { enumerable: true, get: /* @__PURE__ */ __name(function() {
       return validate_1.KeywordCxt;
@@ -8717,17 +12715,17 @@ var require_limit = __commonJS({
       error,
       code(cxt) {
         const { gen, data, schemaCode, keyword, it } = cxt;
-        const { opts, self: self2 } = it;
+        const { opts, self } = it;
         if (!opts.validateFormats)
           return;
-        const fCxt = new ajv_1.KeywordCxt(it, self2.RULES.all.format.definition, "format");
+        const fCxt = new ajv_1.KeywordCxt(it, self.RULES.all.format.definition, "format");
         if (fCxt.$data)
           validate$DataFormat();
         else
           validateFormat();
         function validate$DataFormat() {
           const fmts = gen.scopeValue("formats", {
-            ref: self2.formats,
+            ref: self.formats,
             code: opts.code.formats
           });
           const fmt = gen.const("fmt", (0, codegen_1._)`${fmts}[${fCxt.schemaCode}]`);
@@ -8736,7 +12734,7 @@ var require_limit = __commonJS({
         __name(validate$DataFormat, "validate$DataFormat");
         function validateFormat() {
           const format = fCxt.schema;
-          const fmtDef = self2.formats[format];
+          const fmtDef = self.formats[format];
           if (!fmtDef || fmtDef === true)
             return;
           if (typeof fmtDef != "object" || fmtDef instanceof RegExp || typeof fmtDef.compare != "function") {
@@ -8777,12 +12775,12 @@ var require_dist = __commonJS({
     var fastName = new codegen_1.Name("fastFormats");
     var formatsPlugin = /* @__PURE__ */ __name((ajv, opts = { keywords: true }) => {
       if (Array.isArray(opts)) {
-        addFormats(ajv, opts, formats_1.fullFormats, fullName);
+        addFormats2(ajv, opts, formats_1.fullFormats, fullName);
         return ajv;
       }
       const [formats, exportName] = opts.mode === "fast" ? [formats_1.fastFormats, fastName] : [formats_1.fullFormats, fullName];
       const list = opts.formats || formats_1.formatNames;
-      addFormats(ajv, list, formats, exportName);
+      addFormats2(ajv, list, formats, exportName);
       if (opts.keywords)
         (0, limit_1.default)(ajv);
       return ajv;
@@ -8794,787 +12792,582 @@ var require_dist = __commonJS({
         throw new Error(`Unknown format "${name}"`);
       return f;
     };
-    function addFormats(ajv, list, fs, exportName) {
+    function addFormats2(ajv, list, fs, exportName) {
       var _a;
       var _b;
       (_a = (_b = ajv.opts.code).formats) !== null && _a !== void 0 ? _a : _b.formats = (0, codegen_1._)`require("ajv-formats/dist/formats").${exportName}`;
       for (const f of list)
         ajv.addFormat(f, fs[f]);
     }
-    __name(addFormats, "addFormats");
+    __name(addFormats2, "addFormats");
     module2.exports = exports2 = formatsPlugin;
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.default = formatsPlugin;
   }
 });
 
-// node_modules/deepmerge-ts/dist/index.cjs
+// node_modules/ajv-errors/dist/index.js
 var require_dist2 = __commonJS({
-  "node_modules/deepmerge-ts/dist/index.cjs"(exports2) {
+  "node_modules/ajv-errors/dist/index.js"(exports2, module2) {
     "use strict";
-    var actions = {
-      defaultMerge: Symbol("deepmerge-ts: default merge"),
-      skip: Symbol("deepmerge-ts: skip")
-    };
-    var actionsInto = {
-      defaultMerge: actions.defaultMerge
-    };
-    function defaultMetaDataUpdater(previousMeta, metaMeta) {
-      return metaMeta;
-    }
-    __name(defaultMetaDataUpdater, "defaultMetaDataUpdater");
-    function defaultFilterValues(values, meta) {
-      return values.filter((value) => value !== void 0);
-    }
-    __name(defaultFilterValues, "defaultFilterValues");
-    var ObjectType;
-    (function(ObjectType2) {
-      ObjectType2[ObjectType2["NOT"] = 0] = "NOT";
-      ObjectType2[ObjectType2["RECORD"] = 1] = "RECORD";
-      ObjectType2[ObjectType2["ARRAY"] = 2] = "ARRAY";
-      ObjectType2[ObjectType2["SET"] = 3] = "SET";
-      ObjectType2[ObjectType2["MAP"] = 4] = "MAP";
-      ObjectType2[ObjectType2["OTHER"] = 5] = "OTHER";
-    })(ObjectType || (ObjectType = {}));
-    function getObjectType(object) {
-      if (typeof object !== "object" || object === null) {
-        return 0;
-      }
-      if (Array.isArray(object)) {
-        return 2;
-      }
-      if (isRecord(object)) {
-        return 1;
-      }
-      if (object instanceof Set) {
-        return 3;
-      }
-      if (object instanceof Map) {
-        return 4;
-      }
-      return 5;
-    }
-    __name(getObjectType, "getObjectType");
-    function getKeys(objects) {
-      const keys = /* @__PURE__ */ new Set();
-      for (const object of objects) {
-        for (const key of [...Object.keys(object), ...Object.getOwnPropertySymbols(object)]) {
-          keys.add(key);
-        }
-      }
-      return keys;
-    }
-    __name(getKeys, "getKeys");
-    function objectHasProperty(object, property) {
-      return typeof object === "object" && Object.prototype.propertyIsEnumerable.call(object, property);
-    }
-    __name(objectHasProperty, "objectHasProperty");
-    function getIterableOfIterables(iterables) {
-      let mut_iterablesIndex = 0;
-      let mut_iterator = iterables[0]?.[Symbol.iterator]();
-      return {
-        [Symbol.iterator]() {
-          return {
-            next() {
-              do {
-                if (mut_iterator === void 0) {
-                  return { done: true, value: void 0 };
-                }
-                const result = mut_iterator.next();
-                if (result.done === true) {
-                  mut_iterablesIndex += 1;
-                  mut_iterator = iterables[mut_iterablesIndex]?.[Symbol.iterator]();
-                  continue;
-                }
-                return {
-                  done: false,
-                  value: result.value
-                };
-              } while (true);
-            }
-          };
-        }
-      };
-    }
-    __name(getIterableOfIterables, "getIterableOfIterables");
-    var validRecordToStringValues = ["[object Object]", "[object Module]"];
-    function isRecord(value) {
-      if (!validRecordToStringValues.includes(Object.prototype.toString.call(value))) {
-        return false;
-      }
-      const { constructor } = value;
-      if (constructor === void 0) {
-        return true;
-      }
-      const prototype = constructor.prototype;
-      if (prototype === null || typeof prototype !== "object" || !validRecordToStringValues.includes(Object.prototype.toString.call(prototype))) {
-        return false;
-      }
-      if (!prototype.hasOwnProperty("isPrototypeOf")) {
-        return false;
-      }
-      return true;
-    }
-    __name(isRecord, "isRecord");
-    function mergeRecords$1(values, utils, meta) {
-      const result = {};
-      for (const key of getKeys(values)) {
-        const propValues = [];
-        for (const value of values) {
-          if (objectHasProperty(value, key)) {
-            propValues.push(value[key]);
-          }
-        }
-        if (propValues.length === 0) {
-          continue;
-        }
-        const updatedMeta = utils.metaDataUpdater(meta, {
-          key,
-          parents: values
-        });
-        const propertyResult = mergeUnknowns(propValues, utils, updatedMeta);
-        if (propertyResult === actions.skip) {
-          continue;
-        }
-        if (key === "__proto__") {
-          Object.defineProperty(result, key, {
-            value: propertyResult,
-            configurable: true,
-            enumerable: true,
-            writable: true
-          });
-        } else {
-          result[key] = propertyResult;
-        }
-      }
-      return result;
-    }
-    __name(mergeRecords$1, "mergeRecords$1");
-    function mergeArrays$1(values) {
-      return values.flat();
-    }
-    __name(mergeArrays$1, "mergeArrays$1");
-    function mergeSets$1(values) {
-      return new Set(getIterableOfIterables(values));
-    }
-    __name(mergeSets$1, "mergeSets$1");
-    function mergeMaps$1(values) {
-      return new Map(getIterableOfIterables(values));
-    }
-    __name(mergeMaps$1, "mergeMaps$1");
-    function mergeOthers$1(values) {
-      return values.at(-1);
-    }
-    __name(mergeOthers$1, "mergeOthers$1");
-    var mergeFunctions = {
-      mergeRecords: mergeRecords$1,
-      mergeArrays: mergeArrays$1,
-      mergeSets: mergeSets$1,
-      mergeMaps: mergeMaps$1,
-      mergeOthers: mergeOthers$1
-    };
-    function deepmerge(...objects) {
-      return deepmergeCustom({})(...objects);
-    }
-    __name(deepmerge, "deepmerge");
-    function deepmergeCustom(options, rootMetaData) {
-      const utils = getUtils(options, customizedDeepmerge);
-      function customizedDeepmerge(...objects) {
-        return mergeUnknowns(objects, utils, rootMetaData);
-      }
-      __name(customizedDeepmerge, "customizedDeepmerge");
-      return customizedDeepmerge;
-    }
-    __name(deepmergeCustom, "deepmergeCustom");
-    function getUtils(options, customizedDeepmerge) {
-      return {
-        defaultMergeFunctions: mergeFunctions,
-        mergeFunctions: {
-          ...mergeFunctions,
-          ...Object.fromEntries(Object.entries(options).filter(([key, option]) => Object.hasOwn(mergeFunctions, key)).map(([key, option]) => option === false ? [key, mergeFunctions.mergeOthers] : [key, option]))
-        },
-        metaDataUpdater: options.metaDataUpdater ?? defaultMetaDataUpdater,
-        deepmerge: customizedDeepmerge,
-        useImplicitDefaultMerging: options.enableImplicitDefaultMerging ?? false,
-        filterValues: options.filterValues === false ? void 0 : options.filterValues ?? defaultFilterValues,
-        actions
-      };
-    }
-    __name(getUtils, "getUtils");
-    function mergeUnknowns(values, utils, meta) {
-      const filteredValues = utils.filterValues?.(values, meta) ?? values;
-      if (filteredValues.length === 0) {
-        return void 0;
-      }
-      if (filteredValues.length === 1) {
-        return mergeOthers(filteredValues, utils, meta);
-      }
-      const type = getObjectType(filteredValues[0]);
-      if (type !== 0 && type !== 5) {
-        for (let mut_index = 1; mut_index < filteredValues.length; mut_index++) {
-          if (getObjectType(filteredValues[mut_index]) === type) {
-            continue;
-          }
-          return mergeOthers(filteredValues, utils, meta);
-        }
-      }
-      switch (type) {
-        case 1: {
-          return mergeRecords(filteredValues, utils, meta);
-        }
-        case 2: {
-          return mergeArrays(filteredValues, utils, meta);
-        }
-        case 3: {
-          return mergeSets(filteredValues, utils, meta);
-        }
-        case 4: {
-          return mergeMaps(filteredValues, utils, meta);
-        }
-        default: {
-          return mergeOthers(filteredValues, utils, meta);
-        }
-      }
-    }
-    __name(mergeUnknowns, "mergeUnknowns");
-    function mergeRecords(values, utils, meta) {
-      const result = utils.mergeFunctions.mergeRecords(values, utils, meta);
-      if (result === actions.defaultMerge || utils.useImplicitDefaultMerging && result === void 0 && utils.mergeFunctions.mergeRecords !== utils.defaultMergeFunctions.mergeRecords) {
-        return utils.defaultMergeFunctions.mergeRecords(values, utils, meta);
-      }
-      return result;
-    }
-    __name(mergeRecords, "mergeRecords");
-    function mergeArrays(values, utils, meta) {
-      const result = utils.mergeFunctions.mergeArrays(values, utils, meta);
-      if (result === actions.defaultMerge || utils.useImplicitDefaultMerging && result === void 0 && utils.mergeFunctions.mergeArrays !== utils.defaultMergeFunctions.mergeArrays) {
-        return utils.defaultMergeFunctions.mergeArrays(values);
-      }
-      return result;
-    }
-    __name(mergeArrays, "mergeArrays");
-    function mergeSets(values, utils, meta) {
-      const result = utils.mergeFunctions.mergeSets(values, utils, meta);
-      if (result === actions.defaultMerge || utils.useImplicitDefaultMerging && result === void 0 && utils.mergeFunctions.mergeSets !== utils.defaultMergeFunctions.mergeSets) {
-        return utils.defaultMergeFunctions.mergeSets(values);
-      }
-      return result;
-    }
-    __name(mergeSets, "mergeSets");
-    function mergeMaps(values, utils, meta) {
-      const result = utils.mergeFunctions.mergeMaps(values, utils, meta);
-      if (result === actions.defaultMerge || utils.useImplicitDefaultMerging && result === void 0 && utils.mergeFunctions.mergeMaps !== utils.defaultMergeFunctions.mergeMaps) {
-        return utils.defaultMergeFunctions.mergeMaps(values);
-      }
-      return result;
-    }
-    __name(mergeMaps, "mergeMaps");
-    function mergeOthers(values, utils, meta) {
-      const result = utils.mergeFunctions.mergeOthers(values, utils, meta);
-      if (result === actions.defaultMerge || utils.useImplicitDefaultMerging && result === void 0 && utils.mergeFunctions.mergeOthers !== utils.defaultMergeFunctions.mergeOthers) {
-        return utils.defaultMergeFunctions.mergeOthers(values);
-      }
-      return result;
-    }
-    __name(mergeOthers, "mergeOthers");
-    function mergeRecordsInto$1(mut_target, values, utils, meta) {
-      for (const key of getKeys(values)) {
-        const propValues = [];
-        for (const value of values) {
-          if (objectHasProperty(value, key)) {
-            propValues.push(value[key]);
-          }
-        }
-        if (propValues.length === 0) {
-          continue;
-        }
-        const updatedMeta = utils.metaDataUpdater(meta, {
-          key,
-          parents: values
-        });
-        const propertyTarget = { value: propValues[0] };
-        mergeUnknownsInto(propertyTarget, propValues, utils, updatedMeta);
-        if (key === "__proto__") {
-          Object.defineProperty(mut_target.value, key, {
-            value: propertyTarget.value,
-            configurable: true,
-            enumerable: true,
-            writable: true
-          });
-        } else {
-          mut_target.value[key] = propertyTarget.value;
-        }
-      }
-    }
-    __name(mergeRecordsInto$1, "mergeRecordsInto$1");
-    function mergeArraysInto$1(mut_target, values) {
-      mut_target.value.push(...values.slice(1).flat());
-    }
-    __name(mergeArraysInto$1, "mergeArraysInto$1");
-    function mergeSetsInto$1(mut_target, values) {
-      for (const value of getIterableOfIterables(values.slice(1))) {
-        mut_target.value.add(value);
-      }
-    }
-    __name(mergeSetsInto$1, "mergeSetsInto$1");
-    function mergeMapsInto$1(mut_target, values) {
-      for (const [key, value] of getIterableOfIterables(values.slice(1))) {
-        mut_target.value.set(key, value);
-      }
-    }
-    __name(mergeMapsInto$1, "mergeMapsInto$1");
-    function mergeOthersInto$1(mut_target, values) {
-      mut_target.value = values.at(-1);
-    }
-    __name(mergeOthersInto$1, "mergeOthersInto$1");
-    var mergeIntoFunctions = {
-      mergeRecords: mergeRecordsInto$1,
-      mergeArrays: mergeArraysInto$1,
-      mergeSets: mergeSetsInto$1,
-      mergeMaps: mergeMapsInto$1,
-      mergeOthers: mergeOthersInto$1
-    };
-    function deepmergeInto(target, ...objects) {
-      return void deepmergeIntoCustom({})(target, ...objects);
-    }
-    __name(deepmergeInto, "deepmergeInto");
-    function deepmergeIntoCustom(options, rootMetaData) {
-      const utils = getIntoUtils(options, customizedDeepmergeInto);
-      function customizedDeepmergeInto(target, ...objects) {
-        mergeUnknownsInto({ value: target }, [target, ...objects], utils, rootMetaData);
-      }
-      __name(customizedDeepmergeInto, "customizedDeepmergeInto");
-      return customizedDeepmergeInto;
-    }
-    __name(deepmergeIntoCustom, "deepmergeIntoCustom");
-    function getIntoUtils(options, customizedDeepmergeInto) {
-      return {
-        defaultMergeFunctions: mergeIntoFunctions,
-        mergeFunctions: {
-          ...mergeIntoFunctions,
-          ...Object.fromEntries(Object.entries(options).filter(([key, option]) => Object.hasOwn(mergeIntoFunctions, key)).map(([key, option]) => option === false ? [key, mergeIntoFunctions.mergeOthers] : [key, option]))
-        },
-        metaDataUpdater: options.metaDataUpdater ?? defaultMetaDataUpdater,
-        deepmergeInto: customizedDeepmergeInto,
-        filterValues: options.filterValues === false ? void 0 : options.filterValues ?? defaultFilterValues,
-        actions: actionsInto
-      };
-    }
-    __name(getIntoUtils, "getIntoUtils");
-    function mergeUnknownsInto(mut_target, values, utils, meta) {
-      const filteredValues = utils.filterValues?.(values, meta) ?? values;
-      if (filteredValues.length === 0) {
-        return;
-      }
-      if (filteredValues.length === 1) {
-        return void mergeOthersInto(mut_target, filteredValues, utils, meta);
-      }
-      const type = getObjectType(mut_target.value);
-      if (type !== 0 && type !== 5) {
-        for (let mut_index = 1; mut_index < filteredValues.length; mut_index++) {
-          if (getObjectType(filteredValues[mut_index]) === type) {
-            continue;
-          }
-          return void mergeOthersInto(mut_target, filteredValues, utils, meta);
-        }
-      }
-      switch (type) {
-        case 1: {
-          return void mergeRecordsInto(mut_target, filteredValues, utils, meta);
-        }
-        case 2: {
-          return void mergeArraysInto(mut_target, filteredValues, utils, meta);
-        }
-        case 3: {
-          return void mergeSetsInto(mut_target, filteredValues, utils, meta);
-        }
-        case 4: {
-          return void mergeMapsInto(mut_target, filteredValues, utils, meta);
-        }
-        default: {
-          return void mergeOthersInto(mut_target, filteredValues, utils, meta);
-        }
-      }
-    }
-    __name(mergeUnknownsInto, "mergeUnknownsInto");
-    function mergeRecordsInto(mut_target, values, utils, meta) {
-      const action = utils.mergeFunctions.mergeRecords(mut_target, values, utils, meta);
-      if (action === actionsInto.defaultMerge) {
-        utils.defaultMergeFunctions.mergeRecords(mut_target, values, utils, meta);
-      }
-    }
-    __name(mergeRecordsInto, "mergeRecordsInto");
-    function mergeArraysInto(mut_target, values, utils, meta) {
-      const action = utils.mergeFunctions.mergeArrays(mut_target, values, utils, meta);
-      if (action === actionsInto.defaultMerge) {
-        utils.defaultMergeFunctions.mergeArrays(mut_target, values);
-      }
-    }
-    __name(mergeArraysInto, "mergeArraysInto");
-    function mergeSetsInto(mut_target, values, utils, meta) {
-      const action = utils.mergeFunctions.mergeSets(mut_target, values, utils, meta);
-      if (action === actionsInto.defaultMerge) {
-        utils.defaultMergeFunctions.mergeSets(mut_target, values);
-      }
-    }
-    __name(mergeSetsInto, "mergeSetsInto");
-    function mergeMapsInto(mut_target, values, utils, meta) {
-      const action = utils.mergeFunctions.mergeMaps(mut_target, values, utils, meta);
-      if (action === actionsInto.defaultMerge) {
-        utils.defaultMergeFunctions.mergeMaps(mut_target, values);
-      }
-    }
-    __name(mergeMapsInto, "mergeMapsInto");
-    function mergeOthersInto(mut_target, values, utils, meta) {
-      const action = utils.mergeFunctions.mergeOthers(mut_target, values, utils, meta);
-      if (action === actionsInto.defaultMerge || mut_target.value === actionsInto.defaultMerge) {
-        utils.defaultMergeFunctions.mergeOthers(mut_target, values);
-      }
-    }
-    __name(mergeOthersInto, "mergeOthersInto");
-    exports2.deepmerge = deepmerge;
-    exports2.deepmergeCustom = deepmergeCustom;
-    exports2.deepmergeInto = deepmergeInto;
-    exports2.deepmergeIntoCustom = deepmergeIntoCustom;
-    exports2.getKeys = getKeys;
-    exports2.getObjectType = getObjectType;
-    exports2.objectHasProperty = objectHasProperty;
-  }
-});
-
-// utils.ts
-var utils_exports = {};
-__export(utils_exports, {
-  convertToType: () => convertToType,
-  isSubclassOf: () => isSubclassOf
-});
-function isSubclassOf(child, parent) {
-  if (child === parent) return false;
-  let proto = child.prototype;
-  while (proto) {
-    proto = Object.getPrototypeOf(proto);
-    if (proto?.constructor === parent) return true;
-  }
-  return false;
-}
-function convertToType(value, type) {
-  if (value === null || value === void 0) {
-    return value;
-  }
-  if (type === String) {
-    return String(value);
-  } else if (type === Number) {
-    const num = Number(value);
-    return isNaN(num) ? 0 : num;
-  } else if (type === Boolean) {
-    if (typeof value === "string") {
-      return !["false", "0", ""].includes(value.toLowerCase());
-    }
-    return Boolean(value);
-  } else if (type === BigInt) {
-    if (typeof value === "bigint") {
-      return value;
-    }
-    try {
-      return BigInt(value);
-    } catch (e) {
-      return 0n;
-    }
-  } else if (type === Date) {
-    const date = new Date(value);
-    return isNaN(date.getTime()) ? null : date;
-  } else if (type === Array) {
-    if (typeof value === "string") {
-      try {
-        return JSON.parse(value);
-      } catch {
-        return value.split(",").map((item) => item.trim());
-      }
-    }
-    return Array.isArray(value) ? value : [value];
-  } else if (type === Object) {
-    if (typeof value === "string") {
-      try {
-        return JSON.parse(value);
-      } catch {
-        return {};
-      }
-    }
-    return typeof value === "object" && !Array.isArray(value) ? value : { value };
-  }
-  if (typeof type === "function") {
-    try {
-      return new type(value);
-    } catch {
-      return value;
-    }
-  }
-  return value;
-}
-var init_utils = __esm({
-  "utils.ts"() {
-    "use strict";
-    __name(isSubclassOf, "isSubclassOf");
-    __name(convertToType, "convertToType");
-  }
-});
-
-// node-factory.ts
-var require_node_factory = __commonJS({
-  "node-factory.ts"(exports2) {
-    "use strict";
-    var __createBinding = exports2 && exports2.__createBinding || (Object.create ? function(o, m, k, k2) {
-      if (k2 === void 0) k2 = k;
-      var desc = Object.getOwnPropertyDescriptor(m, k);
-      if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-        desc = { enumerable: true, get: /* @__PURE__ */ __name(function() {
-          return m[k];
-        }, "get") };
-      }
-      Object.defineProperty(o, k2, desc);
-    } : function(o, m, k, k2) {
-      if (k2 === void 0) k2 = k;
-      o[k2] = m[k];
-    });
-    var __setModuleDefault = exports2 && exports2.__setModuleDefault || (Object.create ? function(o, v) {
-      Object.defineProperty(o, "default", { enumerable: true, value: v });
-    } : function(o, v) {
-      o["default"] = v;
-    });
-    var __importStar = exports2 && exports2.__importStar || /* @__PURE__ */ function() {
-      var ownKeys = /* @__PURE__ */ __name(function(o) {
-        ownKeys = Object.getOwnPropertyNames || function(o2) {
-          var ar = [];
-          for (var k in o2) if (Object.prototype.hasOwnProperty.call(o2, k)) ar[ar.length] = k;
-          return ar;
-        };
-        return ownKeys(o);
-      }, "ownKeys");
-      return function(mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) {
-          for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        }
-        __setModuleDefault(result, mod);
-        return result;
-      };
-    }();
-    var __importDefault = exports2 && exports2.__importDefault || function(mod) {
-      return mod && mod.__esModule ? mod : { "default": mod };
-    };
     Object.defineProperty(exports2, "__esModule", { value: true });
-    exports2.registerType = registerType2;
-    var ajv_1 = __importDefault(require_ajv());
-    var ajv_formats_1 = __importDefault(require_dist());
-    var deepmerge_ts_1 = require_dist2();
-    var node_1 = require_node();
-    var config_node_1 = (init_config_node(), __toCommonJS(config_node_exports));
-    var typed_input_1 = (init_typed_input(), __toCommonJS(typed_input_exports));
-    var Credential = __importStar((init_credential(), __toCommonJS(credential_exports)));
-    var utils_1 = (init_utils(), __toCommonJS(utils_exports));
-    var ajv = new ajv_1.default({
-      allErrors: true,
-      useDefaults: true,
-      strict: true,
-      coerceTypes: true,
-      verbose: true,
-      validateFormats: true
-    });
-    (0, ajv_formats_1.default)(ajv);
-    async function registerType2(RED, NodeClass) {
-      if (!(NodeClass.prototype instanceof node_1.Node || NodeClass.prototype instanceof config_node_1.ConfigNode)) {
-        throw new Error(`${NodeClass.name} must extend Node or ConfigNode`);
-      }
-      const type = NodeClass.__nodeProperties___.type;
-      if (!type) {
-        throw new Error(`${type} must be provided with @node decorator in your class`);
-      }
-      if (node_1.Node.RED === void 0) {
-        Object.defineProperty(node_1.Node, "RED", {
-          value: RED,
-          writable: false,
-          configurable: false,
-          enumerable: false
-        });
-      }
-      if (config_node_1.ConfigNode.RED === void 0) {
-        Object.defineProperty(config_node_1.ConfigNode, "RED", {
-          value: RED,
-          writable: false,
-          configurable: false,
-          enumerable: false
-        });
-      }
-      if (NodeClass.RED === void 0) {
-        Object.defineProperty(NodeClass, "RED", {
-          value: RED,
-          writable: false,
-          configurable: false,
-          enumerable: false
-        });
-      }
-      if (NodeClass.type === void 0) {
-        Object.defineProperty(NodeClass, "type", {
-          value: type,
-          writable: false,
-          configurable: false,
-          enumerable: false
-        });
-      }
-      console.log("NodeClass");
-      console.log(NodeClass);
-      if (typeof NodeClass.init === "function") {
-        const result = NodeClass.init();
-        if (result instanceof Promise) {
-          await result;
-        }
-      }
-      console.log(`CREATING SCHEMAS FOR ${NodeClass}`);
-      const inputsValidator = ajv.compile(NodeClass.__nodeProperties___.validation.inputs);
-      const messageValidator = NodeClass.__nodeProperties___?.validation?.message ? ajv.compile(NodeClass.__nodeProperties___.validation.message) : void 0;
-      console.log(inputsValidator);
-      console.log(messageValidator);
-      function validateInputs(inputs) {
-        console.log("VALIDATING INPUTS");
-        const isValid = inputsValidator(inputs);
-        if (!isValid) {
-          const errorDetails = ajv.errorsText(inputsValidator.errors, {
-            separator: "\n",
-            dataVar: "- inputs"
+    var ajv_1 = require_ajv();
+    var codegen_1 = require_codegen();
+    var code_1 = require_code();
+    var validate_1 = require_validate();
+    var errors_1 = require_errors();
+    var names_1 = require_names();
+    var keyword = "errorMessage";
+    var used = new ajv_1.Name("emUsed");
+    var KEYWORD_PROPERTY_PARAMS = {
+      required: "missingProperty",
+      dependencies: "property",
+      dependentRequired: "property"
+    };
+    var INTERPOLATION = /\$\{[^}]+\}/;
+    var INTERPOLATION_REPLACE = /\$\{([^}]+)\}/g;
+    var EMPTY_STR = /^""\s*\+\s*|\s*\+\s*""$/g;
+    function errorMessage(options) {
+      return {
+        keyword,
+        schemaType: ["string", "object"],
+        post: true,
+        code(cxt) {
+          const { gen, data, schema, schemaValue, it } = cxt;
+          if (it.createErrors === false)
+            return;
+          const sch = schema;
+          const instancePath = codegen_1.strConcat(names_1.default.instancePath, it.errorPath);
+          gen.if(ajv_1._`${names_1.default.errors} > 0`, () => {
+            if (typeof sch == "object") {
+              const [kwdPropErrors, kwdErrors] = keywordErrorsConfig(sch);
+              if (kwdErrors)
+                processKeywordErrors(kwdErrors);
+              if (kwdPropErrors)
+                processKeywordPropErrors(kwdPropErrors);
+              processChildErrors(childErrorsConfig(sch));
+            }
+            const schMessage = typeof sch == "string" ? sch : sch._;
+            if (schMessage)
+              processAllErrors(schMessage);
+            if (!options.keepErrors)
+              removeUsedErrors();
           });
-          console.log(errorDetails);
-          return;
-        }
-        console.log("ALL GOOD");
-      }
-      __name(validateInputs, "validateInputs");
-      function validateMessage(message) {
-        console.log("VALIDATING MESSAGE");
-        const isValid = messageValidator(message);
-        if (!isValid) {
-          const errorDetails = ajv.errorsText(messageValidator.errors, {
-            separator: "\n",
-            dataVar: "- message"
-          });
-          console.log(errorDetails);
-          return;
-        }
-        console.log("ALL GOOD WITH MESSAGE");
-      }
-      __name(validateMessage, "validateMessage");
-      const classRegistry = {};
-      classRegistry["_NodeClass"] = class extends NodeClass {
-        /**
-         * Creates an instance of a given node class and injects the RED object in it
-         * @param {object} config - Configuration object for the node-red node instance.
-         */
-        constructor(config2) {
-          super(config2);
-          validateInputs((0, deepmerge_ts_1.deepmerge)(config2, this.credentials));
-          this.setupEventHandlers();
-          this.assignDecoratedProps();
-        }
-        /**
-         * Sets up event handlers for the node. Automatically binds methods starting with "on" from the base class
-         * to their corresponding events.
-         */
-        setupEventHandlers() {
-          this.on("input", (msg, send, done) => {
-            try {
-              validateMessage(msg);
-              this.onInput(msg, send, done);
-            } catch (err) {
-              this.error("Error during input processing: " + err.message, msg);
-              if (done) {
-                done(err);
+          function childErrorsConfig({ properties, items }) {
+            const errors = {};
+            if (properties) {
+              errors.props = {};
+              for (const p in properties)
+                errors.props[p] = [];
+            }
+            if (items) {
+              errors.items = {};
+              for (let i = 0; i < items.length; i++)
+                errors.items[i] = [];
+            }
+            return errors;
+          }
+          __name(childErrorsConfig, "childErrorsConfig");
+          function keywordErrorsConfig(emSchema) {
+            let propErrors;
+            let errors;
+            for (const k in emSchema) {
+              if (k === "properties" || k === "items")
+                continue;
+              const kwdSch = emSchema[k];
+              if (typeof kwdSch == "object") {
+                propErrors || (propErrors = {});
+                const errMap = propErrors[k] = {};
+                for (const p in kwdSch)
+                  errMap[p] = [];
+              } else {
+                errors || (errors = {});
+                errors[k] = [];
               }
             }
-          });
-          this.on("close", this.onClose);
-        }
-        assignDecoratedProps() {
-          const ctor = this.constructor;
-          const props = ctor.__configs__ || [];
-          console.log("INSIDE DECORATED PROPS METHOD");
-          for (const { key, type: type2 } of props) {
-            this[key] = (0, utils_1.isSubclassOf)(type2, config_node_1.ConfigNode) ? RED.nodes.getNode(this.__config[key]) : type2 === typed_input_1.TypedInput ? new typed_input_1.TypedInput(this, this.__config[key]) : type2 === Credential.Password || type2 === Credential.Text ? (0, utils_1.convertToType)(this.credentials[key], type2) : (0, utils_1.convertToType)(this.__config[key], type2);
+            return [propErrors, errors];
           }
-          delete this.credentials;
-          console.log("FINISHED ASSIGNING PROPS");
+          __name(keywordErrorsConfig, "keywordErrorsConfig");
+          function processKeywordErrors(kwdErrors) {
+            const kwdErrs = gen.const("emErrors", ajv_1.stringify(kwdErrors));
+            const templates = gen.const("templates", getTemplatesCode(kwdErrors, schema));
+            gen.forOf("err", names_1.default.vErrors, (err) => gen.if(matchKeywordError(err, kwdErrs), () => gen.code(ajv_1._`${kwdErrs}[${err}.keyword].push(${err})`).assign(ajv_1._`${err}.${used}`, true)));
+            const { singleError } = options;
+            if (singleError) {
+              const message = gen.let("message", ajv_1._`""`);
+              const paramsErrors = gen.let("paramsErrors", ajv_1._`[]`);
+              loopErrors((key) => {
+                gen.if(message, () => gen.code(ajv_1._`${message} += ${typeof singleError == "string" ? singleError : ";"}`));
+                gen.code(ajv_1._`${message} += ${errMessage(key)}`);
+                gen.assign(paramsErrors, ajv_1._`${paramsErrors}.concat(${kwdErrs}[${key}])`);
+              });
+              errors_1.reportError(cxt, { message, params: ajv_1._`{errors: ${paramsErrors}}` });
+            } else {
+              loopErrors((key) => errors_1.reportError(cxt, {
+                message: errMessage(key),
+                params: ajv_1._`{errors: ${kwdErrs}[${key}]}`
+              }));
+            }
+            function loopErrors(body) {
+              gen.forIn("key", kwdErrs, (key) => gen.if(ajv_1._`${kwdErrs}[${key}].length`, () => body(key)));
+            }
+            __name(loopErrors, "loopErrors");
+            function errMessage(key) {
+              return ajv_1._`${key} in ${templates} ? ${templates}[${key}]() : ${schemaValue}[${key}]`;
+            }
+            __name(errMessage, "errMessage");
+          }
+          __name(processKeywordErrors, "processKeywordErrors");
+          function processKeywordPropErrors(kwdPropErrors) {
+            const kwdErrs = gen.const("emErrors", ajv_1.stringify(kwdPropErrors));
+            const templatesCode = [];
+            for (const k in kwdPropErrors) {
+              templatesCode.push([
+                k,
+                getTemplatesCode(kwdPropErrors[k], schema[k])
+              ]);
+            }
+            const templates = gen.const("templates", gen.object(...templatesCode));
+            const kwdPropParams = gen.scopeValue("obj", {
+              ref: KEYWORD_PROPERTY_PARAMS,
+              code: ajv_1.stringify(KEYWORD_PROPERTY_PARAMS)
+            });
+            const propParam = gen.let("emPropParams");
+            const paramsErrors = gen.let("emParamsErrors");
+            gen.forOf("err", names_1.default.vErrors, (err) => gen.if(matchKeywordError(err, kwdErrs), () => {
+              gen.assign(propParam, ajv_1._`${kwdPropParams}[${err}.keyword]`);
+              gen.assign(paramsErrors, ajv_1._`${kwdErrs}[${err}.keyword][${err}.params[${propParam}]]`);
+              gen.if(paramsErrors, () => gen.code(ajv_1._`${paramsErrors}.push(${err})`).assign(ajv_1._`${err}.${used}`, true));
+            }));
+            gen.forIn("key", kwdErrs, (key) => gen.forIn("keyProp", ajv_1._`${kwdErrs}[${key}]`, (keyProp) => {
+              gen.assign(paramsErrors, ajv_1._`${kwdErrs}[${key}][${keyProp}]`);
+              gen.if(ajv_1._`${paramsErrors}.length`, () => {
+                const tmpl = gen.const("tmpl", ajv_1._`${templates}[${key}] && ${templates}[${key}][${keyProp}]`);
+                errors_1.reportError(cxt, {
+                  message: ajv_1._`${tmpl} ? ${tmpl}() : ${schemaValue}[${key}][${keyProp}]`,
+                  params: ajv_1._`{errors: ${paramsErrors}}`
+                });
+              });
+            }));
+          }
+          __name(processKeywordPropErrors, "processKeywordPropErrors");
+          function processChildErrors(childErrors) {
+            const { props, items } = childErrors;
+            if (!props && !items)
+              return;
+            const isObj = ajv_1._`typeof ${data} == "object"`;
+            const isArr = ajv_1._`Array.isArray(${data})`;
+            const childErrs = gen.let("emErrors");
+            let childKwd;
+            let childProp;
+            const templates = gen.let("templates");
+            if (props && items) {
+              childKwd = gen.let("emChildKwd");
+              gen.if(isObj);
+              gen.if(isArr, () => {
+                init(items, schema.items);
+                gen.assign(childKwd, ajv_1.str`items`);
+              }, () => {
+                init(props, schema.properties);
+                gen.assign(childKwd, ajv_1.str`properties`);
+              });
+              childProp = ajv_1._`[${childKwd}]`;
+            } else if (items) {
+              gen.if(isArr);
+              init(items, schema.items);
+              childProp = ajv_1._`.items`;
+            } else if (props) {
+              gen.if(codegen_1.and(isObj, codegen_1.not(isArr)));
+              init(props, schema.properties);
+              childProp = ajv_1._`.properties`;
+            }
+            gen.forOf("err", names_1.default.vErrors, (err) => ifMatchesChildError(err, childErrs, (child) => gen.code(ajv_1._`${childErrs}[${child}].push(${err})`).assign(ajv_1._`${err}.${used}`, true)));
+            gen.forIn("key", childErrs, (key) => gen.if(ajv_1._`${childErrs}[${key}].length`, () => {
+              errors_1.reportError(cxt, {
+                message: ajv_1._`${key} in ${templates} ? ${templates}[${key}]() : ${schemaValue}${childProp}[${key}]`,
+                params: ajv_1._`{errors: ${childErrs}[${key}]}`
+              });
+              gen.assign(ajv_1._`${names_1.default.vErrors}[${names_1.default.errors}-1].instancePath`, ajv_1._`${instancePath} + "/" + ${key}.replace(/~/g, "~0").replace(/\\//g, "~1")`);
+            }));
+            gen.endIf();
+            function init(children, msgs) {
+              gen.assign(childErrs, ajv_1.stringify(children));
+              gen.assign(templates, getTemplatesCode(children, msgs));
+            }
+            __name(init, "init");
+          }
+          __name(processChildErrors, "processChildErrors");
+          function processAllErrors(schMessage) {
+            const errs = gen.const("emErrs", ajv_1._`[]`);
+            gen.forOf("err", names_1.default.vErrors, (err) => gen.if(matchAnyError(err), () => gen.code(ajv_1._`${errs}.push(${err})`).assign(ajv_1._`${err}.${used}`, true)));
+            gen.if(ajv_1._`${errs}.length`, () => errors_1.reportError(cxt, {
+              message: templateExpr(schMessage),
+              params: ajv_1._`{errors: ${errs}}`
+            }));
+          }
+          __name(processAllErrors, "processAllErrors");
+          function removeUsedErrors() {
+            const errs = gen.const("emErrs", ajv_1._`[]`);
+            gen.forOf("err", names_1.default.vErrors, (err) => gen.if(ajv_1._`!${err}.${used}`, () => gen.code(ajv_1._`${errs}.push(${err})`)));
+            gen.assign(names_1.default.vErrors, errs).assign(names_1.default.errors, ajv_1._`${errs}.length`);
+          }
+          __name(removeUsedErrors, "removeUsedErrors");
+          function matchKeywordError(err, kwdErrs) {
+            return codegen_1.and(
+              ajv_1._`${err}.keyword !== ${keyword}`,
+              ajv_1._`!${err}.${used}`,
+              ajv_1._`${err}.instancePath === ${instancePath}`,
+              ajv_1._`${err}.keyword in ${kwdErrs}`,
+              // TODO match the end of the string?
+              ajv_1._`${err}.schemaPath.indexOf(${it.errSchemaPath}) === 0`,
+              ajv_1._`/^\\/[^\\/]*$/.test(${err}.schemaPath.slice(${it.errSchemaPath.length}))`
+            );
+          }
+          __name(matchKeywordError, "matchKeywordError");
+          function ifMatchesChildError(err, childErrs, thenBody) {
+            gen.if(codegen_1.and(ajv_1._`${err}.keyword !== ${keyword}`, ajv_1._`!${err}.${used}`, ajv_1._`${err}.instancePath.indexOf(${instancePath}) === 0`), () => {
+              const childRegex = gen.scopeValue("pattern", {
+                ref: /^\/([^/]*)(?:\/|$)/,
+                code: ajv_1._`new RegExp("^\\\/([^/]*)(?:\\\/|$)")`
+              });
+              const matches = gen.const("emMatches", ajv_1._`${childRegex}.exec(${err}.instancePath.slice(${instancePath}.length))`);
+              const child = gen.const("emChild", ajv_1._`${matches} && ${matches}[1].replace(/~1/g, "/").replace(/~0/g, "~")`);
+              gen.if(ajv_1._`${child} !== undefined && ${child} in ${childErrs}`, () => thenBody(child));
+            });
+          }
+          __name(ifMatchesChildError, "ifMatchesChildError");
+          function matchAnyError(err) {
+            return codegen_1.and(ajv_1._`${err}.keyword !== ${keyword}`, ajv_1._`!${err}.${used}`, codegen_1.or(ajv_1._`${err}.instancePath === ${instancePath}`, codegen_1.and(ajv_1._`${err}.instancePath.indexOf(${instancePath}) === 0`, ajv_1._`${err}.instancePath[${instancePath}.length] === "/"`)), ajv_1._`${err}.schemaPath.indexOf(${it.errSchemaPath}) === 0`, ajv_1._`${err}.schemaPath[${it.errSchemaPath}.length] === "/"`);
+          }
+          __name(matchAnyError, "matchAnyError");
+          function getTemplatesCode(keys, msgs) {
+            const templatesCode = [];
+            for (const k in keys) {
+              const msg = msgs[k];
+              if (INTERPOLATION.test(msg))
+                templatesCode.push([k, templateFunc(msg)]);
+            }
+            return gen.object(...templatesCode);
+          }
+          __name(getTemplatesCode, "getTemplatesCode");
+          function templateExpr(msg) {
+            if (!INTERPOLATION.test(msg))
+              return ajv_1.stringify(msg);
+            return new code_1._Code(code_1.safeStringify(msg).replace(INTERPOLATION_REPLACE, (_s, ptr) => `" + JSON.stringify(${validate_1.getData(ptr, it)}) + "`).replace(EMPTY_STR, ""));
+          }
+          __name(templateExpr, "templateExpr");
+          function templateFunc(msg) {
+            return ajv_1._`function(){return ${templateExpr(msg)}}`;
+          }
+          __name(templateFunc, "templateFunc");
+        },
+        metaSchema: {
+          anyOf: [
+            { type: "string" },
+            {
+              type: "object",
+              properties: {
+                properties: { $ref: "#/$defs/stringMap" },
+                items: { $ref: "#/$defs/stringList" },
+                required: { $ref: "#/$defs/stringOrMap" },
+                dependencies: { $ref: "#/$defs/stringOrMap" }
+              },
+              additionalProperties: { type: "string" }
+            }
+          ],
+          $defs: {
+            stringMap: {
+              type: "object",
+              additionalProperties: { type: "string" }
+            },
+            stringOrMap: {
+              anyOf: [{ type: "string" }, { $ref: "#/$defs/stringMap" }]
+            },
+            stringList: { type: "array", items: { type: "string" } }
+          }
         }
       };
-      function defaults() {
-        return NodeClass?.__configs__ ? NodeClass.__configs__.reduce((acc, { key, type: type2 }) => {
-          if (type2 === Credential.Password || type2 === Credential.Text)
-            return acc;
-          acc[key] = {
-            value: "",
-            type: (0, utils_1.isSubclassOf)(type2, config_node_1.ConfigNode) ? type2.__nodeProperties___.type : void 0
-          };
-          return acc;
-        }, { name: { value: "" } }) : {};
-      }
-      __name(defaults, "defaults");
-      function credentials() {
-        return NodeClass?.__configs__ ? NodeClass.__configs__.reduce((acc, { key, type: type2 }) => {
-          if (type2 === Credential.Password) {
-            acc[key] = {
-              type: "password"
-            };
-          }
-          if (type2 === Credential.Text) {
-            acc[key] = {
-              type: "text"
-            };
-          }
-          return acc;
-        }, {}) : {};
-      }
-      __name(credentials, "credentials");
-      RED.nodes.registerType(type, classRegistry["_NodeClass"], {
-        credentials: credentials()
-      });
-      RED.httpAdmin.get(`/nrg/nodes/${type}`, function(req, res) {
-        const nodeProperties = { ...classRegistry["_NodeClass"].__nodeProperties___ };
-        nodeProperties.defaults = defaults();
-        nodeProperties.credentials = credentials();
-        res.json(nodeProperties);
-      });
     }
-    __name(registerType2, "registerType");
+    __name(errorMessage, "errorMessage");
+    var ajvErrors = /* @__PURE__ */ __name((ajv, options = {}) => {
+      if (!ajv.opts.allErrors)
+        throw new Error("ajv-errors: Ajv option allErrors must be true");
+      if (ajv.opts.jsPropertySyntax) {
+        throw new Error("ajv-errors: ajv option jsPropertySyntax is not supported");
+      }
+      return ajv.addKeyword(errorMessage(options));
+    }, "ajvErrors");
+    exports2.default = ajvErrors;
+    module2.exports = ajvErrors;
+    module2.exports.default = ajvErrors;
   }
 });
 
-// _index.ts
-var index_exports = {};
-__export(index_exports, {
-  default: () => index_default
+// src/nodes/server.ts
+var server_exports = {};
+__export(server_exports, {
+  default: () => server_default
 });
-module.exports = __toCommonJS(index_exports);
-var import_yournode = __toESM(require_yournode());
-var import_server = __toESM(require_server());
-var import_node_factory = __toESM(require_node_factory());
-async function index_default(RED) {
-  await (0, import_node_factory.registerType)(RED, import_server.RemoteServerConfigNode);
-  await (0, import_node_factory.registerType)(RED, import_yournode.YourNode);
-}
-__name(index_default, "default");
-/*! Bundled license information:
+module.exports = __toCommonJS(server_exports);
 
-reflect-metadata/Reflect.js:
-  (*! *****************************************************************************
-  Copyright (C) Microsoft. All rights reserved.
-  Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-  this file except in compliance with the License. You may obtain a copy of the
-  License at http://www.apache.org/licenses/LICENSE-2.0
-  
-  THIS CODE IS PROVIDED ON AN *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-  KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED
-  WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE,
-  MERCHANTABLITY OR NON-INFRINGEMENT.
-  
-  See the Apache Version 2.0 License for specific language governing permissions
-  and limitations under the License.
-  ***************************************************************************** *)
-*/
+// src/core/utils.ts
+function getDefaultsFromSchema(schema) {
+  const result = {};
+  const properties = schema.properties || {};
+  const requiredProps = Array.isArray(schema.required) ? schema.required : [];
+  console.log("getDefaultsFromSchema");
+  for (const [key, value] of Object.entries(properties)) {
+    console.log(key);
+    console.log(value);
+    result[key] = {
+      required: requiredProps.includes(key),
+      value: value.default ?? ""
+    };
+    if ("nodeType" in value) {
+      result[key].type = value.nodeType;
+    }
+  }
+  return result;
+}
+__name(getDefaultsFromSchema, "getDefaultsFromSchema");
+function getCredentialsFromSchema(schema) {
+  const result = {};
+  const properties = schema.properties || {};
+  const requiredProps = Array.isArray(schema.required) ? schema.required : [];
+  for (const [key, value] of Object.entries(properties)) {
+    console.log(value);
+    if (Array.isArray(value)) {
+    }
+    const isPassword = value.format === "password";
+    result[key] = {
+      type: isPassword ? "password" : "text",
+      required: requiredProps.includes(key),
+      value: value.default ?? ""
+    };
+  }
+  return result;
+}
+__name(getCredentialsFromSchema, "getCredentialsFromSchema");
+function extendPatternWithPWD(pattern) {
+  const original = new RegExp(`^${pattern}$`);
+  const pwd = /^__PWD__$/;
+  const combined = new RegExp(`(?:${original.source}|${pwd.source})`);
+  return combined.source;
+}
+__name(extendPatternWithPWD, "extendPatternWithPWD");
+function patchPasswordPatterns(schema) {
+  if (!("properties" in schema)) return;
+  const props = schema.properties;
+  for (const [key, value] of Object.entries(props)) {
+    const prop = value;
+    if (prop.format === "password" && typeof prop.pattern === "string") {
+      prop.pattern = extendPatternWithPWD(prop.pattern);
+      prop.minLength = 0;
+    }
+  }
+}
+__name(patchPasswordPatterns, "patchPasswordPatterns");
+
+// src/core/validator-service.ts
+var import_ajv3 = __toESM(require_ajv());
+var import_ajv_formats = __toESM(require_dist());
+var import_ajv_errors = __toESM(require_dist2());
+var ValidatorService = class {
+  static {
+    __name(this, "ValidatorService");
+  }
+  ajv;
+  constructor(options) {
+    this.ajv = new import_ajv3.default({
+      allErrors: true,
+      useDefaults: "empty",
+      verbose: true,
+      validateFormats: true,
+      strict: true,
+      coerceTypes: true,
+      ...options
+    });
+    console.log(this.ajv.schemas);
+    (0, import_ajv_formats.default)(this.ajv);
+    (0, import_ajv_errors.default)(this.ajv);
+    this.ajv.addKeyword("nodeType");
+  }
+  createValidator(schema) {
+    return this.ajv.compile(schema);
+  }
+  resetCache() {
+    this.ajv.cache.clear();
+  }
+  errors(errors, options) {
+    return this.ajv.errorsText(errors, options);
+  }
+};
+
+// src/core/server/validator.ts
+var validatorService = new ValidatorService();
+
+// src/core/server/index.ts
+init_node();
+init_config_node();
+init_esm();
+async function registerType(RED, type, NodeClass) {
+  if (!(NodeClass.prototype instanceof Node) && !(NodeClass.prototype instanceof ConfigNode)) {
+    throw new Error(`${NodeClass.name} must extend Node | ConfigNode class`);
+  }
+  if (!type) {
+    throw new Error(`type must be provided when registering the node`);
+  }
+  if (Node.RED === void 0) {
+    Object.defineProperty(Node, "RED", {
+      value: RED,
+      writable: false,
+      configurable: false,
+      enumerable: false
+    });
+  }
+  if (ConfigNode.RED === void 0) {
+    Object.defineProperty(ConfigNode, "RED", {
+      value: RED,
+      writable: false,
+      configurable: false,
+      enumerable: false
+    });
+  }
+  if (NodeClass.RED === void 0) {
+    Object.defineProperty(NodeClass, "RED", {
+      value: RED,
+      writable: false,
+      configurable: false,
+      enumerable: false
+    });
+  }
+  if (NodeClass.type === void 0) {
+    Object.defineProperty(NodeClass, "type", {
+      value: type,
+      writable: false,
+      configurable: false,
+      enumerable: false
+    });
+  }
+  console.log("NodeClass");
+  console.log(NodeClass);
+  if (typeof NodeClass.init === "function") {
+    const result = NodeClass.init();
+    if (result instanceof Promise) {
+      await result;
+    }
+  }
+  const classRegistry = {};
+  classRegistry["_NodeClass"] = class extends NodeClass {
+    /**
+     * Creates an instance of a given node class and injects the RED object in it
+     * @param {object} configs - Configuration object for the node-red node instance.
+     */
+    constructor(configs) {
+      super(configs);
+      if (NodeClass.__nodeProperties___.validation?.configs) {
+        console.log("validating configs");
+        console.log(this.configs);
+        console.log(this);
+        const validator = validatorService.createValidator(
+          NodeClass.__nodeProperties___.validation?.configs
+        );
+        const isConfigsValid = validator(this.configs);
+        if (!isConfigsValid) {
+          const errors = validatorService.errors(validator.errors, {
+            separator: "\n",
+            dataVar: "- configs"
+          });
+          console.error(errors);
+        }
+      }
+      if (NodeClass.__nodeProperties___.validation?.credentials) {
+        console.log("validating credentials");
+        const validator = validatorService.createValidator(
+          NodeClass.__nodeProperties___.validation?.credentials
+        );
+        const isCredentialsValid = validator(this.credentials);
+        if (!isCredentialsValid) {
+          const errors = validatorService.errors(validator.errors, {
+            separator: "\n",
+            dataVar: "- credentials"
+          });
+          console.error(errors);
+        }
+      }
+      console.log("SETUP EVENT HANDLERS");
+      this.setupEventHandlers();
+    }
+    /**
+     * Sets up event handlers for the node. Automatically binds methods starting with "on" from the base class
+     * to their corresponding events.
+     */
+    setupEventHandlers() {
+      console.log("INSIDE SETUPTEVENTHANDLERS");
+      if (this.onInput) {
+        console.log("REGISTERING ON INPUT");
+        this.on("input", async (msg, send, done) => {
+          try {
+            const inputSchema = NodeClass.__nodeProperties___.validation?.input;
+            if (inputSchema) {
+              console.log("validating message");
+              const messageValidator = validatorService.createValidator(inputSchema);
+              const isValid = messageValidator(msg);
+              if (!isValid) {
+                const errors = validatorService.errors(
+                  messageValidator.errors,
+                  {
+                    separator: "\n",
+                    dataVar: "- message"
+                  }
+                );
+                console.error(errors);
+                return done(errors);
+              }
+            }
+            await Promise.resolve(this.onInput(msg, send, done));
+          } catch (error) {
+            this.error("Error while processing input: " + error.message, msg);
+            done(error);
+          }
+        });
+      }
+      if (this.onClose) {
+        this.on("close", this.onClose);
+      }
+    }
+  };
+  function defaults() {
+    const schema = NodeClass.__nodeProperties___.validation?.configs;
+    return schema ? getDefaultsFromSchema(schema) : {};
+  }
+  __name(defaults, "defaults");
+  function credentials() {
+    const schema = NodeClass.__nodeProperties___.validation?.credentials;
+    return schema ? getCredentialsFromSchema(schema) : {};
+  }
+  __name(credentials, "credentials");
+  RED.nodes.registerType(type, classRegistry["_NodeClass"], {
+    credentials: credentials()
+  });
+  RED.httpAdmin.get(`/nrg/nodes/${type}`, function(req, res) {
+    const nodeProperties = { ...classRegistry["_NodeClass"].__nodeProperties___ };
+    nodeProperties.schema = Type.Object({
+      ...classRegistry["_NodeClass"].__nodeProperties___.validation.configs?.properties,
+      credentials: Type.Object({
+        ...classRegistry["_NodeClass"].__nodeProperties___.validation.credentials?.properties
+      })
+    });
+    res.json(nodeProperties);
+  });
+}
+__name(registerType, "registerType");
+
+// src/nodes/server.ts
+var import_server = __toESM(require_server());
+var import_server2 = __toESM(require_server2());
+async function server_default(RED) {
+  await registerType(RED, "remote-server", import_server2.default);
+  await registerType(RED, "your-node", import_server.default);
+}
+__name(server_default, "default");
