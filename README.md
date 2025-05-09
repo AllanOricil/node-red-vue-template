@@ -1,7 +1,10 @@
 # node-red-vue-inputs-experiments
 
-![Image](https://github.com/user-attachments/assets/be9feacd-edb1-4b74-8c8b-919b888ea218)
+Build Node-RED nodes using:
 
-Limitations:
+- Vue 3
+- JSON Schemas (V7 draft)
+- Typescript
+- ESM module system
 
-- reflect-metadata doesnt work with union types :(
+![Image](https://github.com/user-attachments/assets/683d4377-371a-4f2a-8750-f93e0eb6649f)
