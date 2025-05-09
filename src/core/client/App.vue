@@ -19,6 +19,11 @@ export default {
       type: Function,
       required: true,
     },
+    disableSaveButtonOnError: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   data() {
     return {
@@ -64,14 +69,16 @@ export default {
     });
   },
   beforeUnmount() {
-    $("#node-dialog-ok")?.prop("disabled", false).removeClass("disabled");
-    $("#node-config-dialog-ok")
-      ?.prop("disabled", false)
-      .removeClass("disabled");
-    $("#red-ui-workspace").get(0).style.setProperty("pointer-events", "");
-    // $("#red-ui-workspace-chart svg")
-    //   .get(0)
-    //   .style.setProperty("pointer-events", "all");
+    if (this.disableSaveButtonOnError) {
+      $("#node-dialog-ok")?.prop("disabled", false).removeClass("disabled");
+      $("#node-config-dialog-ok")
+        ?.prop("disabled", false)
+        .removeClass("disabled");
+      $("#red-ui-workspace").get(0).style.setProperty("pointer-events", "");
+      // $("#red-ui-workspace-chart svg")
+      //   .get(0)
+      //   .style.setProperty("pointer-events", "all");
+    }
 
     // NOTE: must set credentials prop to undefined to avoid updating it to __PWD__ in the server
     Object.keys(this.localNode._def.credentials).forEach((prop) => {
@@ -111,26 +118,29 @@ export default {
       } else {
         this.errors = {};
       }
-      if (Object.keys(this.errors).length) {
-        $("#node-dialog-ok")?.prop("disabled", true).addClass("disabled");
-        $("#node-config-dialog-ok")
-          ?.prop("disabled", true)
-          .addClass("disabled");
-        $("#red-ui-workspace")
-          .get(0)
-          .style.setProperty("pointer-events", "none", "important");
-        // $("#red-ui-workspace-chart svg")
-        //   .get(0)
-        //   .style.setProperty("pointer-events", "none", "important");
-      } else {
-        $("#node-dialog-ok").prop("disabled", false).removeClass("disabled");
-        $("#node-config-dialog-ok")
-          .prop("disabled", false)
-          .removeClass("disabled");
-        $("#red-ui-workspace").get(0).style.setProperty("pointer-events", "");
-        // $("#red-ui-workspace-chart svg")
-        //   .get(0)
-        //   .style.setProperty("pointer-events", "all");
+
+      if (this.disableSaveButtonOnError) {
+        if (Object.keys(this.errors).length) {
+          $("#node-dialog-ok")?.prop("disabled", true).addClass("disabled");
+          $("#node-config-dialog-ok")
+            ?.prop("disabled", true)
+            .addClass("disabled");
+          $("#red-ui-workspace")
+            .get(0)
+            .style.setProperty("pointer-events", "none", "important");
+          // $("#red-ui-workspace-chart svg")
+          //   .get(0)
+          //   .style.setProperty("pointer-events", "none", "important");
+        } else {
+          $("#node-dialog-ok").prop("disabled", false).removeClass("disabled");
+          $("#node-config-dialog-ok")
+            .prop("disabled", false)
+            .removeClass("disabled");
+          $("#red-ui-workspace").get(0).style.setProperty("pointer-events", "");
+          // $("#red-ui-workspace-chart svg")
+          //   .get(0)
+          //   .style.setProperty("pointer-events", "all");
+        }
       }
     },
   },

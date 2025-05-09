@@ -19,12 +19,13 @@ import { validatorService } from "./validator";
 
 function createNodeRedVueApp(
   node: any,
-  form: Component,
+  form: INodeForm,
   validator: ValidateFunction | (() => boolean)
 ): App<Element> {
   const app = createApp(NodeRedVueApp, {
     node,
     validator,
+    disableSaveButtonOnError: form.disableSaveButtonOnError,
   });
 
   app.component("NodeRedInput", NodeRedInput);
@@ -32,13 +33,13 @@ function createNodeRedVueApp(
   app.component("NodeRedConfigInput", NodeRedConfigInput);
   app.component("NodeRedSelectInput", NodeRedSelectInput);
   app.component("NodeRedEditorInput", NodeRedEditorInput);
-  app.component("NodeRedNodeForm", form);
+  app.component("NodeRedNodeForm", form.component);
   return app;
 }
 
 function mountApp(
   node: any,
-  form: Component,
+  form: INodeForm,
   validator: ValidateFunction | (() => boolean)
 ) {
   $("#app").empty();
@@ -111,6 +112,11 @@ interface INodeButton {
   visible?: () => boolean;
 }
 
+interface INodeForm {
+  component: Component;
+  disableSaveButtonOnError?: boolean;
+}
+
 /**
  * Interface representing a Node configuration.
  *
@@ -149,8 +155,7 @@ interface INode {
   button?: INodeButton;
   onPaletteAdd?: () => void;
   onPaletteRemove?: () => void;
-  form: Component;
-  schema?: AnySchema;
+  form: INodeForm;
 }
 
 /**
