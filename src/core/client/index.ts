@@ -165,6 +165,10 @@ interface INode {
   form: INodeForm;
 }
 
+function defineNode<T extends Omit<INode, "type">>(options: T): T {
+  return options;
+}
+
 /**
  * Prepares a node registration function using the provided base configuration.
  *
@@ -191,120 +195,112 @@ interface INode {
  *
  * @returns {function(type: string): Promise<void>} - A function that registers the node with the specified type
  */
-function registerType(options: Omit<INode, "type">) {
-  /**
-   * Registers a node type with the Node-RED runtime.
-   *
-   * @param {string} type - The type identifier for the node
-   * @returns {Promise<void>} - A promise that resolves when registration is complete
-   * @throws {Error} - If there is a network error or the server returns an error status
-   */
-  return async function (type: string): Promise<void> {
-    try {
-      const response = await fetch(`/nrg/nodes/${type}`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+async function registerType(
+  type: string,
+  options: Omit<INode, "type">
+): Promise<void> {
+  try {
+    const response = await fetch(`/nrg/nodes/${type}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
 
-      const { schema } = await response.json();
+    const { schema } = await response.json();
 
-      const defaults = getDefaultsFromSchema(schema);
-      if (defaults.credentials) delete defaults.credentials;
-      const credentials = getCredentialsFromSchema(
-        schema.properties.credentials
-      );
+    const defaults = getDefaultsFromSchema(schema);
+    if (defaults.credentials) delete defaults.credentials;
+    const credentials = getCredentialsFromSchema(schema.properties.credentials);
 
-      console.log("defaults", defaults);
-      console.log("credentials", credentials);
+    console.log("defaults", defaults);
+    console.log("credentials", credentials);
 
-      RED.nodes.registerType(type, {
-        ...options,
-        defaults,
-        credentials,
-        type,
-        label: function () {
-          return this.name;
-        },
-        oneditprepare: function () {
-          const validator = validatorService.createValidator(schema);
-          mountApp(this, options.form, validator);
-        },
-        oneditsave: function () {
-          const node = this;
-          unmountApp(node);
+    RED.nodes.registerType(type, {
+      ...options,
+      defaults,
+      credentials,
+      type,
+      label: function () {
+        return this.name;
+      },
+      oneditprepare: function () {
+        const validator = validatorService.createValidator(schema);
+        mountApp(this, options.form, validator);
+      },
+      oneditsave: function () {
+        const node = this;
+        unmountApp(node);
 
-          const newState = getNodeState(node._newState);
-          const oldState = getNodeState(node);
-          const changes = getChanges(oldState, newState);
-          const changed = !!Object.keys(changes)?.length;
-          if (!changed) return false;
+        const newState = getNodeState(node._newState);
+        const oldState = getNodeState(node);
+        const changes = getChanges(oldState, newState);
+        const changed = !!Object.keys(changes)?.length;
+        if (!changed) return false;
 
-          Object.keys(node._def.defaults).forEach((prop) => {
-            if (node._def.defaults?.[prop]?.type) {
-              const oldConfigNodeId = node[prop];
-              const newConfigNodeId = node._newState[prop];
-              if (oldConfigNodeId !== newConfigNodeId) {
-                const oldConfigNode = RED.nodes.node(oldConfigNodeId);
-                if (oldConfigNode && oldConfigNode._def.category === "config") {
-                  const parentNodeIndex = oldConfigNode.users.findIndex(
-                    (_node) => _node.id === node.id
-                  );
-                  if (parentNodeIndex !== -1) {
-                    oldConfigNode.users.splice(parentNodeIndex, 1);
-                  }
-                }
-              }
-            }
-          });
-
-          Object.keys(node._def.defaults).forEach((prop) => {
-            if (node._def.defaults?.[prop]?.type) {
-              const newStateConfigNodeId = node._newState[prop];
-              const newStateConfigNode = RED.nodes.node(newStateConfigNodeId);
-              if (
-                newStateConfigNode &&
-                newStateConfigNode._def.category === "config"
-              ) {
-                const parentNodeIndex = newStateConfigNode.users.findIndex(
+        Object.keys(node._def.defaults).forEach((prop) => {
+          if (node._def.defaults?.[prop]?.type) {
+            const oldConfigNodeId = node[prop];
+            const newConfigNodeId = node._newState[prop];
+            if (oldConfigNodeId !== newConfigNodeId) {
+              const oldConfigNode = RED.nodes.node(oldConfigNodeId);
+              if (oldConfigNode && oldConfigNode._def.category === "config") {
+                const parentNodeIndex = oldConfigNode.users.findIndex(
                   (_node) => _node.id === node.id
                 );
-                if (parentNodeIndex === -1) {
-                  newStateConfigNode.users.push(node);
+                if (parentNodeIndex !== -1) {
+                  oldConfigNode.users.splice(parentNodeIndex, 1);
                 }
               }
             }
-          });
+          }
+        });
 
-          merge(node, newState);
+        Object.keys(node._def.defaults).forEach((prop) => {
+          if (node._def.defaults?.[prop]?.type) {
+            const newStateConfigNodeId = node._newState[prop];
+            const newStateConfigNode = RED.nodes.node(newStateConfigNodeId);
+            if (
+              newStateConfigNode &&
+              newStateConfigNode._def.category === "config"
+            ) {
+              const parentNodeIndex = newStateConfigNode.users.findIndex(
+                (_node) => _node.id === node.id
+              );
+              if (parentNodeIndex === -1) {
+                newStateConfigNode.users.push(node);
+              }
+            }
+          }
+        });
 
-          return {
-            changed,
-            history: [
-              {
-                t: "edit",
-                node,
-                changes,
-                links: [],
-                dirty: RED.nodes.dirty(),
-                changed,
-              },
-            ],
-          };
-        },
-        oneditcancel: function () {
-          unmountApp(this);
-        },
-        oneditdelete: function () {
-          unmountApp(this);
-        },
-        onpaletteadd: options.onPaletteAdd,
-        onpaltteremove: options.onPaletteRemove,
-      });
-    } catch (error) {
-      console.error(`Error fetching node type ${type}:`, error);
-      throw error;
-    }
-  };
+        merge(node, newState);
+
+        return {
+          changed,
+          history: [
+            {
+              t: "edit",
+              node,
+              changes,
+              links: [],
+              dirty: RED.nodes.dirty(),
+              changed,
+            },
+          ],
+        };
+      },
+      oneditcancel: function () {
+        unmountApp(this);
+      },
+      oneditdelete: function () {
+        unmountApp(this);
+      },
+      onpaletteadd: options.onPaletteAdd,
+      onpaltteremove: options.onPaletteRemove,
+    });
+  } catch (error) {
+    console.error(`Error fetching node type ${type}:`, error);
+    throw error;
+  }
 }
 
-export { registerType, INode, INodeButton };
+export { defineNode, registerType, INode, INodeButton };
