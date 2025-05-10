@@ -148,7 +148,11 @@ export default {
 </script>
 
 <style>
-.node-red-vue-input-error-message {
+#app .node-red-vue-input-error-message {
   color: var(--red-ui-form-input-border-error-color);
+}
+
+#app label {
+  width: 100%;
 }
 </style>
