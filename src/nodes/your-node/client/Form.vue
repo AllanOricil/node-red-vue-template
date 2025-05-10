@@ -124,9 +124,16 @@
       :error="errors['node.csstest']"
     />
   </div>
+
+  <!-- NOTE: this is loaded from the resources/{pkg.name} folder -->
+  <img src="/vue.png" />
+
+  <!-- NOTE: this is added to the bundled .js -->
+  <img :src="logo" alt="Logo" />
 </template>
 
 <script>
+import logo from "../../../assets/vue.png";
 export default {
   name: "NodeRedNodeForm",
   props: {
@@ -141,6 +148,7 @@ export default {
   },
   data() {
     return {
+      logo,
       types: ["str", "msg", "node"],
       countries: [
         { value: "usa", label: "usa" },
@@ -168,6 +176,10 @@ export default {
         { value: JSON.stringify(["c"]), label: "c" },
       ],
     };
+  },
+  mounted() {
+    console.log("MOUNTED");
+    console.log(this.logo);
   },
 };
 </script>
