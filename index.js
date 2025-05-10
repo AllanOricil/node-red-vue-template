@@ -404,6 +404,8 @@ __export(server_exports, {
   default: () => server_default
 });
 module.exports = __toCommonJS(server_exports);
+
+// src/index.server.ts
 var import_server = __toESM(require_server());
 var import_server2 = __toESM(require_server2());
 
@@ -645,14 +647,26 @@ async function registerType(RED, type, NodeClass) {
 }
 __name(registerType, "registerType");
 
-// src/server.ts
-async function server_default(RED) {
+// src/index.server.ts
+async function index_server_default(RED) {
   try {
     await registerType(RED, "remote-server", import_server2.default);
     await registerType(RED, "your-node", import_server.default);
     console.log("All node types registered in series");
   } catch (error) {
     console.error("Error registering node types:", error);
+  }
+}
+__name(index_server_default, "default");
+
+// src/server.ts
+async function server_default(RED) {
+  try {
+    console.log("Running provided init");
+    await index_server_default(RED);
+    console.log("Finished running provided init");
+  } catch (error) {
+    console.error("Error while running provided init:", error);
   }
 }
 __name(server_default, "default");
