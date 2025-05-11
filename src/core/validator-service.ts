@@ -1,8 +1,12 @@
-import Ajv, { Options, ErrorObject, ErrorsTextOptions } from "ajv";
+import Ajv, {
+  Options,
+  ErrorObject,
+  ErrorsTextOptions,
+  AnySchemaObject,
+} from "ajv";
 import addFormats from "ajv-formats";
 import addErrors from "ajv-errors";
-import TypedInputSchema from "./schemas/typed-input";
-import MessageSchema from "./schemas/message";
+import { MessageSchema, TypedInputSchema } from "./schemas";
 
 class ValidatorService {
   ajv: Ajv;
@@ -30,14 +34,10 @@ class ValidatorService {
     this.ajv.addKeyword("nodeType");
   }
 
-  createValidator(schema: AnySchema) {
+  createValidator(schema: AnySchemaObject) {
     // console.log("INSIDE CREATEVALIDATOR");
     // console.log(this.ajv.schemas);
     return this.ajv.compile(schema);
-  }
-
-  resetCache() {
-    this.ajv.cache.clear();
   }
 
   errors(

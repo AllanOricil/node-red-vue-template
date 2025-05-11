@@ -1,9 +1,13 @@
 import { Type, Static } from "@sinclair/typebox";
-import MessageSchema from "../../core/schemas/message";
-import TypedInputSchema from "../../core/schemas/typed-input";
+import {
+  NodeConfigsSchema,
+  TypedInputSchema,
+  MessageSchema,
+} from "../../core/schemas";
 
 const ConfigsSchema = Type.Object(
   {
+    ...NodeConfigsSchema.properties,
     name: Type.String({ default: "your-node" }),
     myProperty: TypedInputSchema,
     myProperty2: TypedInputSchema,

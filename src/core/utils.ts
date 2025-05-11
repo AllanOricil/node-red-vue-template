@@ -1,21 +1,34 @@
-import { AnySchema } from "ajv";
+import { AnySchemaObject } from "ajv";
 import { Type } from "@sinclair/typebox";
 
-function getDefaultsFromSchema(schema: AnySchema): Record<string, any> {
-  const result: Record<string, any> = {};
-  const properties = schema.properties || {};
-  const requiredProps = Array.isArray(schema.required) ? schema.required : [];
+function getDefaultsFromSchema(
+  schema: AnySchemaObject
+): Record<string, { type?: string; required: boolean; value: any }> {
+  const result: Record<
+    string,
+    { type?: string; required: boolean; value: any }
+  > = {};
+  const requiredProps =
+    schema && "required" in schema && Array.isArray(schema.required)
+      ? schema.required
+      : [];
+
+  console.log(requiredProps);
 
   console.log("getDefaultsFromSchema");
-  for (const [key, value] of Object.entries(properties)) {
+  for (const [key, value] of Object.entries(schema.properties)) {
     console.log(key);
     console.log(value);
-    result[key] = {
-      required: requiredProps.includes(key),
-      value: value.default ?? "",
-    };
-    if ("nodeType" in value) {
-      result[key].type = value.nodeType;
+    if (value && typeof value === "object" && "default" in value) {
+      result[key] = {
+        required: requiredProps.includes(key),
+        value: value.default ?? "",
+      };
+
+      // Check if value has a nodeType property
+      if ("nodeType" in value) {
+        result[key].type = value.nodeType as string;
+      }
     }
   }
 
@@ -23,23 +36,26 @@ function getDefaultsFromSchema(schema: AnySchema): Record<string, any> {
 }
 
 function getCredentialsFromSchema(
-  schema: TSchema
-): Record<string, { type: string; password?: boolean }> {
-  const result: Record<string, { type: string; password?: boolean }> = {};
-  const properties = schema.properties || {};
+  schema: AnySchemaObject
+): Record<string, { type: string; required: boolean; value: any }> {
+  const result: Record<
+    string,
+    { type: string; required: boolean; value: any }
+  > = {};
   const requiredProps = Array.isArray(schema.required) ? schema.required : [];
 
-  for (const [key, value] of Object.entries(properties)) {
+  for (const [key, value] of Object.entries(schema.properties)) {
     console.log(value);
-    if (Array.isArray(value)) {
-    }
-    const isPassword = value.format === "password";
+    if (value && typeof value === "object" && "format" in value) {
+      const typedValue = value as { format?: string; default?: any };
+      const isPassword = typedValue.format === "password";
 
-    result[key] = {
-      type: isPassword ? "password" : "text",
-      required: requiredProps.includes(key),
-      value: value.default ?? "",
-    };
+      result[key] = {
+        type: isPassword ? "password" : "text",
+        required: requiredProps.includes(key),
+        value: typedValue.default ?? "",
+      };
+    }
   }
 
   return result;
@@ -52,17 +68,19 @@ function extendPatternWithPWD(pattern: string): string {
   return combined.source;
 }
 
-function patchPasswordPatterns(schema: TSchema): void {
-  if (!("properties" in schema)) return;
-
-  const props = (schema as any).properties;
-
-  for (const [key, value] of Object.entries(props)) {
-    const prop = value as any;
-
-    if (prop.format === "password" && typeof prop.pattern === "string") {
-      prop.pattern = extendPatternWithPWD(prop.pattern);
-      prop.minLength = 0; // optional: allow "__PWD__"
+function patchPasswordPatterns(schema: AnySchemaObject): void {
+  for (const [key, value] of Object.entries(schema.properties)) {
+    if (
+      value &&
+      typeof value === "object" &&
+      "format" in value &&
+      value.format === "password" &&
+      "pattern" in value &&
+      typeof value.pattern === "string" &&
+      "minLength" in value
+    ) {
+      value.pattern = extendPatternWithPWD(value.pattern);
+      value.minLength = 0;
     }
   }
 }

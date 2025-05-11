@@ -1,18 +1,9 @@
-import { AnySchema } from "ajv";
+import { BaseNodeMetadata } from "./base-node";
 
-type NodeOptions = {
-  validation?: {
-    configs: AnySchema;
-    credentials: AnySchema;
-    input: AnySchema;
-    outputs: AnySchema;
-  };
-};
-
-function node(options: NodeOptions) {
+function node(options: BaseNodeMetadata) {
   return function <T extends { new (...args: any[]): {} }>(constructor: T) {
     return class extends constructor {
-      static __nodeProperties___: NodeOptions = options;
+      static __nodeProperties__: BaseNodeMetadata = options;
     };
   };
 }

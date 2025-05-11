@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "type": "module",
   "scripts": {
+    "tsc": "tsc --noEmit",
     "build:dev": "vite build --mode development --config vite.config.client.ts",
     "build": "vite build --mode production --config vite.config.client.ts",
     "build:dts": "tsc --emitDeclarationOnly --declaration src/server.ts"
@@ -17,6 +17,7 @@
     }
   },
   "devDependencies": {
+    "@types/express": "^5.0.1",
     "@types/jquery": "^3.5.32",
     "@types/node": "^22.14.1",
     "@types/vue": "^2.0.0",

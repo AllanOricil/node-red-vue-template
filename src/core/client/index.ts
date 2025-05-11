@@ -55,8 +55,17 @@ function unmountApp(node: any) {
   }
 }
 
-function getNodeState(node: any) {
-  const state = {
+interface ICredentials {
+  [key: string]: any;
+}
+
+interface INodeState {
+  credentials: ICredentials;
+  [key: string]: any;
+}
+
+function getNodeState(node: any): INodeState {
+  const state: INodeState = {
     credentials: {},
   };
   Object.keys(node._def.defaults).forEach((prop) => {
@@ -74,8 +83,11 @@ function getNodeState(node: any) {
   return state;
 }
 
-function getChanges(o: Record<any, any>, n: Record<any, any>) {
-  const changes = {};
+function getChanges(
+  o: Record<any, any>,
+  n: Record<any, any>
+): Record<string, any> {
+  const changes: Record<string, any> = {};
 
   Object.keys(o).forEach((prop) => {
     const _o = o[prop];

@@ -49,7 +49,7 @@ function getHtmlTag(
   }
 }
 
-function nodeRedHtmlPlugin(): Plugin {
+function nodeRedHtmlPlugin(options = {}): Plugin {
   return {
     name: "vite-plugin-node-red-html",
     apply: "build",
@@ -90,10 +90,15 @@ function nodeRedHtmlPlugin(): Plugin {
         .filter(Boolean)
         .join("\n");
 
+      let licenseBanner =
+        options.licensePath &&
+        fs.existsSync(options.licensePath) &&
+        `<!--\n${fs.readFileSync(options.licensePath)}\n-->`;
+
       this.emitFile({
         type: "asset",
         fileName: "index.html",
-        source: `${templateTags}\n${resourcesTags}`,
+        source: `${licenseBanner}\n${templateTags}\n${resourcesTags}`,
       });
     },
   };
@@ -113,15 +118,6 @@ function appendSourceURLPlugin(filename: string): Plugin {
   };
 }
 
-const signature = [
-  "/**",
-  `* name: ${pkg.name}`,
-  `* version: v${pkg.version}`,
-  `* description: ${pkg.description}`,
-  `* author: ${pkg.author}`,
-  "*/",
-].join("\n");
-
 export default defineConfig(({ mode }) => {
   const isDev = mode === "development";
 
@@ -130,20 +126,18 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "src"),
-        "@/nodes": path.resolve(__dirname, "src", "nodes"),
       },
     },
     plugins: [
       vue(),
       appendSourceURLPlugin("src/client.js"),
-      banner(signature),
       visualizer({
         open: isDev,
         gzipSize: true,
         brotliSize: true,
         template: "treemap",
       }),
-      nodeRedHtmlPlugin(),
+      nodeRedHtmlPlugin({ licensePath: path.resolve(__dirname, "LICENSE") }),
       viteStaticCopy({
         targets: [
           {

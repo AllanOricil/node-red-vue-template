@@ -6,13 +6,17 @@ const { nodeExternalsPlugin } = require("esbuild-node-externals");
 esbuild
   .build({
     entryPoints: ["src/server.ts"],
-    outfile: "index.js",
+    outfile: "dist/index.js",
     sourcemap: true,
     bundle: true,
     platform: "node",
     target: "node18",
     format: "cjs",
-    plugins: [nodeExternalsPlugin(), esbuildPluginTsc(), dtsPlugin()],
+    plugins: [
+      nodeExternalsPlugin(),
+      esbuildPluginTsc({ force: true }),
+      dtsPlugin(),
+    ],
     minify: false,
     keepNames: true,
     treeShaking: true,

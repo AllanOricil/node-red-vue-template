@@ -3,7 +3,7 @@ import { TYPED_INPUT_TYPES } from "../constants";
 
 const TypedInputTypeLiterals = TYPED_INPUT_TYPES.map((type) =>
   Type.Literal(type)
-) as const;
+);
 
 export default Type.Object(
   {
@@ -22,6 +22,9 @@ export default Type.Object(
   },
   {
     description: "Represents a Node-RED TypedInput value and its type.",
-    default: {},
+    default: {
+      type: "str",
+      value: "",
+    },
   }
 );

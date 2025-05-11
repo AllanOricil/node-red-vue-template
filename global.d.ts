@@ -1,19 +1,13 @@
-// global.d.ts
-import "jquery";
-
-// Declare global variables
-declare const RED: any;
+// TODO: change this by the official editor and runtime node-red types
+// NOTE: I wrote the minimum definitions to allow tsc to transpile the code with no errors
+declare const RED: {
+  nodes: {
+    registerType: (type: string, def: any) => void;
+    node: (id: string) => {
+      _def: { category: string };
+      users: { id: string }[];
+    };
+    dirty: () => boolean;
+  };
+};
 declare const $: typeof import("jquery");
-
-// Extend jQuery with Node-RED plugins
-declare module "jquery" {
-  interface JQuery {
-    typedInput(options: any): JQuery;
-    typedInput(method: string, ...args: any[]): any;
-
-    editableList(options: any): JQuery;
-    editableList(method: string, ...args: any[]): any;
-
-    // Add other Node-RED plugin methods as needed
-  }
-}

@@ -2,6 +2,7 @@ import { Static } from "@sinclair/typebox";
 import { node } from "../../../core/server/decorators";
 import {
   InputDoneFunction,
+  CloseDoneFunction,
   Node,
   SendFunction,
 } from "../../../core/server/node";
@@ -50,7 +51,7 @@ export default class YourNode extends Node<
       } & { originalType: "string" | "number"; processedTime: number }
     >,
     done: InputDoneFunction
-  ): void | Promise<void> {
+  ): Promise<void> {
     console.log(this);
     console.log(msg);
 
@@ -61,10 +62,7 @@ export default class YourNode extends Node<
     console.log(server?.users);
   }
 
-  async onClose(
-    removed: boolean,
-    done: CloseDoneFunction
-  ): void | Promise<void> {
+  async onClose(removed: boolean, done: CloseDoneFunction): Promise<void> {
     console.log("removing node");
     done();
   }

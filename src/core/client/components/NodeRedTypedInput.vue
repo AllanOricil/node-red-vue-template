@@ -12,7 +12,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { TYPED_INPUT_TYPES } from "../../constants";
 
 export default {
@@ -56,18 +56,6 @@ export default {
       return types.includes(type);
     },
   },
-  watch: {
-    isProvidedValueTypeValid: {
-      handler(newValue) {
-        if (!newValue) {
-          console.warn(
-            `Validation failed: this.value.type (${this.value.type}) must be one of the provided types (${this.types}).`
-          );
-        }
-      },
-      immediate: true,
-    },
-  },
   mounted() {
     const inputElement = this.$refs.typedInput;
     this.$input = $(inputElement).typedInput({
@@ -102,6 +90,16 @@ export default {
     });
   },
   watch: {
+    isProvidedValueTypeValid: {
+      handler(newValue) {
+        if (!newValue) {
+          console.warn(
+            `Validation failed: this.value.type (${this.value.type}) must be one of the provided types (${this.types}).`
+          );
+        }
+      },
+      immediate: true,
+    },
     error(newVal) {
       this.$nextTick(() => {
         const targetDiv = this.$el.querySelector(
