@@ -27,14 +27,15 @@ abstract class IONode<
   public static override readonly validations?: IONodeValidations;
 
   public readonly wires: string[][];
-  public readonly x?: number;
-  public readonly y?: number;
+  public readonly x: number;
+  public readonly y: number;
 
   constructor(configs: TConfigs) {
     super(configs);
-    this.wires = configs.wires;
+
     this.x = configs.x;
     this.y = configs.y;
+    this.wires = configs.wires || [[]];
 
     console.log("SETUP EVENT HANDLERS");
     this.setupEventHandlers();

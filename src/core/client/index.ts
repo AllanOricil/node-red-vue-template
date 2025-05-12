@@ -2,11 +2,7 @@ import $ from "jquery";
 import { createApp, Component, App, defineComponent } from "vue";
 import { cloneDeep, isEqual, merge } from "es-toolkit";
 import { AnySchema, ValidateFunction } from "ajv";
-import {
-  getDefaultsFromSchema,
-  getCredentialsFromSchema,
-  patchPasswordPatterns,
-} from "../utils";
+import { getDefaultsFromSchema, getCredentialsFromSchema } from "../utils";
 
 import NodeRedVueApp from "./App.vue";
 import NodeRedInput from "./components/NodeRedInput.vue";
@@ -235,6 +231,8 @@ async function registerType(
         return this.name;
       },
       oneditprepare: function () {
+        console.log("oneditprepare");
+        console.log(this);
         const validator = validatorService.createValidator(schema);
         mountApp(this, options.form, validator);
       },
