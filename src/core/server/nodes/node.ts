@@ -7,12 +7,12 @@ type Message = Static<typeof MessageSchema>;
 type NodeConfigs = Static<typeof NodeConfigsSchema>;
 
 interface ConfigNodeValidations {
-  configs?: AnySchemaObject;
+  configs: AnySchemaObject;
   credentials?: AnySchemaObject;
 }
 
 interface IONodeValidations {
-  configs?: AnySchemaObject;
+  configs: AnySchemaObject;
   credentials?: AnySchemaObject;
   input?: AnySchemaObject;
   outputs?: AnySchemaObject;
@@ -66,7 +66,7 @@ abstract class Node<
   static RED: any;
   static type: string;
 
-  public static readonly validations?: NodeValidations;
+  public static readonly validations: NodeValidations;
 
   public readonly id: string;
   public readonly type: string;

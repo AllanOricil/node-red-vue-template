@@ -24,7 +24,7 @@ abstract class IONode<
   TInputMessage = Message,
   TOutputMessage = Message | Message[] | (Message | null)[],
 > extends Node<TConfigs, TCredentials> {
-  public static override readonly validations?: IONodeValidations;
+  public static override readonly validations: IONodeValidations;
 
   public readonly wires: string[][];
   public readonly x: number;

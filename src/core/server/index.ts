@@ -95,13 +95,12 @@ export async function registerType(
   }
 
   function defaults() {
-    const schema = NodeClass.validations?.configs;
-    console.log("DEFAULTS", schema);
+    const schema = NodeClass.validations.configs;
     return schema ? getDefaultsFromSchema(schema) : {};
   }
 
   function credentials() {
-    const schema = NodeClass.validations?.credentials;
+    const schema = NodeClass.validations.credentials;
     return schema ? getCredentialsFromSchema(schema) : {};
   }
 
@@ -113,7 +112,7 @@ export async function registerType(
     if (NodeClass.validations) {
       const validationConfig = NodeClass.validations;
 
-      const configsProperties = validationConfig.configs?.properties
+      const configsProperties = validationConfig.configs.properties
         ? validationConfig.configs.properties
         : {};
 
