@@ -3,9 +3,9 @@ import {
   CloseDoneFunction,
   InputDoneFunction,
   IONode,
+  IONodeValidations,
   SendFunction,
-} from "../../../core/server/io-node";
-import { IONodeValidations } from "../../../core/server/node";
+} from "../../../core/server/nodes";
 import RemoteServerConfigNode from "../../remote-server/server";
 import {
   ConfigsSchema,

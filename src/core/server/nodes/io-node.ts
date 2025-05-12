@@ -1,8 +1,8 @@
 import { Static } from "@sinclair/typebox";
 import { AnySchemaObject } from "ajv";
-import { MessageSchema, IONodeConfigsSchema } from "../schemas";
+import { MessageSchema, IONodeConfigsSchema } from "../../schemas";
+import { validatorService } from "../validator";
 import { Node, IONodeValidations } from "./node";
-import { validatorService } from "./validator";
 
 type CloseDoneFunction = () => void;
 type InputDoneFunction = (error?: Error | string) => void;

@@ -4,9 +4,7 @@ import camelCase from "camelcase";
 import { merge } from "es-toolkit";
 import { Request, Response } from "express";
 import { getDefaultsFromSchema, getCredentialsFromSchema } from "../utils";
-import { ConfigNode } from "./config-node";
-import { IONode } from "./io-node";
-import { Node, NodeValidations } from "./node";
+import { Node, IONode, ConfigNode, NodeValidations } from "./nodes";
 import { validatorService } from "./validator";
 
 // TODO: define RED type

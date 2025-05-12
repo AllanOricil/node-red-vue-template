@@ -1,7 +1,7 @@
 import { AnySchemaObject } from "ajv";
 import { Static } from "@sinclair/typebox";
-import { MessageSchema, NodeConfigsSchema } from "../schemas";
-import { validatorService } from "./validator";
+import { MessageSchema, NodeConfigsSchema } from "../../schemas";
+import { validatorService } from "../validator";
 
 type Message = Static<typeof MessageSchema>;
 type NodeConfigs = Static<typeof NodeConfigsSchema>;
