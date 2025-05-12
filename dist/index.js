@@ -70,7 +70,7 @@ var ValidatorService = class {
 // src/core/server/validator.ts
 var validatorService = new ValidatorService();
 
-// src/core/server/node.ts
+// src/core/server/nodes/node.ts
 var Node = class _Node {
   static {
     __name(this, "Node");
@@ -132,7 +132,7 @@ var Node = class _Node {
   }
 };
 
-// src/core/server/io-node.ts
+// src/core/server/nodes/io-node.ts
 var IONode = class _IONode extends Node {
   static {
     __name(this, "IONode");
@@ -194,6 +194,19 @@ var IONode = class _IONode extends Node {
     if (this.onClose) {
       this.on("close", this.onClose);
     }
+  }
+};
+
+// src/core/server/nodes/config-node.ts
+var ConfigNode = class extends Node {
+  static {
+    __name(this, "ConfigNode");
+  }
+  static validations;
+  users;
+  constructor(configs) {
+    super(configs);
+    this.users = configs._users || [];
   }
 };
 
@@ -391,19 +404,6 @@ var YourNode = class extends IONode {
   }
 };
 
-// src/core/server/config-node.ts
-var ConfigNode = class extends Node {
-  static {
-    __name(this, "ConfigNode");
-  }
-  static validations;
-  users;
-  constructor(configs) {
-    super(configs);
-    this.users = configs._users || [];
-  }
-};
-
 // src/nodes/remote-server/schemas.ts
 var import_typebox7 = require("@sinclair/typebox");
 var ConfigsSchema2 = import_typebox7.Type.Object(
@@ -444,6 +444,7 @@ function getDefaultsFromSchema(schema) {
     console.log(key);
     console.log(property);
     result[key] = {
+      // NOTE: required is defined by the JSON Schema
       required: false,
       value: property.default ?? void 0,
       // NOTE: I'm using a custom json schema keyword to determine the node type
@@ -460,6 +461,7 @@ function getCredentialsFromSchema(schema) {
     console.log(property);
     const isPassword = property.format === "password";
     result[key] = {
+      // NOTE: required is defined by the JSON Schema
       required: false,
       type: isPassword ? "password" : "text",
       value: property.default ?? void 0
