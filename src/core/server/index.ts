@@ -3,7 +3,7 @@ import { AnySchemaObject } from "ajv";
 import camelCase from "camelcase";
 import { merge } from "es-toolkit";
 import { Request, Response } from "express";
-import { getDefaultsFromSchema, getCredentialsFromSchema } from "../utils";
+import { getCredentialsFromSchema } from "../utils";
 import { Node, IONode, ConfigNode } from "./nodes";
 import { validatorService } from "./validator";
 
@@ -94,18 +94,10 @@ export async function registerType(
     }
   }
 
-  function defaults() {
-    const schema = NodeClass.validations.configs;
-    return schema ? getDefaultsFromSchema(schema) : {};
-  }
-
-  function credentials() {
-    const schema = NodeClass.validations.credentials;
-    return schema ? getCredentialsFromSchema(schema) : {};
-  }
-
   RED.nodes.registerType(type, NodeClass, {
-    credentials: credentials(),
+    credentials: NodeClass.validations.credentials
+      ? getCredentialsFromSchema(NodeClass.validations.credentials)
+      : {},
   });
 
   RED.httpAdmin.get(`/nrg/nodes/${type}`, (req: Request, res: Response) => {

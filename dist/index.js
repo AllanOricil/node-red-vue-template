@@ -435,25 +435,6 @@ var RemoteServerConfigNode = class extends ConfigNode {
 var import_typebox8 = require("@sinclair/typebox");
 
 // src/core/utils.ts
-function getDefaultsFromSchema(schema) {
-  const result = {};
-  console.log("getDefaultsFromSchema");
-  for (const [key, value] of Object.entries(schema.properties)) {
-    if (["x", "y", "z", "g", "wires", "type", "id"].includes(key)) continue;
-    const property = value;
-    console.log(key);
-    console.log(property);
-    result[key] = {
-      // NOTE: required is defined by the JSON Schema
-      required: false,
-      value: property.default ?? void 0,
-      // NOTE: I'm using a custom json schema keyword to determine the node type
-      type: property.nodeType
-    };
-  }
-  return result;
-}
-__name(getDefaultsFromSchema, "getDefaultsFromSchema");
 function getCredentialsFromSchema(schema) {
   const result = {};
   for (const [key, value] of Object.entries(schema.properties)) {
@@ -529,24 +510,13 @@ async function registerType(RED, type, NodeClass) {
       await result;
     }
   }
-  function defaults() {
-    const schema = NodeClass.validations?.configs;
-    console.log("DEFAULTS", schema);
-    return schema ? getDefaultsFromSchema(schema) : {};
-  }
-  __name(defaults, "defaults");
-  function credentials() {
-    const schema = NodeClass.validations?.credentials;
-    return schema ? getCredentialsFromSchema(schema) : {};
-  }
-  __name(credentials, "credentials");
   RED.nodes.registerType(type, NodeClass, {
-    credentials: credentials()
+    credentials: NodeClass.validations.credentials ? getCredentialsFromSchema(NodeClass.validations.credentials) : {}
   });
   RED.httpAdmin.get(`/nrg/nodes/${type}`, (req, res) => {
     if (NodeClass.validations) {
       const validationConfig = NodeClass.validations;
-      const configsProperties = validationConfig.configs?.properties ? validationConfig.configs.properties : {};
+      const configsProperties = validationConfig.configs.properties ? validationConfig.configs.properties : {};
       const credentialsProperties = validationConfig.credentials?.properties ? validationConfig.credentials.properties : {};
       const nodeProperties = {
         schema: import_typebox8.Type.Object({
