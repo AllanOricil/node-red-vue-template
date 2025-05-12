@@ -12,8 +12,7 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
+<script>
 export default {
   props: {
     value: String | Array,

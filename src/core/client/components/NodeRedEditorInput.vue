@@ -7,8 +7,7 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
+<script>
 export default {
   props: {
     value: String,
@@ -45,6 +44,7 @@ export default {
           "ini",
           "java",
           "javascript",
+          "json",
           "julia",
           "kotlin",
           "less",

@@ -12,7 +12,7 @@
   </div>
 </template>
 
-<script lang="ts">
+<script>
 import { TYPED_INPUT_TYPES } from "../../constants";
 
 export default {
