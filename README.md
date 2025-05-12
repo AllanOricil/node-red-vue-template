@@ -17,3 +17,47 @@ These nodes are already built to simplify testing. Just clone the repo and insta
 cd ~/.node-red
 npm install $PATH_WHERE_YOU_CLONED_THIS_REPO/dist
 ```
+
+### Class Diagram
+
+```mermaid
+classDiagram
+
+%% Base class
+class Node {
+  <<abstract>>
+  +id: string
+  +type: string
+  +name: string
+  +z: string
+  +g: string
+  +configs: TConfigs
+  +credentials: TCredentials
+  +constructor(configs: TConfigs)
+  +static init(): void | Promise<void>
+  +static getNode<T>(id: string): T | undefined
+}
+
+%% Inheriting class: IONode
+class IONode {
+  <<abstract>>
+  +wires: string[][]
+  +x: number
+  +y: number
+  +constructor(configs: TConfigs)
+  +onInput(msg, send, done): void | Promise<void>
+  +onClose(removed, done): void | Promise<void>
+  -setupEventHandlers()
+}
+
+%% Inheriting class: ConfigNode
+class ConfigNode {
+  <<abstract>>
+  +users: string[]
+  +constructor(configs: TConfigs)
+}
+
+%% Relationships
+IONode --|> Node
+ConfigNode --|> Node
+```
