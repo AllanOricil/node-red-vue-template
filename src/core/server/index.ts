@@ -4,7 +4,7 @@ import camelCase from "camelcase";
 import { merge } from "es-toolkit";
 import { Request, Response } from "express";
 import { getDefaultsFromSchema, getCredentialsFromSchema } from "../utils";
-import { Node, IONode, ConfigNode, NodeValidations } from "./nodes";
+import { Node, IONode, ConfigNode } from "./nodes";
 import { validatorService } from "./validator";
 
 // TODO: define RED type
@@ -13,7 +13,7 @@ import { validatorService } from "./validator";
  * @static
  * @async
  * @param {object} RED - The Node-RED runtime API object
- * @param {(Node)} NodeClass - A node class extending Node or ConfigNode
+ * @param {(Node | IONode | ConfigNode )} NodeClass - A node class extending Node or ConfigNode
  * @returns {Promise<void>} A promise that resolves when the node type registration and setup are complete. It might wait for the `NodeClass.init()` promise if one is returned.
  * @throws {Error} If NodeClass does not extend `Node`
  * @throws {Error} If type is note defined
@@ -21,15 +21,10 @@ import { validatorService } from "./validator";
 export async function registerType(
   RED: any,
   type: string,
-  NodeClass: {
-    new (...args: any[]): ConfigNode<any, any> | IONode<any, any, any, any>;
-    RED?: any;
-    type?: string;
-    init?(): void | Promise<void>;
-    onInput?(): void | Promise<void>;
-    onClose?(): void | Promise<void>;
-    validations?: NodeValidations;
-  }
+  NodeClass:
+    | typeof Node
+    | typeof ConfigNode<any, any>
+    | typeof IONode<any, any, any, any>
 ) {
   if (!(NodeClass.prototype instanceof Node)) {
     throw new Error(
