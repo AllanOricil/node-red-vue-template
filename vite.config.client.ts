@@ -132,7 +132,7 @@ export default defineConfig(({ mode }) => {
       vue(),
       appendSourceURLPlugin("src/client.js"),
       visualizer({
-        open: isDev,
+        open: false,
         gzipSize: true,
         brotliSize: true,
         template: "treemap",
