@@ -15,5 +15,5 @@ These nodes are already built to simplify testing. Just clone the repo and insta
 
 ```bash
 cd ~/.node-red
-npm install $PATH_WHERE_YOU_CLONED_THIS_REPO
+npm install $PATH_WHERE_YOU_CLONED_THIS_REPO/dist
 ```
