@@ -3,5 +3,7 @@ import NodeConfigsSchema from "./node-configs";
 
 export default Type.Object({
   ...NodeConfigsSchema.properties,
-  _users: Type.Array(Type.String()),
+  wires: Type.Array(Type.Array(Type.String())),
+  x: Type.Number(),
+  y: Type.Number(),
 });

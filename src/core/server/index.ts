@@ -1,23 +1,13 @@
+import { Type } from "@sinclair/typebox";
+import { AnySchemaObject } from "ajv";
 import camelCase from "camelcase";
 import { merge } from "es-toolkit";
-import { BaseNode, BaseNodeMetadata } from "./base-node";
-import { Node } from "./node";
-import { ConfigNode } from "./config-node";
-import { getDefaultsFromSchema, getCredentialsFromSchema } from "../utils";
-import { Type } from "@sinclair/typebox";
-import { validatorService } from "./validator";
-import { AnySchemaObject } from "ajv";
 import { Request, Response } from "express";
-
-interface BaseNodeConstructor {
-  new (...args: any[]): BaseNode<any, any>;
-  RED?: any;
-  type?: string;
-  init?(): void | Promise<void>;
-  onInput?(): void | Promise<void>;
-  onClose?(): void | Promise<void>;
-  __nodeProperties__?: BaseNodeMetadata;
-}
+import { getDefaultsFromSchema, getCredentialsFromSchema } from "../utils";
+import { ConfigNode } from "./config-node";
+import { IONode } from "./io-node";
+import { Node, NodeValidations } from "./node";
+import { validatorService } from "./validator";
 
 // TODO: define RED type
 /**
@@ -33,10 +23,20 @@ interface BaseNodeConstructor {
 export async function registerType(
   RED: any,
   type: string,
-  NodeClass: BaseNodeConstructor
+  NodeClass: {
+    new (...args: any[]): ConfigNode<any, any> | IONode<any, any, any, any>;
+    RED?: any;
+    type?: string;
+    init?(): void | Promise<void>;
+    onInput?(): void | Promise<void>;
+    onClose?(): void | Promise<void>;
+    validations?: NodeValidations;
+  }
 ) {
-  if (!(NodeClass.prototype instanceof BaseNode)) {
-    throw new Error(`${NodeClass.name} must extend Node | ConfigNode class`);
+  if (!(NodeClass.prototype instanceof Node)) {
+    throw new Error(
+      `${NodeClass.name} must extend IONode or ConfigNode classes`
+    );
   }
 
   if (!type) {
@@ -44,8 +44,8 @@ export async function registerType(
   }
 
   // TODO: move this somewhere else
-  if (BaseNode.RED === undefined) {
-    Object.defineProperty(BaseNode, "RED", {
+  if (Node.RED === undefined) {
+    Object.defineProperty(Node, "RED", {
       value: RED,
       writable: false,
       configurable: false,
@@ -54,8 +54,8 @@ export async function registerType(
   }
 
   // TODO: move this somewhere else
-  if (Node.RED === undefined) {
-    Object.defineProperty(Node, "RED", {
+  if (IONode.RED === undefined) {
+    Object.defineProperty(IONode, "RED", {
       value: RED,
       writable: false,
       configurable: false,
@@ -102,13 +102,13 @@ export async function registerType(
   }
 
   function defaults() {
-    const schema = NodeClass.__nodeProperties__?.validation?.configs;
+    const schema = NodeClass.validations?.configs;
     console.log("DEFAULTS", schema);
     return schema ? getDefaultsFromSchema(schema) : {};
   }
 
   function credentials() {
-    const schema = NodeClass.__nodeProperties__?.validation?.credentials;
+    const schema = NodeClass.validations?.credentials;
     return schema ? getCredentialsFromSchema(schema) : {};
   }
 
@@ -116,24 +116,19 @@ export async function registerType(
     credentials: credentials(),
   });
 
-  function hasProperties(schema: any): schema is { properties: object } {
-    return schema && typeof schema === "object" && "properties" in schema;
-  }
-
   RED.httpAdmin.get(`/nrg/nodes/${type}`, (req: Request, res: Response) => {
-    if (NodeClass.__nodeProperties__?.validation) {
-      const validationConfig = NodeClass.__nodeProperties__.validation;
+    if (NodeClass.validations) {
+      const validationConfig = NodeClass.validations;
 
-      const configsProperties = hasProperties(validationConfig.configs)
+      const configsProperties = validationConfig.configs?.properties
         ? validationConfig.configs.properties
         : {};
 
-      const credentialsProperties = hasProperties(validationConfig.credentials)
+      const credentialsProperties = validationConfig.credentials?.properties
         ? validationConfig.credentials.properties
         : {};
 
       const nodeProperties = {
-        ...NodeClass.__nodeProperties__,
         schema: Type.Object({
           ...configsProperties,
           credentials: Type.Object({

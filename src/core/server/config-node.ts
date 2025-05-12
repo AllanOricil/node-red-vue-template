@@ -1,13 +1,15 @@
-import { BaseNode, BaseNodeConfigs } from "./base-node";
-import { ConfigNodeConfigsSchema } from "../schemas";
 import { Static } from "@sinclair/typebox";
+import { AnySchemaObject } from "ajv";
+import { ConfigNodeConfigsSchema } from "../schemas";
+import { Node, ConfigNodeValidations } from "./node";
 
-export type ConfigNodeConfigs = Static<typeof ConfigNodeConfigsSchema>;
+type ConfigNodeConfigs = Static<typeof ConfigNodeConfigsSchema>;
 
 abstract class ConfigNode<
   TConfigs extends ConfigNodeConfigs = ConfigNodeConfigs,
   TCredentials = any,
-> extends BaseNode<TConfigs, TCredentials> {
+> extends Node<TConfigs, TCredentials> {
+  public static override readonly validations?: ConfigNodeValidations;
   public readonly users: string[];
 
   constructor(configs: TConfigs) {
@@ -16,4 +18,4 @@ abstract class ConfigNode<
   }
 }
 
-export { ConfigNode };
+export { ConfigNode, ConfigNodeConfigs };

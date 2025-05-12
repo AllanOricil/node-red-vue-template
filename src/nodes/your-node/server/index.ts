@@ -1,38 +1,37 @@
 import { Static } from "@sinclair/typebox";
-import { node } from "../../../core/server/decorators";
 import {
-  InputDoneFunction,
   CloseDoneFunction,
-  Node,
+  InputDoneFunction,
+  IONode,
   SendFunction,
-} from "../../../core/server/node";
+} from "../../../core/server/io-node";
+import { IONodeValidations } from "../../../core/server/node";
+import RemoteServerConfigNode from "../../remote-server/server";
 import {
   ConfigsSchema,
   CredentialsSchema,
   InputMessageSchema,
   OutputMessageSchema,
 } from "../schemas";
-import RemoteServerConfigNode from "../../remote-server/server";
 
 export type YourNodeConfigs = Static<typeof ConfigsSchema>;
 export type YourNodeCredentials = Static<typeof CredentialsSchema>;
 export type YourNodeInputMessage = Static<typeof InputMessageSchema>;
 export type YourNodeOutputMessage = Static<typeof OutputMessageSchema>;
 
-@node({
-  validation: {
-    configs: ConfigsSchema,
-    credentials: CredentialsSchema,
-    input: InputMessageSchema,
-    outputs: OutputMessageSchema,
-  },
-})
-export default class YourNode extends Node<
+export default class YourNode extends IONode<
   YourNodeConfigs,
   YourNodeCredentials,
   YourNodeInputMessage,
   YourNodeOutputMessage
 > {
+  static override validations: IONodeValidations = {
+    configs: ConfigsSchema,
+    credentials: CredentialsSchema,
+    input: InputMessageSchema,
+    outputs: OutputMessageSchema,
+  };
+
   static override async init() {
     console.log("testing your node init");
   }
@@ -55,7 +54,7 @@ export default class YourNode extends Node<
     console.log(this);
     console.log(msg);
 
-    const server = Node.getNode<RemoteServerConfigNode>(
+    const server = IONode.getNode<RemoteServerConfigNode>(
       this.configs.remoteServer
     );
 
