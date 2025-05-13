@@ -13,24 +13,7 @@ import pkg from "./package.json" assert { type: "json" };
 // TODO: add docs to .html
 // TODO: build locales and copy to dist/locales
 
-// NOTE: when minifying with esbuild, vite doesn't natively remove line breaks
-function minify() {
-  return {
-    name: "minify",
-    renderChunk: {
-      order: "post",
-      async handler(code, chunk, outputOptions) {
-        if (outputOptions.format === "es" && chunk.fileName.endsWith(".js")) {
-          const result = await transform(code, { minify: true });
-          return result.code;
-        }
-        return code;
-      },
-    },
-  };
-}
-
-// NOTE: maybe there is a more reliable way to generate these tags?
+// TODO: maybe there is a more reliable way to generate these tags?
 function getHtmlTag(
   filePath: string,
   srcPath: string,
@@ -61,7 +44,24 @@ function getHtmlTag(
   }
 }
 
-function nodeRedHtmlPlugin(options = {}): Plugin {
+// NOTE: when minifying with esbuild, vite doesn't natively remove line breaks
+function minify() {
+  return {
+    name: "minify",
+    renderChunk: {
+      order: "post",
+      async handler(code, chunk, outputOptions) {
+        if (outputOptions.format === "es" && chunk.fileName.endsWith(".js")) {
+          const result = await transform(code, { minify: true });
+          return result.code;
+        }
+        return code;
+      },
+    },
+  };
+}
+
+function nodeRed(options = {}): Plugin {
   return {
     name: "vite-plugin-node-red-html",
     apply: "build",
@@ -116,20 +116,6 @@ function nodeRedHtmlPlugin(options = {}): Plugin {
   };
 }
 
-function appendSourceURLPlugin(filename: string): Plugin {
-  return {
-    name: "append-source-url",
-    generateBundle(_: NormalizedOutputOptions, bundle: OutputBundle) {
-      for (const fileName in bundle) {
-        const chunk = bundle[fileName];
-        if (chunk.type === "chunk" && chunk.fileName.endsWith(".js")) {
-          chunk.code += `\n//# sourceURL=${filename}\n`;
-        }
-      }
-    },
-  };
-}
-
 export default defineConfig(({ mode }) => {
   const isDev = mode === "development";
 
@@ -148,7 +134,7 @@ export default defineConfig(({ mode }) => {
         brotliSize: true,
         template: "treemap",
       }),
-      nodeRedHtmlPlugin({ licensePath: path.resolve(__dirname, "LICENSE") }),
+      nodeRed({ licensePath: path.resolve(__dirname, "LICENSE") }),
       viteStaticCopy({
         targets: [
           {
@@ -231,6 +217,7 @@ export default defineConfig(({ mode }) => {
         },
       },
     },
+    // NOTE: some libraries did not remove references to process.env from their dist so we have to change it at build time
     define: {
       "process.env.NODE_ENV": JSON.stringify(mode),
       "process.env": {},
