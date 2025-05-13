@@ -5,10 +5,11 @@
 </template>
 
 <script lang="ts">
-import { validatorService } from "./validator";
 import jsonpointer from "jsonpointer";
+import { defineComponent } from "vue";
+import { validatorService } from "./validator";
 
-export default {
+export default defineComponent({
   name: "NodeRedVueApp",
   props: {
     node: {
@@ -144,7 +145,7 @@ export default {
       }
     },
   },
-};
+});
 </script>
 
 <style>

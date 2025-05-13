@@ -7,11 +7,15 @@
   </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent } from "vue";
+export default defineComponent({
   props: {
     value: String,
-    type: String,
+    type: {
+      type: String,
+      required: true,
+    },
     error: {
       type: String,
       default: "",
@@ -41,5 +45,5 @@ export default {
 
     input.val(this.value || "_ADD_");
   },
-};
+});
 </script>

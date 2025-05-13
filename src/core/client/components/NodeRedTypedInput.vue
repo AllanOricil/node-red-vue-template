@@ -12,10 +12,11 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from "vue";
 import { TYPED_INPUT_TYPES } from "../../constants";
 
-export default {
+export default defineComponent({
   props: {
     value: {
       type: Object,
@@ -125,5 +126,5 @@ export default {
       }
     },
   },
-};
+});
 </script>
