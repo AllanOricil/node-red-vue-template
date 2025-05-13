@@ -399,6 +399,12 @@ var YourNode = class extends IONode {
       this.configs.remoteServer
     );
     console.log(server?.users);
+    const outputMsg = {
+      originalType: "number",
+      processedTime: 1
+    };
+    send(outputMsg);
+    done();
   }
   async onClose(removed, done) {
     console.log("removing node");
