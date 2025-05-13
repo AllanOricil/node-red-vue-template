@@ -1,4 +1,3 @@
-import $ from "jquery";
 import { createApp, Component, App, defineComponent } from "vue";
 import { cloneDeep, isEqual, merge } from "es-toolkit";
 import { AnySchema, ValidateFunction } from "ajv";

@@ -1,17 +1,35 @@
+import crypto from "crypto";
+import { transform } from "esbuild";
 import fs from "fs";
+import mime from "mime-types";
 import path from "path";
 import { defineConfig } from "vite";
-import vue from "@vitejs/plugin-vue";
-import banner from "vite-plugin-banner";
-import pkg from "./package.json" assert { type: "json" };
 import type { OutputBundle, NormalizedOutputOptions, Plugin } from "rollup";
 import { visualizer } from "rollup-plugin-visualizer";
-import mime from "mime-types";
-import crypto from "crypto";
+import banner from "vite-plugin-banner";
 import { viteStaticCopy } from "vite-plugin-static-copy";
+import vue from "@vitejs/plugin-vue";
+import pkg from "./package.json" assert { type: "json" };
 
 // TODO: add docs to .html
 // TODO: build locales and copy to dist/locales
+
+// NOTE: when minifying with esbuild, vite doesn't natively remove line breaks
+function minify() {
+  return {
+    name: "minify",
+    renderChunk: {
+      order: "post",
+      async handler(code, chunk, outputOptions) {
+        if (outputOptions.format === "es" && chunk.fileName.endsWith(".js")) {
+          const result = await transform(code, { minify: true });
+          return result.code;
+        }
+        return code;
+      },
+    },
+  };
+}
 
 function generateSha(content: Buffer): string {
   return crypto.createHash("sha256").update(content).digest("hex");
@@ -29,7 +47,7 @@ function getHtmlTag(
   switch (mimeType) {
     case "application/javascript":
     case "text/javascript":
-      return `<script src="${srcPath}" integrity="${shaHash}"></script>`;
+      return `<script type="module" src="${srcPath}" integrity="${shaHash}"></script>`;
 
     case "text/css":
       return `<link rel="stylesheet" href="${srcPath}" integrity="${shaHash}">`;
@@ -130,7 +148,6 @@ export default defineConfig(({ mode }) => {
     },
     plugins: [
       vue(),
-      appendSourceURLPlugin("src/client.js"),
       visualizer({
         open: false,
         gzipSize: true,
@@ -163,6 +180,7 @@ export default defineConfig(({ mode }) => {
           },
         ],
       }),
+      minify(),
     ],
     css: {
       devSourcemap: isDev,
@@ -172,7 +190,7 @@ export default defineConfig(({ mode }) => {
         entry: "src/client.ts",
         name: "NRG",
         fileName: "index",
-        formats: ["iife"],
+        formats: ["es"],
       },
       sourcemap: isDev ? "inline" : false,
       minify: !isDev,
@@ -180,11 +198,12 @@ export default defineConfig(({ mode }) => {
       outDir: "dist",
       copyPublicDir: false,
       rollupOptions: {
+        // NOTE: these are available in Node-RED editor already, so not bundling
         external: ["jquery", "node-red"],
         treeshake: true,
         output: {
           entryFileNames: "resources/index.[hash].js",
-          chunkFileNames: "resources/index.[hash].js",
+          chunkFileNames: "resources/vendor.[hash].js",
           assetFileNames: (assetInfo) => {
             console.log(assetInfo);
             const fileName = assetInfo.name ?? "";
@@ -195,8 +214,25 @@ export default defineConfig(({ mode }) => {
             jquery: "$",
             "node-red": "RED",
           },
+          // NOTE: this ensures src/{node-type}/client/index.ts is shown as src/{node-type}/index.ts in devtools
           sourcemapPathTransform: (relativeSourcePath) => {
             return relativeSourcePath.replace(/\/client\//g, "/");
+          },
+          manualChunks(id) {
+            if (!id.includes("node_modules")) return;
+
+            const parts = id.split("node_modules/")[1].split("/");
+            const packageName = parts[0].startsWith("@")
+              ? `${parts[0]}/${parts[1]}`
+              : parts[0];
+
+            // NOTE: these dependencies are chuncked together
+            if (["vue"].includes(packageName)) return "vendor-vue";
+            if (["ajv", "ajv-formats", "ajv-errors"].includes(packageName))
+              return "vendor-ajv";
+            if (["jsonpointer", "es-toolkit"].includes(packageName))
+              return "vendor-utils";
+            return "vendor";
           },
         },
       },

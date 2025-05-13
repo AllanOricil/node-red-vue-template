@@ -213,6 +213,9 @@ var ConfigNode = class extends Node {
 // src/nodes/your-node/schemas.ts
 var import_typebox6 = require("@sinclair/typebox");
 
+// src/core/schemas/config-node-configs.ts
+var import_typebox2 = require("@sinclair/typebox");
+
 // src/core/schemas/node-configs.ts
 var import_typebox = require("@sinclair/typebox");
 var node_configs_default = import_typebox.Type.Object({
@@ -223,26 +226,33 @@ var node_configs_default = import_typebox.Type.Object({
   z: import_typebox.Type.Optional(import_typebox.Type.String())
 });
 
-// src/core/schemas/io-node-configs.ts
-var import_typebox2 = require("@sinclair/typebox");
-var io_node_configs_default = import_typebox2.Type.Object({
+// src/core/schemas/config-node-configs.ts
+var config_node_configs_default = import_typebox2.Type.Object({
   ...node_configs_default.properties,
-  wires: import_typebox2.Type.Array(import_typebox2.Type.Array(import_typebox2.Type.String(), { default: [] }), {
-    default: [[]]
-  }),
-  x: import_typebox2.Type.Number(),
-  y: import_typebox2.Type.Number()
+  _users: import_typebox2.Type.Array(import_typebox2.Type.String())
 });
 
-// src/core/schemas/config-node-configs.ts
+// src/core/schemas/message.ts
 var import_typebox3 = require("@sinclair/typebox");
-var config_node_configs_default = import_typebox3.Type.Object({
+var message_default = import_typebox3.Type.Object({
+  payload: import_typebox3.Type.Optional(import_typebox3.Type.String()),
+  topic: import_typebox3.Type.Optional(import_typebox3.Type.String()),
+  _msgid: import_typebox3.Type.Optional(import_typebox3.Type.String())
+});
+
+// src/core/schemas/io-node-configs.ts
+var import_typebox4 = require("@sinclair/typebox");
+var io_node_configs_default = import_typebox4.Type.Object({
   ...node_configs_default.properties,
-  _users: import_typebox3.Type.Array(import_typebox3.Type.String())
+  wires: import_typebox4.Type.Array(import_typebox4.Type.Array(import_typebox4.Type.String(), { default: [] }), {
+    default: [[]]
+  }),
+  x: import_typebox4.Type.Number(),
+  y: import_typebox4.Type.Number()
 });
 
 // src/core/schemas/typed-input.ts
-var import_typebox4 = require("@sinclair/typebox");
+var import_typebox5 = require("@sinclair/typebox");
 
 // src/core/constants.ts
 var TYPED_INPUT_TYPES = [
@@ -264,18 +274,18 @@ var TYPED_INPUT_TYPES = [
 
 // src/core/schemas/typed-input.ts
 var TypedInputTypeLiterals = TYPED_INPUT_TYPES.map(
-  (type) => import_typebox4.Type.Literal(type)
+  (type) => import_typebox5.Type.Literal(type)
 );
-var typed_input_default = import_typebox4.Type.Object(
+var typed_input_default = import_typebox5.Type.Object(
   {
-    value: import_typebox4.Type.Union(
-      [import_typebox4.Type.String(), import_typebox4.Type.Number(), import_typebox4.Type.Boolean(), import_typebox4.Type.Null()],
+    value: import_typebox5.Type.Union(
+      [import_typebox5.Type.String(), import_typebox5.Type.Number(), import_typebox5.Type.Boolean(), import_typebox5.Type.Null()],
       {
         description: "The actual value entered or selected.",
         default: ""
       }
     ),
-    type: import_typebox4.Type.Union(TypedInputTypeLiterals, {
+    type: import_typebox5.Type.Union(TypedInputTypeLiterals, {
       description: "The type of the value (string, number, message property, etc.)",
       default: "str"
     })
@@ -288,14 +298,6 @@ var typed_input_default = import_typebox4.Type.Object(
     }
   }
 );
-
-// src/core/schemas/message.ts
-var import_typebox5 = require("@sinclair/typebox");
-var message_default = import_typebox5.Type.Object({
-  payload: import_typebox5.Type.Optional(import_typebox5.Type.String()),
-  topic: import_typebox5.Type.Optional(import_typebox5.Type.String()),
-  _msgid: import_typebox5.Type.Optional(import_typebox5.Type.String())
-});
 
 // src/nodes/your-node/schemas.ts
 var ConfigsSchema = import_typebox6.Type.Object(
