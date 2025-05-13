@@ -61,7 +61,7 @@ export default class YourNode extends IONode<
 
     const outputMsg: YourNodeOutputMessage = {
       originalType: "number",
-      processedTime: "1",
+      processedTime: 1,
     };
     send(outputMsg);
     done();

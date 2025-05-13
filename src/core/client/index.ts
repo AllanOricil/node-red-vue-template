@@ -220,13 +220,9 @@ async function registerType(
     console.log("credentials", credentials);
 
     RED.nodes.registerType(type, {
-      ...options,
       defaults,
       credentials,
       type,
-      label: function () {
-        return this.name;
-      },
       oneditprepare: function () {
         console.log("oneditprepare");
         console.log(this);
@@ -301,8 +297,24 @@ async function registerType(
       oneditdelete: function () {
         unmountApp(this);
       },
-      onpaletteadd: options.onPaletteAdd,
-      onpaltteremove: options.onPaletteRemove,
+      category: options.category,
+      color: options.color,
+      icon: options.icon,
+      label:
+        options.label ||
+        function () {
+          return this.name;
+        },
+      inputs: options.inputs,
+      outputs: options.outputs,
+      paletteLabel: options.paletteLabel,
+      labelStyle: options.labelStyle,
+      inputLabels: options.inputLabels,
+      outputLabels: options.outputLabels,
+      align: options.align,
+      button: options.button,
+      onPaletteAdd: options.onPaletteAdd,
+      onPaletteRemove: options.onPaletteRemove,
     });
   } catch (error) {
     console.error(`Error fetching node type ${type}:`, error);
