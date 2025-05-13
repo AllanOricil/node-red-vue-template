@@ -3,15 +3,13 @@ import { createApp, Component, App, defineComponent } from "vue";
 import { cloneDeep, isEqual, merge } from "es-toolkit";
 import { AnySchema, ValidateFunction } from "ajv";
 import { getDefaultsFromSchema, getCredentialsFromSchema } from "../utils";
-
+import { validatorService } from "./validator";
 import NodeRedVueApp from "./App.vue";
 import NodeRedInput from "./components/NodeRedInput.vue";
 import NodeRedTypedInput from "./components/NodeRedTypedInput.vue";
 import NodeRedConfigInput from "./components/NodeRedConfigInput.vue";
 import NodeRedSelectInput from "./components/NodeRedSelectInput.vue";
 import NodeRedEditorInput from "./components/NodeRedEditorInput.vue";
-
-import { validatorService } from "./validator";
 
 function createNodeRedVueApp(
   node: any,
