@@ -22,8 +22,6 @@ npm install $PATH_WHERE_YOU_CLONED_THIS_REPO/dist
 
 ```mermaid
 classDiagram
-
-%% Base class
 class Node {
   <<abstract>>
   +id: string
@@ -36,9 +34,13 @@ class Node {
   +constructor(configs: TConfigs)
   +static init(): void | Promise<void>
   +static getNode<T>(id: string): T | undefined
+  +error(logMessage: string, msg: any): void
+  +debug(msg: any): void
+  +trace(msg: any): void
+  +log(msg: any): void
+  +warn(msg: any): void
 }
 
-%% Inheriting class: IONode
 class IONode {
   <<abstract>>
   +wires: string[][]
@@ -47,17 +49,26 @@ class IONode {
   +constructor(configs: TConfigs)
   +onInput(msg, send, done): void | Promise<void>
   +onClose(removed, done): void | Promise<void>
+  +close(removed: boolean): Promise<void>
+  +context(): Context
+  +emit(event: string, ...args: any[]): void
+  +on(event: string, callback: (...args: any[]) => void): void
+  +receive(msg: Message): void
+  +removeAllListeners(name: string): void
+  +removeListener(name: string): void
+  +send(msg: TInputMessage): void
+  +updateWires(wires: string[][]): void
+  +metric(eventName: string, msg: Message, metricValue: number): boolean | void
+  +status(status: object | string): void
   -setupEventHandlers()
 }
 
-%% Inheriting class: ConfigNode
 class ConfigNode {
   <<abstract>>
   +users: string[]
   +constructor(configs: TConfigs)
 }
 
-%% Relationships
 IONode --|> Node
 ConfigNode --|> Node
 ```
