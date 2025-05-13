@@ -27,10 +27,10 @@ declare module "./io-node" {
     context(): Context;
     emit(event: string, ...args: any[]): void;
     on(event: string, callback: (...args: any[]) => void): void;
-    receive(msg: Message & { [key: string]: any }): void;
+    receive(msg: TInputMessage): void;
     removeAllListeners(name: string): void;
     removeListener(name: string): void;
-    send(msg: TInputMessage): void;
+    send(msg: TOutputMessage): void;
     updateWires(wires: string[][]): void;
     metric(
       eventName: string,
