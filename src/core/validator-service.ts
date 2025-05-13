@@ -9,10 +9,9 @@ import addErrors from "ajv-errors";
 import { MessageSchema, TypedInputSchema } from "./schemas";
 
 class ValidatorService {
-  ajv: Ajv;
+  private readonly ajv: Ajv;
 
   constructor(options?: Options) {
-    // console.log("INSIDE CONSTRUCTOR OF VALIDATOR SERVICE");
     this.ajv = new Ajv({
       allErrors: true,
       useDefaults: "empty",
@@ -35,8 +34,6 @@ class ValidatorService {
   }
 
   createValidator(schema: AnySchemaObject) {
-    // console.log("INSIDE CREATEVALIDATOR");
-    // console.log(this.ajv.schemas);
     return this.ajv.compile(schema);
   }
 
