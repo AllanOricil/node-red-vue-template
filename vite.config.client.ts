@@ -1,4 +1,3 @@
-import crypto from "crypto";
 import { transform } from "esbuild";
 import fs from "fs";
 import mime from "mime-types";
@@ -31,10 +30,6 @@ function minify() {
   };
 }
 
-function generateSha(content: Buffer): string {
-  return crypto.createHash("sha256").update(content).digest("hex");
-}
-
 // NOTE: maybe there is a more reliable way to generate these tags?
 function getHtmlTag(
   filePath: string,
@@ -42,15 +37,14 @@ function getHtmlTag(
   assetContent: Buffer
 ): string | null {
   const mimeType = mime.lookup(filePath);
-  const shaHash = generateSha(assetContent);
 
   switch (mimeType) {
     case "application/javascript":
     case "text/javascript":
-      return `<script type="module" src="${srcPath}" integrity="${shaHash}"></script>`;
+      return `<script type="module" src="${srcPath}"></script>`;
 
     case "text/css":
-      return `<link rel="stylesheet" href="${srcPath}" integrity="${shaHash}">`;
+      return `<link rel="stylesheet" href="${srcPath}">`;
 
     case "font/woff":
     case "font/woff2":
@@ -60,7 +54,7 @@ function getHtmlTag(
     case "application/x-font-opentype":
     case "font/ttf":
     case "font/otf":
-      return `<link rel="preload" as="font" href="${srcPath}" integrity="${shaHash}" type="${mimeType}" crossorigin="anonymous">`;
+      return `<link rel="preload" as="font" href="${srcPath}" type="${mimeType}">`;
 
     default:
       return null;
