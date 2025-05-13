@@ -20,42 +20,14 @@ interface IONodeValidations {
 
 type NodeValidations = ConfigNodeValidations | IONodeValidations;
 
-interface ContextStore {
-  get(key: string): any;
-  set(key: string, value: any): void;
-}
-
-interface Context {
-  flow: ContextStore;
-  global: ContextStore;
-  node: ContextStore;
-}
-
 // NOTE: these methods are implemented and defined by Node-RED runtime. They were added here to provide intelisense only.
 declare module "./node" {
   interface Node<TConfigs, TCredentials> {
-    updateWires(wires: string[][]): void;
-    context(): Context;
-    emit(event: string, ...args: any[]): void;
-    removeListener(name: string): void;
-    removeAllListeners(name: string): void;
-    close(removed: boolean): Promise<void>;
-    receive(msg: Message & { [key: string]: any }): void;
     error(logMessage: string, msg: any): void;
     debug(msg: any): void;
     trace(msg: any): void;
     log(msg: any): void;
     warn(msg: any): void;
-    metric(
-      eventName: string,
-      msg: Message & { [key: string]: any },
-      metricValue: number
-    ): boolean | void;
-    status(
-      status:
-        | { fill?: "red" | "green"; shape?: "dot" | "string"; text?: string }
-        | string
-    ): void;
   }
 }
 
@@ -129,11 +101,9 @@ abstract class Node<
 }
 
 export {
+  ConfigNodeValidations,
   Node,
   NodeConfigs,
-  ConfigNodeValidations,
-  IONodeValidations,
   NodeValidations,
-  ContextStore,
-  Context,
+  IONodeValidations,
 };

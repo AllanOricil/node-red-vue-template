@@ -9,12 +9,39 @@ type InputDoneFunction = (error?: Error | string) => void;
 type IONodeConfigs = Static<typeof IONodeConfigsSchema>;
 type Message = Static<typeof MessageSchema>;
 type SendFunction<T> = (data: T | T[]) => void;
+interface ContextStore {
+  get(key: string): any;
+  set(key: string, value: any): void;
+}
+
+interface Context {
+  flow: ContextStore;
+  global: ContextStore;
+  node: ContextStore;
+}
 
 // NOTE: these methods are implemented and defined by Node-RED runtime. They were added here to provide intelisense only.
 declare module "./io-node" {
   interface IONode<TConfigs, TCredentials, TInputMessage, TOutputMessage> {
+    close(removed: boolean): Promise<void>;
+    context(): Context;
+    emit(event: string, ...args: any[]): void;
     on(event: string, callback: (...args: any[]) => void): void;
+    receive(msg: Message & { [key: string]: any }): void;
+    removeAllListeners(name: string): void;
+    removeListener(name: string): void;
     send(msg: TInputMessage): void;
+    updateWires(wires: string[][]): void;
+    metric(
+      eventName: string,
+      msg: Message & { [key: string]: any },
+      metricValue: number
+    ): boolean | void;
+    status(
+      status:
+        | { fill?: "red" | "green"; shape?: "dot" | "string"; text?: string }
+        | string
+    ): void;
   }
 }
 
@@ -108,8 +135,10 @@ abstract class IONode<
 
 export {
   CloseDoneFunction,
+  Context,
+  ContextStore,
+  InputDoneFunction,
   IONode,
   IONodeConfigs,
-  InputDoneFunction,
   SendFunction,
 };
