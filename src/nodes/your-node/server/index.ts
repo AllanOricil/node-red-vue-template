@@ -57,8 +57,14 @@ export default class YourNode extends IONode<
     const server = IONode.getNode<RemoteServerConfigNode>(
       this.configs.remoteServer
     );
-
     console.log(server?.users);
+
+    const outputMsg: YourNodeOutputMessage = {
+      originalType: "number",
+      processedTime: "1",
+    };
+    send(outputMsg);
+    done();
   }
 
   async onClose(removed: boolean, done: CloseDoneFunction): Promise<void> {
