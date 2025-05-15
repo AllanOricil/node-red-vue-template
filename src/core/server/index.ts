@@ -1,5 +1,4 @@
 import { Type } from "@sinclair/typebox";
-import { AnySchemaObject } from "ajv";
 import camelCase from "camelcase";
 import { merge } from "es-toolkit";
 import { Request, Response } from "express";

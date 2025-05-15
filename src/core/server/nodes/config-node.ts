@@ -1,5 +1,4 @@
 import { Static } from "@sinclair/typebox";
-import { AnySchemaObject } from "ajv";
 import { ConfigNodeConfigsSchema } from "../../schemas";
 import { Node, ConfigNodeValidations } from "./node";
 
