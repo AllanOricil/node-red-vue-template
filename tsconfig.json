@@ -1,3 +1,4 @@
+// TODO: find a proper way to define different RED augumentations for server and client based on directory glob nodes/*/client/**/*.ts | nodes/*/server/**/*.ts
 {
   "compilerOptions": {
     "target": "ES2022",
