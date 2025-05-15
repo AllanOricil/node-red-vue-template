@@ -24,7 +24,7 @@ function getHtmlTag(
   switch (mimeType) {
     case "application/javascript":
     case "text/javascript":
-      return `<script type="module" src="${srcPath}"></script>`;
+      return `<script type="module" src="${srcPath}" defer></script>`;
 
     case "text/css":
       return `<link rel="stylesheet" href="${srcPath}">`;
