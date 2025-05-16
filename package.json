@@ -6,6 +6,9 @@
   "license": "ISC",
   "type": "module",
   "private": true,
+  "engines": {
+    "node": ">=18"
+  },
   "workspaces": [
     "src/client",
     "src/server"

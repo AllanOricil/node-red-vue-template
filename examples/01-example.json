@@ -1,0 +1,86 @@
+[
+  {
+    "id": "dd3a427256d642e5",
+    "type": "tab",
+    "label": "Flow 1",
+    "disabled": false,
+    "info": "",
+    "env": []
+  },
+  {
+    "id": "7547f7aebd387e65",
+    "type": "remote-server",
+    "name": "abcd",
+    "host": "localhost"
+  },
+  {
+    "id": "438f926bb128b91f",
+    "type": "remote-server",
+    "name": "BBBBB",
+    "host": "dsdassda"
+  },
+  {
+    "id": "ed5aebac16278950",
+    "type": "inject",
+    "z": "dd3a427256d642e5",
+    "name": "",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "payload": "2025-04-14T19:31:20.023Z",
+    "payloadType": "str",
+    "x": 250,
+    "y": 100,
+    "wires": [["c42dd09a848fd308"]]
+  },
+  {
+    "id": "0d4104ca3967547a",
+    "type": "debug",
+    "z": "dd3a427256d642e5",
+    "name": "debug 6",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "true",
+    "targetType": "full",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 580,
+    "y": 100,
+    "wires": []
+  },
+  {
+    "id": "c42dd09a848fd308",
+    "type": "your-node",
+    "z": "dd3a427256d642e5",
+    "name": "your-node",
+    "myProperty": {
+      "value": "abc",
+      "type": "str"
+    },
+    "myProperty2": {
+      "value": "abc",
+      "type": "str"
+    },
+    "remoteServer": "438f926bb128b91f",
+    "anotherRemoteServer": "7547f7aebd387e65",
+    "country": "argentina",
+    "fruit": ["apple", "melon"],
+    "number": "1",
+    "object": ["", "{\"test\":\"b\"}", "{\"test\":\"c\"}"],
+    "array": "[\"a\"]",
+    "jsontest": "{\n    \"test\" : \"A\"\n}",
+    "csstest": "label {\n    background-color: aliceblue;\n}",
+    "x": 410,
+    "y": 100,
+    "wires": [["0d4104ca3967547a"]]
+  }
+]
