@@ -8,3 +8,5 @@ declare module "jquery" {
     editableList(method: string, ...args: any[]): any;
   }
 }
+
+export {};

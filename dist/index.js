@@ -1,51 +1,12 @@
 "use strict";
-var __create = Object.create;
-var __defProp = Object.defineProperty;
-var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-var __getOwnPropNames = Object.getOwnPropertyNames;
-var __getProtoOf = Object.getPrototypeOf;
-var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
-var __export = (target, all) => {
-  for (var name in all)
-    __defProp(target, name, { get: all[name], enumerable: true });
-};
-var __copyProps = (to, from, except, desc) => {
-  if (from && typeof from === "object" || typeof from === "function") {
-    for (let key of __getOwnPropNames(from))
-      if (!__hasOwnProp.call(to, key) && key !== except)
-        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
-  }
-  return to;
-};
-var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
-  // If the importer is in node compatibility mode or this is not an ESM
-  // file that has been converted to a CommonJS file using a Babel-
-  // compatible transform (i.e. "__esModule" has not been set), then set
-  // "default" to the CommonJS "module.exports" for node compatibility.
-  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
-  mod
-));
-var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
-
-// src/server.ts
-var server_exports = {};
-__export(server_exports, {
-  default: () => server_default
-});
-module.exports = __toCommonJS(server_exports);
-
-// src/core/validator-service.ts
-var import_ajv = __toESM(require("ajv"));
-var import_ajv_formats = __toESM(require("ajv-formats"));
-var import_ajv_errors = __toESM(require("ajv-errors"));
-var ValidatorService = class {
-  static {
-    __name(this, "ValidatorService");
-  }
-  ajv;
+Object.defineProperties(exports, { __esModule: { value: true }, [Symbol.toStringTag]: { value: "Module" } });
+const Ajv = require("ajv");
+const addFormats = require("ajv-formats");
+const addErrors = require("ajv-errors");
+const typebox = require("@sinclair/typebox");
+class ValidatorService {
   constructor(options) {
-    this.ajv = new import_ajv.default({
+    this.ajv = new Ajv({
       allErrors: true,
       useDefaults: "empty",
       verbose: true,
@@ -55,8 +16,8 @@ var ValidatorService = class {
       ...options
     });
     console.log(this.ajv.schemas);
-    (0, import_ajv_formats.default)(this.ajv);
-    (0, import_ajv_errors.default)(this.ajv);
+    addFormats(this.ajv);
+    addErrors(this.ajv);
     this.ajv.addKeyword("nodeType");
   }
   createValidator(schema) {
@@ -65,40 +26,23 @@ var ValidatorService = class {
   errors(errors, options) {
     return this.ajv.errorsText(errors, options);
   }
-};
-
-// src/core/server/validator.ts
-var validatorService = new ValidatorService();
-
-// src/core/server/nodes/node.ts
-var Node = class _Node {
-  static {
-    __name(this, "Node");
-  }
-  static RED;
-  static type;
-  static validations;
-  id;
-  type;
-  name;
-  z;
-  g;
-  configs;
-  credentials;
+}
+const validatorService = new ValidatorService();
+class Node {
   constructor(configs) {
-    _Node.RED.nodes.createNode(this, configs);
+    Node.RED.nodes.createNode(this, configs);
     this.configs = configs;
     this.id = configs.id;
     this.type = configs.type;
     this.name = configs.name;
     this.z = configs.z;
     this.g = configs.g;
-    if (_Node.validations?.configs) {
+    if (Node.validations?.configs) {
       console.log("validating configs");
       console.log(this.configs);
       console.log(this);
       const validator = validatorService.createValidator(
-        _Node.validations?.configs
+        Node.validations?.configs
       );
       const isConfigsValid = validator(this.configs);
       if (!isConfigsValid) {
@@ -109,10 +53,10 @@ var Node = class _Node {
         console.error(errors);
       }
     }
-    if (_Node.validations?.credentials) {
+    if (Node.validations?.credentials) {
       console.log("validating credentials");
       const validator = validatorService.createValidator(
-        _Node.validations?.credentials
+        Node.validations?.credentials
       );
       const isCredentialsValid = validator(this.credentials);
       if (!isCredentialsValid) {
@@ -130,17 +74,8 @@ var Node = class _Node {
   static getNode(id) {
     return this.RED.nodes.getNode(id);
   }
-};
-
-// src/core/server/nodes/io-node.ts
-var IONode = class _IONode extends Node {
-  static {
-    __name(this, "IONode");
-  }
-  static validations;
-  wires;
-  x;
-  y;
+}
+class IONode extends Node {
   constructor(configs) {
     super(configs);
     this.x = configs.x;
@@ -161,7 +96,7 @@ var IONode = class _IONode extends Node {
         "input",
         async (msg, send, done) => {
           try {
-            const inputSchema = _IONode.validations?.input;
+            const inputSchema = IONode.validations?.input;
             if (inputSchema) {
               console.log("validating message");
               const messageValidator = validatorService.createValidator(inputSchema);
@@ -195,67 +130,38 @@ var IONode = class _IONode extends Node {
       this.on("close", this.onClose);
     }
   }
-};
-
-// src/core/server/nodes/config-node.ts
-var ConfigNode = class extends Node {
-  static {
-    __name(this, "ConfigNode");
-  }
-  static validations;
-  users;
+}
+class ConfigNode extends Node {
   constructor(configs) {
     super(configs);
     this.users = configs._users || [];
   }
-};
-
-// src/nodes/your-node/schemas.ts
-var import_typebox6 = require("@sinclair/typebox");
-
-// src/core/schemas/config-node-configs.ts
-var import_typebox2 = require("@sinclair/typebox");
-
-// src/core/schemas/node-configs.ts
-var import_typebox = require("@sinclair/typebox");
-var node_configs_default = import_typebox.Type.Object({
-  id: import_typebox.Type.String(),
-  type: import_typebox.Type.String(),
-  name: import_typebox.Type.String(),
-  g: import_typebox.Type.Optional(import_typebox.Type.String()),
-  z: import_typebox.Type.Optional(import_typebox.Type.String())
+}
+const NodeConfigsSchema = typebox.Type.Object({
+  id: typebox.Type.String(),
+  type: typebox.Type.String(),
+  name: typebox.Type.String(),
+  g: typebox.Type.Optional(typebox.Type.String()),
+  z: typebox.Type.Optional(typebox.Type.String())
 });
-
-// src/core/schemas/config-node-configs.ts
-var config_node_configs_default = import_typebox2.Type.Object({
-  ...node_configs_default.properties,
-  _users: import_typebox2.Type.Array(import_typebox2.Type.String())
+const ConfigNodeConfigsSchema = typebox.Type.Object({
+  ...NodeConfigsSchema.properties,
+  _users: typebox.Type.Array(typebox.Type.String())
 });
-
-// src/core/schemas/message.ts
-var import_typebox3 = require("@sinclair/typebox");
-var message_default = import_typebox3.Type.Object({
-  payload: import_typebox3.Type.Optional(import_typebox3.Type.String()),
-  topic: import_typebox3.Type.Optional(import_typebox3.Type.String()),
-  _msgid: import_typebox3.Type.Optional(import_typebox3.Type.String())
+const MessageSchema = typebox.Type.Object({
+  payload: typebox.Type.Optional(typebox.Type.String()),
+  topic: typebox.Type.Optional(typebox.Type.String()),
+  _msgid: typebox.Type.Optional(typebox.Type.String())
 });
-
-// src/core/schemas/io-node-configs.ts
-var import_typebox4 = require("@sinclair/typebox");
-var io_node_configs_default = import_typebox4.Type.Object({
-  ...node_configs_default.properties,
-  wires: import_typebox4.Type.Array(import_typebox4.Type.Array(import_typebox4.Type.String(), { default: [] }), {
+const IONodeConfigsSchema = typebox.Type.Object({
+  ...NodeConfigsSchema.properties,
+  wires: typebox.Type.Array(typebox.Type.Array(typebox.Type.String(), { default: [] }), {
     default: [[]]
   }),
-  x: import_typebox4.Type.Number(),
-  y: import_typebox4.Type.Number()
+  x: typebox.Type.Number(),
+  y: typebox.Type.Number()
 });
-
-// src/core/schemas/typed-input.ts
-var import_typebox5 = require("@sinclair/typebox");
-
-// src/core/constants.ts
-var TYPED_INPUT_TYPES = [
+const TYPED_INPUT_TYPES = [
   "msg",
   "flow",
   "global",
@@ -271,21 +177,19 @@ var TYPED_INPUT_TYPES = [
   "node",
   "cred"
 ];
-
-// src/core/schemas/typed-input.ts
-var TypedInputTypeLiterals = TYPED_INPUT_TYPES.map(
-  (type) => import_typebox5.Type.Literal(type)
+const TypedInputTypeLiterals = TYPED_INPUT_TYPES.map(
+  (type) => typebox.Type.Literal(type)
 );
-var typed_input_default = import_typebox5.Type.Object(
+const TypedInputSchema = typebox.Type.Object(
   {
-    value: import_typebox5.Type.Union(
-      [import_typebox5.Type.String(), import_typebox5.Type.Number(), import_typebox5.Type.Boolean(), import_typebox5.Type.Null()],
+    value: typebox.Type.Union(
+      [typebox.Type.String(), typebox.Type.Number(), typebox.Type.Boolean(), typebox.Type.Null()],
       {
         description: "The actual value entered or selected.",
         default: ""
       }
     ),
-    type: import_typebox5.Type.Union(TypedInputTypeLiterals, {
+    type: typebox.Type.Union(TypedInputTypeLiterals, {
       description: "The type of the value (string, number, message property, etc.)",
       default: "str"
     })
@@ -298,38 +202,36 @@ var typed_input_default = import_typebox5.Type.Object(
     }
   }
 );
-
-// src/nodes/your-node/schemas.ts
-var ConfigsSchema = import_typebox6.Type.Object(
+const ConfigsSchema$1 = typebox.Type.Object(
   {
-    ...io_node_configs_default.properties,
-    name: import_typebox6.Type.String({ default: "your-node" }),
-    myProperty: typed_input_default,
-    myProperty2: typed_input_default,
-    remoteServer: import_typebox6.Type.String({ nodeType: "remote-server" }),
-    anotherRemoteServer: import_typebox6.Type.Optional(
-      import_typebox6.Type.String({ nodeType: "remote-server" })
+    ...IONodeConfigsSchema.properties,
+    name: typebox.Type.String({ default: "your-node" }),
+    myProperty: TypedInputSchema,
+    myProperty2: TypedInputSchema,
+    remoteServer: typebox.Type.String({ nodeType: "remote-server" }),
+    anotherRemoteServer: typebox.Type.Optional(
+      typebox.Type.String({ nodeType: "remote-server" })
     ),
-    country: import_typebox6.Type.String({ default: "brazil" }),
-    fruit: import_typebox6.Type.Array(import_typebox6.Type.String(), { default: ["apple", "melon"] }),
-    number: import_typebox6.Type.String({ default: "1" }),
-    object: import_typebox6.Type.Array(import_typebox6.Type.String(), {
+    country: typebox.Type.String({ default: "brazil" }),
+    fruit: typebox.Type.Array(typebox.Type.String(), { default: ["apple", "melon"] }),
+    number: typebox.Type.String({ default: "1" }),
+    object: typebox.Type.Array(typebox.Type.String(), {
       default: [JSON.stringify({ test: "a" }), JSON.stringify({ test: "b" })]
     }),
-    array: import_typebox6.Type.String({
+    array: typebox.Type.String({
       default: '["a"]'
     }),
-    jsontest: import_typebox6.Type.String({ default: "" }),
-    csstest: import_typebox6.Type.String({ default: "" })
+    jsontest: typebox.Type.String({ default: "" }),
+    csstest: typebox.Type.String({ default: "" })
   },
   {
     $id: "YourNodeConfigsSchema"
   }
 );
-var CredentialsSchema = import_typebox6.Type.Object(
+const CredentialsSchema = typebox.Type.Object(
   {
-    password: import_typebox6.Type.Optional(
-      import_typebox6.Type.String({
+    password: typebox.Type.Optional(
+      typebox.Type.String({
         default: "",
         minLength: 8,
         maxLength: 20,
@@ -337,60 +239,69 @@ var CredentialsSchema = import_typebox6.Type.Object(
         format: "password"
       })
     ),
-    password2: import_typebox6.Type.Optional(
-      import_typebox6.Type.String({
+    password2: typebox.Type.Optional(
+      typebox.Type.String({
         default: "",
         pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.source,
         format: "password"
       })
     ),
-    username: import_typebox6.Type.Optional(
-      import_typebox6.Type.String({ default: "", maxLength: 10, minLength: 5 })
+    username: typebox.Type.Optional(
+      typebox.Type.String({ default: "", maxLength: 10, minLength: 5 })
     )
   },
   {
     $id: "YourNodeCredentialsSchema"
   }
 );
-var InputMessageSchema = import_typebox6.Type.Intersect(
+const InputMessageSchema = typebox.Type.Intersect(
   [
-    message_default,
-    import_typebox6.Type.Object({
-      myVariable: import_typebox6.Type.Optional(import_typebox6.Type.String())
+    MessageSchema,
+    typebox.Type.Object({
+      myVariable: typebox.Type.Optional(typebox.Type.String())
     })
   ],
   {
     $id: "YourNodeInputMessageSchema"
   }
 );
-var OutputMessageSchema = import_typebox6.Type.Intersect(
+const OutputMessageSchema = typebox.Type.Intersect(
   [
-    message_default,
-    import_typebox6.Type.Object({
-      originalType: import_typebox6.Type.Union([
-        import_typebox6.Type.Literal("string"),
-        import_typebox6.Type.Literal("number")
+    MessageSchema,
+    typebox.Type.Object({
+      originalType: typebox.Type.Union([
+        typebox.Type.Literal("string"),
+        typebox.Type.Literal("number")
       ]),
-      processedTime: import_typebox6.Type.Number()
+      processedTime: typebox.Type.Number()
     }),
-    import_typebox6.Type.Unknown()
+    typebox.Type.Unknown()
   ],
   { $id: "YourNodeOutputMessageSchema" }
 );
-
-// src/nodes/your-node/server/index.ts
-var YourNode = class extends IONode {
-  static {
-    __name(this, "YourNode");
-  }
+class YourNode extends IONode {
   static validations = {
-    configs: ConfigsSchema,
+    configs: ConfigsSchema$1,
     credentials: CredentialsSchema,
     input: InputMessageSchema,
     outputs: OutputMessageSchema
   };
   static async init() {
-    console.log("testing your node init");
+    console.log("testing your-node node init");
+    try {
+      const response = await fetch("https://dog.ceo/api/breeds/image/random");
+      if (!response.ok) {
+        throw new Error(`Response status: ${response.status}`);
+      }
+      const json = await response.json();
+      console.log(json);
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("Error while fetching dogs: ", error.message);
+      } else {
+        console.error("Unknown error occurred: ", error);
+      }
+    }
   }
   async onInput(msg, send, done) {
     console.log(this);
@@ -410,39 +321,40 @@ var YourNode = class extends IONode {
     console.log("removing node");
     done();
   }
-};
-
-// src/nodes/remote-server/schemas.ts
-var import_typebox7 = require("@sinclair/typebox");
-var ConfigsSchema2 = import_typebox7.Type.Object(
+}
+const ConfigsSchema = typebox.Type.Object(
   {
-    ...config_node_configs_default.properties,
-    name: import_typebox7.Type.String({ default: "remote-server", minLength: 10 }),
-    host: import_typebox7.Type.String({ default: "localhost" })
+    ...ConfigNodeConfigsSchema.properties,
+    name: typebox.Type.String({ default: "remote-server", minLength: 10 }),
+    host: typebox.Type.String({ default: "localhost" })
   },
   {
     $id: "RemoteServerConfigsSchema"
   }
 );
-
-// src/nodes/remote-server/server/index.ts
-var RemoteServerConfigNode = class extends ConfigNode {
-  static {
-    __name(this, "RemoteServerConfigNode");
-  }
+class RemoteServerConfigNode extends ConfigNode {
   static validations = {
-    configs: ConfigsSchema2
+    configs: ConfigsSchema
   };
   // NOTE: run only once when node type is registered
-  static init() {
-    console.log("server-node");
+  static async init() {
+    console.log("testing remote-server node init");
+    try {
+      const response = await fetch("https://dog.ceo/api/breeds/image/random");
+      if (!response.ok) {
+        throw new Error(`Response status: ${response.status}`);
+      }
+      const json = await response.json();
+      console.log(json);
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("Error while fetching dogs: ", error.message);
+      } else {
+        console.error("Unknown error occurred: ", error);
+      }
+    }
   }
-};
-
-// src/core/server/index.ts
-var import_typebox8 = require("@sinclair/typebox");
-
-// src/core/utils.ts
+}
 function getCredentialsFromSchema(schema) {
   const result = {};
   for (const [key, value] of Object.entries(schema.properties)) {
@@ -458,9 +370,6 @@ function getCredentialsFromSchema(schema) {
   }
   return result;
 }
-__name(getCredentialsFromSchema, "getCredentialsFromSchema");
-
-// src/core/server/index.ts
 async function registerType(RED, type, NodeClass) {
   if (!(NodeClass.prototype instanceof Node)) {
     throw new Error(
@@ -527,9 +436,9 @@ async function registerType(RED, type, NodeClass) {
       const configsProperties = validationConfig.configs.properties ? validationConfig.configs.properties : {};
       const credentialsProperties = validationConfig.credentials?.properties ? validationConfig.credentials.properties : {};
       const nodeProperties = {
-        schema: import_typebox8.Type.Object({
+        schema: typebox.Type.Object({
           ...configsProperties,
-          credentials: import_typebox8.Type.Object({
+          credentials: typebox.Type.Object({
             ...credentialsProperties
           })
         })
@@ -542,11 +451,9 @@ async function registerType(RED, type, NodeClass) {
     }
   });
 }
-__name(registerType, "registerType");
-
-// src/index.server.ts
-async function index_server_default(RED) {
+async function index(RED) {
   try {
+    console.log("Registering node types in series");
     await registerType(RED, "remote-server", RemoteServerConfigNode);
     await registerType(RED, "your-node", YourNode);
     console.log("All node types registered in series");
@@ -554,17 +461,7 @@ async function index_server_default(RED) {
     console.error("Error registering node types:", error);
   }
 }
-__name(index_server_default, "default");
-
-// src/server.ts
-async function server_default(RED) {
-  try {
-    console.log("Running provided init");
-    await index_server_default(RED);
-    console.log("Finished running provided init");
-  } catch (error) {
-    console.error("Error while running provided init:", error);
-  }
-}
-__name(server_default, "default");
+exports.RemoteServerConfigNode = RemoteServerConfigNode;
+exports.YourNode = YourNode;
+exports.default = index;
 //# sourceMappingURL=index.js.map

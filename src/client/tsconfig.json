@@ -1,0 +1,21 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler"
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.vue",
+    "shims-vue.d.ts",
+    "../../jquery-plugins.d.ts",
+    "vite.config.ts"
+  ],
+  "exclude": [
+    "../server",
+    "../../node_modules/@types/node",
+    "../../node_modules/@types/readable-stream",
+    "vite.config.ts"
+  ]
+}

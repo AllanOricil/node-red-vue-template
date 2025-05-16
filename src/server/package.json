@@ -1,0 +1,23 @@
+{
+  "name": "server",
+  "type": "module",
+  "scripts": {
+    "tsc": "tsc --noEmit",
+    "build:dev": "vite build --mode development --config vite.config.ts",
+    "build": "vite build --mode production --config vite.config.ts"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.1",
+    "@types/node": "^22.14.1",
+    "vite-plugin-dts": "^4.5.4",
+    "vite-plugin-node-externals": "^0.0.1"
+  },
+  "dependencies": {
+    "@sinclair/typebox": "^0.34.33",
+    "ajv": "^8.17.1",
+    "ajv-errors": "^3.0.0",
+    "ajv-formats": "^3.0.1",
+    "camelcase": "^8.0.0",
+    "es-toolkit": "^1.37.2"
+  }
+}

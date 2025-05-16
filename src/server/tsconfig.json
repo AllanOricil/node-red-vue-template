@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "CommonJS",
+    "moduleResolution": "node"
+  },
+  "include": ["global.d.ts", "**/*.ts", "vite.config.ts"],
+  "exclude": ["vite.config.ts"]
+}
