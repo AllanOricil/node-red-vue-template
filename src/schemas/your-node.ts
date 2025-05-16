@@ -3,7 +3,7 @@ import {
   IONodeConfigsSchema,
   TypedInputSchema,
   MessageSchema,
-} from "../core/schemas";
+} from "../../core/schemas";
 
 const ConfigsSchema = Type.Object(
   {

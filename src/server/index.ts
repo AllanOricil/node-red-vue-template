@@ -1,6 +1,6 @@
 import YourNode from "./nodes/your-node";
 import RemoteServerConfigNode from "./nodes/remote-server";
-import { registerType } from "../core/server";
+import { registerType } from "../../core/server";
 
 export { YourNode, RemoteServerConfigNode };
 

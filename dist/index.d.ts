@@ -1,15 +1,15 @@
-import { CloseDoneFunction } from '../../core/server/nodes';
-import { ConfigNode } from '../../core/server/nodes';
-import { ConfigNodeValidations } from '../../core/server/nodes';
+import { CloseDoneFunction } from '../../../core/server/nodes';
+import { ConfigNode } from '../../../core/server/nodes';
+import { ConfigNodeValidations } from '../../../core/server/nodes';
 import { ConfigsSchema } from '../../schemas/your-node';
 import { ConfigsSchema as ConfigsSchema_2 } from '../../schemas/remote-server';
 import { CredentialsSchema } from '../../schemas/your-node';
-import { InputDoneFunction } from '../../core/server/nodes';
+import { InputDoneFunction } from '../../../core/server/nodes';
 import { InputMessageSchema } from '../../schemas/your-node';
-import { IONode } from '../../core/server/nodes';
-import { IONodeValidations } from '../../core/server/nodes';
+import { IONode } from '../../../core/server/nodes';
+import { IONodeValidations } from '../../../core/server/nodes';
 import { OutputMessageSchema } from '../../schemas/your-node';
-import { SendFunction } from '../../core/server/nodes';
+import { SendFunction } from '../../../core/server/nodes';
 import { Static } from '@sinclair/typebox';
 
 declare function (RED: any): Promise<void>;

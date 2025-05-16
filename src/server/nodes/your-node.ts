@@ -5,7 +5,7 @@ import {
   IONode,
   IONodeValidations,
   SendFunction,
-} from "../../core/server/nodes";
+} from "../../../core/server/nodes";
 import RemoteServerConfigNode from "./remote-server";
 import {
   ConfigsSchema,
