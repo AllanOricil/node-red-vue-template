@@ -105,9 +105,9 @@ function nodeRed(options: { licensePath: string }): Plugin {
         .join("\n");
 
       let licenseBanner =
-        options.licensePath &&
-        fs.existsSync(options.licensePath) &&
-        `<!--\n${fs.readFileSync(options.licensePath)}\n-->`;
+        options.licensePath && fs.existsSync(options.licensePath)
+          ? `<!--\n${fs.readFileSync(options.licensePath)}\n-->`
+          : "";
 
       this.emitFile({
         type: "asset",
@@ -132,7 +132,7 @@ export default defineConfig(({ mode }) => {
     },
     plugins: [
       vue(),
-      nodeRed({ licensePath: path.resolve(__dirname, "LICENSE") }),
+      nodeRed({ licensePath: path.resolve(__dirname, "../../LICENSE") }),
       viteStaticCopy({
         targets: [
           {
@@ -200,12 +200,16 @@ export default defineConfig(({ mode }) => {
           manualChunks(id) {
             if (!id.includes("node_modules")) return;
 
-            const parts = id.split("node_modules/")[1].split("/");
+            // NOTE: because it is using pnpm I need to disregard the .pnpm prefix
+            const parts = id
+              .substring(
+                id.lastIndexOf("node_modules/") + "node_modules/".length
+              )
+              .split("/");
+
             const packageName = parts[0].startsWith("@")
               ? `${parts[0]}/${parts[1]}`
               : parts[0];
-
-            console.log(parts);
 
             // NOTE: these dependencies are chuncked together
             if (["vue"].includes(packageName)) return "vendor-vue";
