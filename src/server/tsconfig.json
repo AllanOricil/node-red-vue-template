@@ -3,7 +3,9 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "CommonJS",
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "lib": ["ES2020"],
+    "types": ["node"]
   },
   "include": ["global.d.ts", "**/*.ts", "vite.config.ts"],
   "exclude": ["vite.config.ts"]

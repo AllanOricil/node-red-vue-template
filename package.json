@@ -18,8 +18,8 @@
     "build:server": "pnpm --filter server run build",
     "build:dev": "pnpm run clean && pnpm run build:client:dev && pnpm run build:server:dev",
     "build": "pnpm run clean && pnpm run build:client && pnpm run build:server",
-    "tsc:c": "pnpm --filter client run tsc",
-    "tsc:s": "pnpm --filter server run tsc"
+    "tsc:client": "pnpm --filter client run tsc",
+    "tsc:server": "pnpm --filter server run tsc"
   },
   "devDependencies": {
     "@types/express": "^5.0.1",

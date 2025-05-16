@@ -126,7 +126,7 @@ importers:
         specifier: ^5.0.1
         version: 5.0.1
       '@types/node':
-        specifier: ^22.14.1
+        specifier: ^22.15.18
         version: 22.15.18
       vite-plugin-dts:
         specifier: ^4.5.4

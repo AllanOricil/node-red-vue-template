@@ -8,7 +8,7 @@
   },
   "devDependencies": {
     "@types/express": "^5.0.1",
-    "@types/node": "^22.14.1",
+    "@types/node": "^22.15.18",
     "vite-plugin-dts": "^4.5.4",
     "vite-plugin-node-externals": "^0.0.1"
   },

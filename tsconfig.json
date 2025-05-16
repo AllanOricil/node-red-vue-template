@@ -16,5 +16,5 @@
     "noEmitOnError": false,
     "noEmit": true
   },
-  "exclude": ["node_modules", "dist", "node_modules/@types/readable-stream"]
+  "exclude": ["node_modules", "dist"]
 }
