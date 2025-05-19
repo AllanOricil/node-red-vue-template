@@ -1,8 +1,8 @@
 <template>
   <div style="display: flex; flex-direction: column; width: 100%">
     <input
-      type="text"
       ref="selectInput"
+      type="text"
       class="node-input-select"
       style="width: 100%"
     />

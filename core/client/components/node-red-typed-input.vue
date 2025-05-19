@@ -1,8 +1,8 @@
 <template>
   <div style="display: flex; flex-direction: column; width: 100%">
     <input
-      type="text"
       ref="typedInput"
+      type="text"
       class="node-red-typed-input"
       style="flex: 1; width: 100%"
     />
@@ -57,6 +57,30 @@ export default defineComponent({
       return types.includes(type);
     },
   },
+  watch: {
+    isProvidedValueTypeValid: {
+      handler(newValue) {
+        if (!newValue) {
+          console.warn(
+            `Validation failed: this.value.type (${this.value.type}) must be one of the provided types (${this.types}).`,
+          );
+        }
+      },
+      immediate: true,
+    },
+    error(newVal) {
+      this.$nextTick(() => {
+        const targetDiv = this.$el.querySelector(
+          ".red-ui-typedInput-container",
+        );
+        if (newVal) {
+          targetDiv.classList.add("input-error");
+        } else {
+          targetDiv.classList.remove("input-error");
+        }
+      });
+    },
+  },
   mounted() {
     const inputElement = this.$refs.typedInput;
     this.$input = $(inputElement).typedInput({
@@ -89,30 +113,6 @@ export default defineComponent({
     this.$input.on("change", () => {
       this.onChange();
     });
-  },
-  watch: {
-    isProvidedValueTypeValid: {
-      handler(newValue) {
-        if (!newValue) {
-          console.warn(
-            `Validation failed: this.value.type (${this.value.type}) must be one of the provided types (${this.types}).`,
-          );
-        }
-      },
-      immediate: true,
-    },
-    error(newVal) {
-      this.$nextTick(() => {
-        const targetDiv = this.$el.querySelector(
-          ".red-ui-typedInput-container",
-        );
-        if (newVal) {
-          targetDiv.classList.add("input-error");
-        } else {
-          targetDiv.classList.remove("input-error");
-        }
-      });
-    },
   },
   methods: {
     onChange() {

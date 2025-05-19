@@ -1,6 +1,6 @@
 <template>
   <div style="display: flex; flex-direction: column; width: 100%">
-    <input type="text" :id="inputId" style="width: 100%" />
+    <input :id="inputId" type="text" style="width: 100%" />
     <div v-if="error" class="node-red-vue-input-error-message">
       {{ error }}
     </div>

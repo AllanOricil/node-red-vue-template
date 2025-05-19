@@ -98,7 +98,7 @@ function nodeRed(options: { licensePath: string }): Plugin {
         .filter(Boolean)
         .join("\n");
 
-      let licenseBanner =
+      const licenseBanner =
         options.licensePath && fs.existsSync(options.licensePath)
           ? `<!--\n${fs.readFileSync(options.licensePath)}\n-->`
           : "";

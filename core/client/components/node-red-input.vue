@@ -5,10 +5,10 @@
       :type="type"
       :value="internalValue"
       :placeholder="placeholder"
+      style="flex: 1; width: 100%"
       @input="onInput"
       @focus="onFocus"
       @blur="onBlur"
-      style="flex: 1; width: 100%"
     />
     <div v-if="error" class="node-red-vue-input-error-message">
       {{ error }}

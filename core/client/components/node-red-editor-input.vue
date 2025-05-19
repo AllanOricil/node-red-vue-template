@@ -1,6 +1,6 @@
 <template>
   <div ref="containerDiv" class="node-text-editor-container">
-    <div ref="editorDiv" :id="editorId" class="node-text-editor"></div>
+    <div :id="editorId" ref="editorDiv" class="node-text-editor"></div>
     <div v-show="error" class="node-red-vue-input-error-message">
       {{ error }}
     </div>
@@ -125,6 +125,16 @@ export default defineComponent({
   mounted() {
     this.mountEditor();
   },
+  beforeUnmount() {
+    if (this.editorInstance) {
+      try {
+        this.editorInstance.destroy();
+      } catch (err) {
+        console.error(`Error destroying editor for ID ${this.editorId}:`, err);
+      }
+      this.editorInstance = null;
+    }
+  },
   methods: {
     mountEditor() {
       this.$nextTick(() => {
@@ -175,16 +185,6 @@ export default defineComponent({
         }
       });
     },
-  },
-  beforeUnmount() {
-    if (this.editorInstance) {
-      try {
-        this.editorInstance.destroy();
-      } catch (err) {
-        console.error(`Error destroying editor for ID ${this.editorId}:`, err);
-      }
-      this.editorInstance = null;
-    }
   },
 });
 </script>
