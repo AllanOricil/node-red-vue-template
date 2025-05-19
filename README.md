@@ -11,9 +11,11 @@ Build Node-RED nodes using:
 
 ### Dev Environment
 
-- node v18.18.x
-- node-red v4.0.9
-- pnpm v10.11.0
+| Dependency | Version  |
+| ---------- | -------- |
+| node       | v18.18.0 |
+| node-red   | v4.0.9   |
+| pnpm       | v10.11.0 |
 
 ### How to build
 
