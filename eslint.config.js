@@ -5,7 +5,6 @@ import globals from "globals";
 import typescriptEslint from "typescript-eslint";
 
 export default typescriptEslint.config(
-  { ignores: ["*.d.ts", "**/coverage", "**/dist"] },
   {
     extends: [
       eslint.configs.recommended,
@@ -16,7 +15,7 @@ export default typescriptEslint.config(
     languageOptions: {
       ecmaVersion: "latest",
       sourceType: "module",
-      globals: globals.browser,
+      globals: { ...globals["shared-node-browser"] },
       parserOptions: {
         parser: typescriptEslint.parser,
       },
@@ -24,4 +23,7 @@ export default typescriptEslint.config(
     rules: {},
   },
   eslintConfigPrettier,
+  {
+    ignores: ["src/**/*.d.ts", "**/coverage", "**/dist"],
+  },
 );
