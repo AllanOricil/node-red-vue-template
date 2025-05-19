@@ -1,5 +1,4 @@
 import { AnySchemaObject } from "ajv";
-import { Type } from "@sinclair/typebox";
 
 function getDefaultsFromSchema(
   schema: AnySchemaObject

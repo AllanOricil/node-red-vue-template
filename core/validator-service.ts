@@ -6,7 +6,6 @@ import Ajv, {
 } from "ajv";
 import addFormats from "ajv-formats";
 import addErrors from "ajv-errors";
-import { MessageSchema, TypedInputSchema } from "./schemas";
 
 class ValidatorService {
   private readonly ajv: Ajv;

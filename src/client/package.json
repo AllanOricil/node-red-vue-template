@@ -8,12 +8,11 @@
   },
   "devDependencies": {
     "@types/jquery": "^3.5.32",
-    "@types/vue": "^2.0.0",
     "@types/mime-types": "^2.1.4",
+    "@types/vue": "^2.0.0",
     "@vitejs/plugin-vue": "^5.2.3",
     "mime-types": "^3.0.1",
     "rollup-plugin-visualizer": "^5.14.0",
-    "vite-plugin-banner": "^0.8.1",
     "vite-plugin-static-copy": "^3.0.0"
   },
   "dependencies": {

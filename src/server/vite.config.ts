@@ -3,9 +3,8 @@ import path from "path";
 import { defineConfig, Plugin } from "vite";
 import dts from "vite-plugin-dts";
 import nodeExternals from "rollup-plugin-node-externals";
-import pkg from "./package.json" assert { type: "json" };
-
-type PartialPackageJson = Partial<typeof pkg>;
+import pkg from "./package.json";
+import type { PackageJson } from "type-fest";
 
 function createPackageJson(): Plugin {
   return {
@@ -15,7 +14,7 @@ function createPackageJson(): Plugin {
         const rootPkgPath = path.resolve(__dirname, "../../package.json");
         const rootPkg = JSON.parse(fs.readFileSync(rootPkgPath, "utf-8"));
 
-        const _pkg = { ...pkg } as PartialPackageJson;
+        const _pkg = { ...pkg } as PackageJson;
         delete _pkg.type;
         delete _pkg.scripts;
         delete _pkg.devDependencies;
@@ -47,6 +46,8 @@ function createPackageJson(): Plugin {
 
 export default defineConfig(({ mode }) => {
   const isDev = mode === "development";
+
+  console.log(`ISDEV: ${isDev}`);
 
   return {
     resolve: {

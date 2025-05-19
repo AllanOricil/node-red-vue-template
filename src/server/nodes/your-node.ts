@@ -85,6 +85,7 @@ export default class YourNode extends IONode<
 
   async onClose(removed: boolean, done: CloseDoneFunction): Promise<void> {
     console.log("removing node");
+    console.log(removed);
     done();
   }
 }

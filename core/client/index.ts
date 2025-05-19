@@ -1,4 +1,4 @@
-import { createApp, Component, App, defineComponent } from "vue";
+import { createApp, Component, App } from "vue";
 import { cloneDeep, isEqual, merge } from "es-toolkit";
 import { ValidateFunction, JSONSchemaType } from "ajv";
 import { getDefaultsFromSchema, getCredentialsFromSchema } from "../utils";

@@ -7,12 +7,5 @@
     "lib": ["ES2020", "DOM"],
     "types": ["jquery"]
   },
-  "include": [
-    "**/*.ts",
-    "**/*.vue",
-    "shims-vue.d.ts",
-    "jquery-plugin.d.ts",
-    "vite.config.ts"
-  ],
-  "exclude": ["../server", "vite.config.ts"]
+  "include": ["**/*.ts", "**/*.vue", "shims-vue.d.ts", "jquery-plugin.d.ts"]
 }

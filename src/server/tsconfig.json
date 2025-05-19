@@ -7,6 +7,5 @@
     "lib": ["ES2020"],
     "types": ["node"]
   },
-  "include": ["global.d.ts", "**/*.ts", "vite.config.ts"],
-  "exclude": ["vite.config.ts"]
+  "include": ["global.d.ts", "**/*.ts"]
 }

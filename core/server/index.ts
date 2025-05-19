@@ -1,10 +1,7 @@
 import { Type } from "@sinclair/typebox";
-import camelCase from "camelcase";
-import { merge } from "es-toolkit";
 import { Request, Response } from "express";
 import { getCredentialsFromSchema } from "../utils";
 import { Node, IONode, ConfigNode } from "./nodes";
-import { validatorService } from "./validator";
 
 // TODO: define RED type
 /**
@@ -99,7 +96,7 @@ export async function registerType(
       : {},
   });
 
-  RED.httpAdmin.get(`/nrg/nodes/${type}`, (req: Request, res: Response) => {
+  RED.httpAdmin.get(`/nrg/nodes/${type}`, (_: Request, res: Response) => {
     if (NodeClass.validations) {
       const validationConfig = NodeClass.validations;
 

@@ -3,9 +3,7 @@ import fs from "fs";
 import mime from "mime-types";
 import path from "path";
 import { defineConfig, Plugin } from "vite";
-import type { OutputBundle, NormalizedOutputOptions } from "rollup";
 import { visualizer } from "rollup-plugin-visualizer";
-import banner from "vite-plugin-banner";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 import vue from "@vitejs/plugin-vue";
 import pkg from "../../package.json" assert { type: "json" };
@@ -14,11 +12,7 @@ import pkg from "../../package.json" assert { type: "json" };
 // TODO: build locales and copy to dist/locales
 
 // TODO: maybe there is a more reliable way to generate these tags?
-function getHtmlTag(
-  filePath: string,
-  srcPath: string,
-  assetContent: Uint8Array | string
-): string | null {
+function getHtmlTag(filePath: string, srcPath: string): string | null {
   const mimeType = mime.lookup(filePath);
 
   switch (mimeType) {
@@ -99,7 +93,7 @@ function nodeRed(options: { licensePath: string }): Plugin {
           if (typeof content !== "string" && !(content instanceof Uint8Array))
             return null;
 
-          return getHtmlTag(fileName, srcPath, content);
+          return getHtmlTag(fileName, srcPath);
         })
         .filter(Boolean)
         .join("\n");
@@ -183,11 +177,7 @@ export default defineConfig(({ mode }) => {
         output: {
           entryFileNames: "resources/index.[hash].js",
           chunkFileNames: "resources/vendor.[hash].js",
-          assetFileNames: (assetInfo) => {
-            console.log(assetInfo);
-            const fileName = assetInfo.name ?? "";
-            return "resources/[name].[hash].[ext]";
-          },
+          assetFileNames: "resources/[name].[hash].[ext]",
           globals: {
             vue: "Vue",
             jquery: "$",

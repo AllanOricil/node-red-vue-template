@@ -1,4 +1,4 @@
-import { Type, Static } from "@sinclair/typebox";
+import { Type } from "@sinclair/typebox";
 import { TYPED_INPUT_TYPES } from "../constants";
 
 const TypedInputTypeLiterals = TYPED_INPUT_TYPES.map((type) =>
