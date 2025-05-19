@@ -63,18 +63,6 @@ function nodeRed(options: { licensePath: string }): Plugin {
     apply: "build",
     enforce: "post",
     async generateBundle(_, bundle) {
-      const nodesDir = path.resolve(__dirname, "nodes");
-      const nodeNames = fs
-        .readdirSync(nodesDir, { withFileTypes: true })
-        .filter((dirent) => dirent.isFile())
-        .map((dirent) => path.basename(dirent.name, path.extname(dirent.name)));
-
-      const templateTags = nodeNames
-        .map((nodeName) => {
-          return `<script type="text/html" data-template-name="${nodeName}"><div id="app"></div></script>`;
-        })
-        .join("\n");
-
       const resourcesTags = Object.keys(bundle)
         .map((fileName) => {
           const asset = bundle[fileName];
@@ -106,7 +94,7 @@ function nodeRed(options: { licensePath: string }): Plugin {
       this.emitFile({
         type: "asset",
         fileName: "index.html",
-        source: `${licenseBanner}\n${templateTags}\n${resourcesTags}`,
+        source: `${licenseBanner}\n${resourcesTags}`,
       });
     },
   };

@@ -267,6 +267,12 @@ async function registerType(
     console.log("defaults", defaults);
     console.log("credentials", credentials);
 
+    $("<script>", {
+      type: "text/html",
+      "data-template-name": type,
+      html: '<div id="app"></div>',
+    }).appendTo("body");
+
     function oneditprepare(this: Node) {
       console.log("oneditprepare");
       console.log(this);
