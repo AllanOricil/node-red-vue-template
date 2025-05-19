@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import { defineConfig, Plugin } from "vite";
 import dts from "vite-plugin-dts";
-import nodeExternals from "vite-plugin-node-externals";
+import nodeExternals from "rollup-plugin-node-externals";
 import pkg from "./package.json" assert { type: "json" };
 
 type PartialPackageJson = Partial<typeof pkg>;

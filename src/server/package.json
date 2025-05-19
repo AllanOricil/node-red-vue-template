@@ -9,8 +9,8 @@
   "devDependencies": {
     "@types/express": "^5.0.1",
     "@types/node": "^22.15.18",
-    "vite-plugin-dts": "^4.5.4",
-    "vite-plugin-node-externals": "^0.0.1"
+    "rollup-plugin-node-externals": "^8.0.0",
+    "vite-plugin-dts": "^4.5.4"
   },
   "dependencies": {
     "@sinclair/typebox": "^0.34.33",
