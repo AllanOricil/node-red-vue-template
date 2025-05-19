@@ -1,7 +1,7 @@
 import { AnySchemaObject } from "ajv";
 
 function getDefaultsFromSchema(
-  schema: AnySchemaObject
+  schema: AnySchemaObject,
 ): Record<string, { type?: string; required: boolean; value: any }> {
   const result: Record<
     string,
@@ -29,7 +29,7 @@ function getDefaultsFromSchema(
 }
 
 function getCredentialsFromSchema(
-  schema: AnySchemaObject
+  schema: AnySchemaObject,
 ): Record<string, { type: string; required: boolean; value: any }> {
   const result: Record<
     string,

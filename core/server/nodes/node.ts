@@ -62,7 +62,7 @@ abstract class Node<
       console.log(this.configs);
       console.log(this);
       const validator = validatorService.createValidator(
-        Node.validations?.configs
+        Node.validations?.configs,
       );
       const isConfigsValid = validator(this.configs);
       if (!isConfigsValid) {
@@ -77,7 +77,7 @@ abstract class Node<
     if (Node.validations?.credentials) {
       console.log("validating credentials");
       const validator = validatorService.createValidator(
-        Node.validations?.credentials
+        Node.validations?.credentials,
       );
       const isCredentialsValid = validator(this.credentials);
       if (!isCredentialsValid) {

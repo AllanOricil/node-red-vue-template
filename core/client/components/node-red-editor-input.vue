@@ -104,7 +104,7 @@ export default defineComponent({
         if (!isValid) {
           console.warn(
             `[WARN]: Invalid value for 'type' property: "${value}". ` +
-              `Expected one of: ${allowedLanguages.join(", ")}`
+              `Expected one of: ${allowedLanguages.join(", ")}`,
           );
         }
         return isValid;
@@ -151,13 +151,13 @@ export default defineComponent({
           } catch (e) {
             console.error(
               "[NodeRedEditorInput] Error setting initial editor style:",
-              e
+              e,
             );
             this.createEditorInstance();
           }
         } else {
           console.error(
-            "[NodeRedEditorInput] Container or Editor div refs not found on mount."
+            "[NodeRedEditorInput] Container or Editor div refs not found on mount.",
           );
         }
       });

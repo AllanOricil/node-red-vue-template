@@ -81,7 +81,7 @@ function nodeRed(options: { licensePath: string }): Plugin {
           const srcPath = path.join(
             "resources",
             pkg.name,
-            fileName.replace("resources", "")
+            fileName.replace("resources", ""),
           );
 
           const content =
@@ -193,7 +193,7 @@ export default defineConfig(({ mode }) => {
             // NOTE: because it is using pnpm I need to disregard the .pnpm prefix
             const parts = id
               .substring(
-                id.lastIndexOf("node_modules/") + "node_modules/".length
+                id.lastIndexOf("node_modules/") + "node_modules/".length,
               )
               .split("/");
 

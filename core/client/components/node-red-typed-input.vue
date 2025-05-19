@@ -24,7 +24,7 @@ export default defineComponent({
       validator: function (obj) {
         if (!typeof obj === "object") {
           console.warn(
-            "[WARN] Invalid value for 'value' property. It must be an object."
+            "[WARN] Invalid value for 'value' property. It must be an object.",
           );
           return false;
         }
@@ -33,7 +33,7 @@ export default defineComponent({
         if (!isValid) {
           console.warn(
             "[WARN] Invalid value for 'value' property. It must be an object with 'value' and 'type' properties being strings.",
-            obj
+            obj,
           );
         }
         return isValid;
@@ -95,7 +95,7 @@ export default defineComponent({
       handler(newValue) {
         if (!newValue) {
           console.warn(
-            `Validation failed: this.value.type (${this.value.type}) must be one of the provided types (${this.types}).`
+            `Validation failed: this.value.type (${this.value.type}) must be one of the provided types (${this.types}).`,
           );
         }
       },
@@ -104,7 +104,7 @@ export default defineComponent({
     error(newVal) {
       this.$nextTick(() => {
         const targetDiv = this.$el.querySelector(
-          ".red-ui-typedInput-container"
+          ".red-ui-typedInput-container",
         );
         if (newVal) {
           targetDiv.classList.add("input-error");

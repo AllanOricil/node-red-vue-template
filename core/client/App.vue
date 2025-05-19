@@ -7,7 +7,6 @@
 <script lang="ts">
 import jsonpointer from "jsonpointer";
 import { defineComponent } from "vue";
-import { validatorService } from "./validator";
 
 export default defineComponent({
   name: "NodeRedVueApp",
@@ -38,10 +37,10 @@ export default defineComponent({
     Object.keys(this.localNode._def.defaults).forEach((prop) => {
       this.$watch(
         () => this.localNode[prop],
-        (newVal) => {
+        () => {
           this.validate();
         },
-        { deep: true }
+        { deep: true },
       );
     });
 
@@ -65,7 +64,7 @@ export default defineComponent({
             this.localNode.credentials[`has_${prop}`] = !!newVal;
           }
         },
-        { deep: true }
+        { deep: true },
       );
     });
   },
@@ -100,14 +99,14 @@ export default defineComponent({
         this.errors = errors.reduce((acc, error) => {
           const errorValue = jsonpointer.get(
             this.localNode,
-            error.instancePath
+            error.instancePath,
           );
           if (
             error.parentSchema.format === "password" &&
             errorValue === "__PWD__"
           ) {
             console.log(
-              "password fields with value equal to __PWD__ should not be an error"
+              "password fields with value equal to __PWD__ should not be an error",
             );
             return acc;
           } else {

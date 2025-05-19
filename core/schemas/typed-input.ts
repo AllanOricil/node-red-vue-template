@@ -2,7 +2,7 @@ import { Type } from "@sinclair/typebox";
 import { TYPED_INPUT_TYPES } from "../constants";
 
 const TypedInputTypeLiterals = TYPED_INPUT_TYPES.map((type) =>
-  Type.Literal(type)
+  Type.Literal(type),
 );
 
 export default Type.Object(
@@ -12,7 +12,7 @@ export default Type.Object(
       {
         description: "The actual value entered or selected.",
         default: "",
-      }
+      },
     ),
     type: Type.Union(TypedInputTypeLiterals, {
       description:
@@ -26,5 +26,5 @@ export default Type.Object(
       type: "str",
       value: "",
     },
-  }
+  },
 );

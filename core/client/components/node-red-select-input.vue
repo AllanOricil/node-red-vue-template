@@ -23,7 +23,7 @@ export default defineComponent({
       validator: function (value) {
         if (!Array.isArray(value)) {
           console.warn(
-            "[WARN] Invalid value for 'options' property. It must be an array."
+            "[WARN] Invalid value for 'options' property. It must be an array.",
           );
           return false;
         }
@@ -41,7 +41,7 @@ export default defineComponent({
         if (!isValid) {
           console.warn(
             "[WARN] Invalid value for 'options' property. Each item must be an object with 'value' and 'label' properties being strings.",
-            value
+            value,
           );
         }
         return isValid;
@@ -71,7 +71,7 @@ export default defineComponent({
 
     $selectInput.typedInput(
       "value",
-      Array.isArray(this.value) ? this.value.join(",") : this.value
+      Array.isArray(this.value) ? this.value.join(",") : this.value,
     );
     $selectInput.on("change", () => {
       const newValue = this.multiple

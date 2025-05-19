@@ -38,7 +38,7 @@ class ValidatorService {
 
   errors(
     errors?: ErrorObject[] | null | undefined,
-    options?: ErrorsTextOptions
+    options?: ErrorsTextOptions,
   ) {
     return this.ajv.errorsText(errors, options);
   }

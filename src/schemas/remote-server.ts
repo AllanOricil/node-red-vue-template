@@ -9,7 +9,7 @@ const ConfigsSchema = Type.Object(
   },
   {
     $id: "RemoteServerConfigsSchema",
-  }
+  },
 );
 
 export { ConfigsSchema };

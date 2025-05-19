@@ -35,7 +35,7 @@ export default defineComponent({
       this,
       this.value,
       this.type,
-      this.inputPrefix
+      this.inputPrefix,
     );
 
     const input = $("#" + this.inputId);

@@ -34,12 +34,12 @@ declare module "./io-node" {
     metric(
       eventName: string,
       msg: Message & { [key: string]: any },
-      metricValue: number
+      metricValue: number,
     ): boolean | void;
     status(
       status:
         | { fill?: "red" | "green"; shape?: "dot" | "string"; text?: string }
-        | string
+        | string,
     ): void;
   }
 }
@@ -70,12 +70,12 @@ abstract class IONode<
   abstract onInput(
     msg: TInputMessage,
     send: SendFunction<TOutputMessage>,
-    done: InputDoneFunction
+    done: InputDoneFunction,
   ): void | Promise<void>;
 
   abstract onClose(
     removed: boolean,
-    done: CloseDoneFunction
+    done: CloseDoneFunction,
   ): void | Promise<void>;
 
   /**
@@ -91,7 +91,7 @@ abstract class IONode<
         async (
           msg: TInputMessage,
           send: SendFunction<TOutputMessage>,
-          done: InputDoneFunction
+          done: InputDoneFunction,
         ) => {
           try {
             const inputSchema = IONode.validations?.input;
@@ -106,7 +106,7 @@ abstract class IONode<
                   {
                     separator: "\n",
                     dataVar: "- message",
-                  }
+                  },
                 );
                 console.error(errors);
                 return done(errors);
@@ -123,7 +123,7 @@ abstract class IONode<
               done("Unknown error occurred during input handling");
             }
           }
-        }
+        },
       );
     }
     if (this.onClose) {

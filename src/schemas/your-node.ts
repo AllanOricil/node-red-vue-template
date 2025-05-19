@@ -13,7 +13,7 @@ const ConfigsSchema = Type.Object(
     myProperty2: TypedInputSchema,
     remoteServer: Type.String({ nodeType: "remote-server" }),
     anotherRemoteServer: Type.Optional(
-      Type.String({ nodeType: "remote-server" })
+      Type.String({ nodeType: "remote-server" }),
     ),
     country: Type.String({ default: "brazil" }),
     fruit: Type.Array(Type.String(), { default: ["apple", "melon"] }),
@@ -29,7 +29,7 @@ const ConfigsSchema = Type.Object(
   },
   {
     $id: "YourNodeConfigsSchema",
-  }
+  },
 );
 
 const CredentialsSchema = Type.Object(
@@ -41,7 +41,7 @@ const CredentialsSchema = Type.Object(
         maxLength: 20,
         pattern: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/.source,
         format: "password",
-      })
+      }),
     ),
     password2: Type.Optional(
       Type.String({
@@ -50,15 +50,15 @@ const CredentialsSchema = Type.Object(
           /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
             .source,
         format: "password",
-      })
+      }),
     ),
     username: Type.Optional(
-      Type.String({ default: "", maxLength: 10, minLength: 5 })
+      Type.String({ default: "", maxLength: 10, minLength: 5 }),
     ),
   },
   {
     $id: "YourNodeCredentialsSchema",
-  }
+  },
 );
 
 const InputMessageSchema = Type.Object(
@@ -68,7 +68,7 @@ const InputMessageSchema = Type.Object(
   },
   {
     $id: "YourNodeInputMessageSchema",
-  }
+  },
 );
 
 const OutputMessageSchema = Type.Object(
@@ -79,7 +79,7 @@ const OutputMessageSchema = Type.Object(
   },
   {
     $id: "YourNodeOutputMessageSchema",
-  }
+  },
 );
 
 export {

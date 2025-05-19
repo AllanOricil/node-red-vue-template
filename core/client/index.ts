@@ -138,7 +138,7 @@ interface NodeDefinition {
 function createNodeRedVueApp(
   node: Node,
   form: NodeFormDefinition,
-  validator: ValidateFunction | (() => boolean)
+  validator: ValidateFunction | (() => boolean),
 ): App<Element> {
   const app = createApp(NodeRedVueApp, {
     node,
@@ -158,7 +158,7 @@ function createNodeRedVueApp(
 function mountApp(
   node: Node,
   form: NodeFormDefinition,
-  validator: ValidateFunction | (() => boolean)
+  validator: ValidateFunction | (() => boolean),
 ) {
   $("#app").empty();
   node._newState = cloneDeep(node);
@@ -194,7 +194,7 @@ function getNodeState(node: Node): NodeState {
 
 function getChanges(
   o: Record<any, any>,
-  n: Record<any, any>
+  n: Record<any, any>,
 ): Record<string, any> {
   const changes: Record<string, any> = {};
 
@@ -247,13 +247,13 @@ function defineNode<T extends NodeDefinition>(options: T): T {
  */
 async function registerType(
   type: string,
-  options: NodeDefinition
+  options: NodeDefinition,
 ): Promise<void> {
   try {
     const response = await fetch(`/nrg/nodes/${type}`);
     if (!response.ok) {
       throw new Error(
-        `Error while fetching node config schema ${response.status}`
+        `Error while fetching node config schema ${response.status}`,
       );
     }
 
@@ -291,7 +291,7 @@ async function registerType(
             const oldConfigNode = RED.nodes.node(oldConfigNodeId);
             if (oldConfigNode && oldConfigNode._def.category === "config") {
               const parentNodeIndex = oldConfigNode.users.findIndex(
-                (_node) => _node.id === node.id
+                (_node) => _node.id === node.id,
               );
               if (parentNodeIndex !== -1) {
                 oldConfigNode.users.splice(parentNodeIndex, 1);
@@ -310,7 +310,7 @@ async function registerType(
             newStateConfigNode._def.category === "config"
           ) {
             const parentNodeIndex = newStateConfigNode.users.findIndex(
-              (_node) => _node.id === node.id
+              (_node) => _node.id === node.id,
             );
             if (parentNodeIndex === -1) {
               newStateConfigNode.users.push(node);

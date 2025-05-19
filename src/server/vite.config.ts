@@ -34,7 +34,7 @@ function createPackageJson(): Plugin {
         await fs.promises.writeFile(
           path.join(__dirname, "../../dist/package.json"),
           JSON.stringify(_pkg, null, 2),
-          { encoding: "utf-8" }
+          { encoding: "utf-8" },
         );
         console.log("[create-package-json-plugin] package created");
       } catch (err) {

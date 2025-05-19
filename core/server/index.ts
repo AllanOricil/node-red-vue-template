@@ -18,13 +18,13 @@ export async function registerType(
   RED: any,
   type: string,
   NodeClass:
-    | typeof Node
+    | typeof Node<any, any>
     | typeof ConfigNode<any, any>
-    | typeof IONode<any, any, any, any>
+    | typeof IONode<any, any, any, any>,
 ) {
   if (!(NodeClass.prototype instanceof Node)) {
     throw new Error(
-      `${NodeClass.name} must extend IONode or ConfigNode classes`
+      `${NodeClass.name} must extend IONode or ConfigNode classes`,
     );
   }
 

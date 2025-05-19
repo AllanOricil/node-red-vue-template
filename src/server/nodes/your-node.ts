@@ -66,13 +66,13 @@ export default class YourNode extends IONode<
       originalType: "string" | "number";
       processedTime: number;
     }>,
-    done: InputDoneFunction
+    done: InputDoneFunction,
   ): Promise<void> {
     console.log(this);
     console.log(msg);
 
     const server = IONode.getNode<RemoteServerConfigNode>(
-      this.configs.remoteServer
+      this.configs.remoteServer,
     );
     console.log(server?.users);
 
@@ -86,7 +86,7 @@ export default class YourNode extends IONode<
 
   override async onClose(
     removed: boolean,
-    done: CloseDoneFunction
+    done: CloseDoneFunction,
   ): Promise<void> {
     console.log("removing node");
     console.log(removed);

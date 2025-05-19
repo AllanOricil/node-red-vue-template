@@ -17,7 +17,7 @@ declare const RED: {
       obj: Record<any, any>,
       value: string,
       type: number,
-      prefix: string
+      prefix: string,
     ) => void;
   };
 };
