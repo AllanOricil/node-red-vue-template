@@ -3,12 +3,12 @@ import { cloneDeep, isEqual, merge } from "es-toolkit";
 import { ValidateFunction, JSONSchemaType } from "ajv";
 import { getDefaultsFromSchema, getCredentialsFromSchema } from "../utils";
 import { validatorService } from "./validator";
-import NodeRedVueApp from "./App.vue";
-import NodeRedInput from "./components/NodeRedInput.vue";
-import NodeRedTypedInput from "./components/NodeRedTypedInput.vue";
-import NodeRedConfigInput from "./components/NodeRedConfigInput.vue";
-import NodeRedSelectInput from "./components/NodeRedSelectInput.vue";
-import NodeRedEditorInput from "./components/NodeRedEditorInput.vue";
+import NodeRedVueApp from "./app.vue";
+import NodeRedInput from "./components/node-red-input.vue";
+import NodeRedTypedInput from "./components/node-red-typed-input.vue";
+import NodeRedConfigInput from "./components/node-red-config-input.vue";
+import NodeRedSelectInput from "./components/node-red-select-input.vue";
+import NodeRedEditorInput from "./components/node-red-editor-input.vue";
 
 interface NodeStateCredentials {
   [key: string]: any;
