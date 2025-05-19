@@ -52,19 +52,20 @@ export default class YourNode extends IONode<
     }
   }
 
-  async onInput(
+  override async onInput(
     msg: {
       payload?: string | undefined;
       topic?: string | undefined;
       _msgid?: string | undefined;
-    } & { myVariable?: string | undefined },
-    send: SendFunction<
-      {
-        payload?: string | undefined;
-        topic?: string | undefined;
-        _msgid?: string | undefined;
-      } & { originalType: "string" | "number"; processedTime: number }
-    >,
+      myVariable?: string | undefined;
+    },
+    send: SendFunction<{
+      payload?: string | undefined;
+      topic?: string | undefined;
+      _msgid?: string | undefined;
+      originalType: "string" | "number";
+      processedTime: number;
+    }>,
     done: InputDoneFunction
   ): Promise<void> {
     console.log(this);
@@ -83,7 +84,10 @@ export default class YourNode extends IONode<
     done();
   }
 
-  async onClose(removed: boolean, done: CloseDoneFunction): Promise<void> {
+  override async onClose(
+    removed: boolean,
+    done: CloseDoneFunction
+  ): Promise<void> {
     console.log("removing node");
     console.log(removed);
     done();

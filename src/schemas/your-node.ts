@@ -61,31 +61,25 @@ const CredentialsSchema = Type.Object(
   }
 );
 
-const InputMessageSchema = Type.Intersect(
-  [
-    MessageSchema,
-    Type.Object({
-      myVariable: Type.Optional(Type.String()),
-    }),
-  ],
+const InputMessageSchema = Type.Object(
+  {
+    ...MessageSchema.properties,
+    myVariable: Type.Optional(Type.String()),
+  },
   {
     $id: "YourNodeInputMessageSchema",
   }
 );
 
-const OutputMessageSchema = Type.Intersect(
-  [
-    MessageSchema,
-    Type.Object({
-      originalType: Type.Union([
-        Type.Literal("string"),
-        Type.Literal("number"),
-      ]),
-      processedTime: Type.Number(),
-    }),
-    Type.Unknown(),
-  ],
-  { $id: "YourNodeOutputMessageSchema" }
+const OutputMessageSchema = Type.Object(
+  {
+    ...MessageSchema.properties,
+    originalType: Type.Union([Type.Literal("string"), Type.Literal("number")]),
+    processedTime: Type.Number(),
+  },
+  {
+    $id: "YourNodeOutputMessageSchema",
+  }
 );
 
 export {
