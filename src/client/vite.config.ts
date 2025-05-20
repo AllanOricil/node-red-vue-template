@@ -129,6 +129,10 @@ export default defineConfig(({ mode }) => {
             src: "../../examples",
             dest: ".",
           },
+          {
+            src: "../../LICENSE",
+            dest: ".",
+          },
         ],
       }),
       ...(!isDev
