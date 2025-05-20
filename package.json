@@ -35,6 +35,8 @@
     "tsc:server": "pnpm --filter server run tsc"
   },
   "devDependencies": {
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
     "@types/express": "^5.0.1",
     "@types/node": "^22.15.18",
     "@typescript-eslint/eslint-plugin": "^8.32.1",
@@ -44,6 +46,7 @@
     "eslint-plugin-vue": "^10.1.0",
     "globals": "^16.1.0",
     "prettier": "3.5.3",
+    "semantic-release": "^24.2.4",
     "type-fest": "^4.41.0",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.32.1",
