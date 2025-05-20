@@ -18,6 +18,9 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+
+const SECRET_PATTERN = "*************";
+
 export default defineComponent({
   props: {
     value: String,
@@ -35,7 +38,6 @@ export default defineComponent({
   data() {
     return {
       internalValue: "",
-      secretPattern: "*************",
     };
   },
   beforeMount() {
@@ -49,16 +51,13 @@ export default defineComponent({
       this.$emit("input", this.internalValue);
     },
     onFocus() {
-      if (
-        this.type === "password" &&
-        this.internalValue === this.secretPattern
-      ) {
+      if (this.type === "password" && this.internalValue === SECRET_PATTERN) {
         this.internalValue = "";
       }
     },
     onBlur() {
       if (this.type === "password" && this.value === "__PWD__") {
-        this.internalValue = this.secretPattern;
+        this.internalValue = SECRET_PATTERN;
       }
     },
   },
