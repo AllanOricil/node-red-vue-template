@@ -361,7 +361,7 @@ async function registerType(
         label:
           options.label ||
           function () {
-            return this.name;
+            return this.name || this._(`${type}.label`);
           },
         oneditprepare,
         oneditsave,
@@ -376,14 +376,18 @@ async function registerType(
         label:
           options.label ||
           function () {
-            return this.name;
+            return this.name || this._(`${type}.label`);
           },
         category: options.category,
         color: options.color || "#FFFFFF",
         icon: options.icon,
         inputs: options.inputs || 0,
         outputs: options.outputs || 0,
-        paletteLabel: options.paletteLabel,
+        paletteLabel:
+          options.paletteLabel ||
+          function () {
+            return this.name || this._(`${type}.label`);
+          },
         labelStyle: options.labelStyle,
         inputLabels: options.inputLabels,
         outputLabels: options.outputLabels,

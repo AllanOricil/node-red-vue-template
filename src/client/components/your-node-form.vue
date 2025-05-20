@@ -1,6 +1,11 @@
 <template>
   <div>
     <div class="form-row">
+      <label><i class="fa fa-tag"></i> {{ $i18n("configs.name") }}</label>
+      <NodeRedInput v-model:value="node.name" :error="errors['node.name']" />
+    </div>
+
+    <div class="form-row">
       <label
         ><i class="fa fa-tag"></i> {{ $i18n("credentials.username") }}</label
       >
