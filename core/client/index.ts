@@ -152,6 +152,9 @@ function createNodeRedVueApp(
   app.component("NodeRedSelectInput", NodeRedSelectInput);
   app.component("NodeRedEditorInput", NodeRedEditorInput);
   app.component("NodeRedNodeForm", form.component);
+
+  // NOTE: now every form can use $i18n to access Node-RED built in i18n features
+  app.config.globalProperties.$i18n = node._;
   return app;
 }
 

@@ -9,10 +9,14 @@
     "country": "Country",
     "fruit": "Fruit",
     "number": "Number",
-    "Object": "Object",
-    "Array": "Array",
+    "object": "Object",
+    "array": "Array",
     "jsontest": "JSON Test",
     "csstest": "CSS Test"
   },
-  "credentials": {}
+  "credentials": {
+    "username": "Username",
+    "password": "Password",
+    "password2": "Password 2"
+  }
 }

@@ -1,7 +1,10 @@
 <template>
   <div>
     <div class="form-row">
-      <label><i class="fa fa-tag"></i> Username</label>
+      <label
+        ><i class="fa fa-tag"></i>
+        {{ $i18n("your-node.credentials.username") }}</label
+      >
       <NodeRedInput
         v-model:value="node.credentials.username"
         :error="errors['node.credentials.username']"
@@ -9,7 +12,10 @@
     </div>
 
     <div class="form-row">
-      <label><i class="fa fa-tag"></i> Password</label>
+      <label
+        ><i class="fa fa-tag"></i>
+        {{ $i18n("your-node.credentials.password") }}</label
+      >
       <NodeRedInput
         v-model:value="node.credentials.password"
         type="password"
@@ -18,7 +24,10 @@
     </div>
 
     <div class="form-row">
-      <label><i class="fa fa-tag"></i> Password 2</label>
+      <label
+        ><i class="fa fa-tag"></i>
+        {{ $i18n("your-node.credentials.password2") }}</label
+      >
       <NodeRedInput
         v-model:value="node.credentials.password2"
         type="password"
@@ -27,7 +36,7 @@
     </div>
 
     <div class="form-row">
-      <label>Typed Input</label>
+      <label>{{ $i18n("your-node.configs.myProperty") }}</label>
       <NodeRedTypedInput
         v-model:value="node.myProperty"
         :types="types"
@@ -36,7 +45,7 @@
     </div>
 
     <div class="form-row">
-      <label>Typed Input 2</label>
+      <label>{{ $i18n("your-node.configs.myProperty2") }}</label>
       <NodeRedTypedInput
         v-model:value="node.myProperty2"
         :error="errors['node.myProperty2']"
@@ -44,7 +53,7 @@
     </div>
 
     <div class="form-row">
-      <label>Config Input</label>
+      <label>{{ $i18n("your-node.configs.remoteServer") }}</label>
       <NodeRedConfigInput
         v-model:value="node.remoteServer"
         type="remote-server"
@@ -53,7 +62,7 @@
     </div>
 
     <div class="form-row">
-      <label>Config Input</label>
+      <label>{{ $i18n("your-node.configs.anotherRemoteServer") }}</label>
       <NodeRedConfigInput
         v-model:value="node.anotherRemoteServer"
         type="remote-server"
@@ -62,7 +71,7 @@
     </div>
 
     <div class="form-row">
-      <label>Select Input</label>
+      <label>{{ $i18n("your-node.configs.country") }}</label>
       <NodeRedSelectInput
         v-model:value="node.country"
         :options="countries"
@@ -71,7 +80,7 @@
     </div>
 
     <div class="form-row">
-      <label>MultiSelect Input</label>
+      <label>{{ $i18n("your-node.configs.fruit") }}</label>
       <NodeRedSelectInput
         v-model:value="node.fruit"
         :options="fruits"
@@ -81,7 +90,7 @@
     </div>
 
     <div class="form-row">
-      <label>Select Input</label>
+      <label>{{ $i18n("your-node.configs.number") }}</label>
       <NodeRedSelectInput
         v-model:value="node.number"
         :options="numbers"
@@ -90,7 +99,7 @@
     </div>
 
     <div class="form-row">
-      <label>Select Input</label>
+      <label>{{ $i18n("your-node.configs.object") }}</label>
       <NodeRedSelectInput
         v-model:value="node.object"
         :options="objects"
@@ -100,7 +109,7 @@
     </div>
 
     <div class="form-row">
-      <label>Select Input</label>
+      <label>{{ $i18n("your-node.configs.array") }}</label>
       <NodeRedSelectInput
         v-model:value="node.array"
         :options="arrays"
@@ -109,7 +118,7 @@
     </div>
 
     <div class="form-row">
-      <label>Editor with default height 200px and JSON</label>
+      <label>{{ $i18n("your-node.configs.jsontest") }}</label>
       <NodeRedEditorInput
         v-model:value="node.jsontest"
         :error="errors['node.jsontest']"
@@ -117,7 +126,7 @@
     </div>
 
     <div class="form-row">
-      <label>Editor with custom height and CSS</label>
+      <label>{{ $i18n("your-node.configs.csstest") }}</label>
       <NodeRedEditorInput
         v-model:value="node.csstest"
         language="css"
