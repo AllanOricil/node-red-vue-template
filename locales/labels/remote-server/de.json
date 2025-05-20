@@ -1,0 +1,8 @@
+{
+  "label": "Entfernter Server",
+  "configs": {
+    "name": "Name",
+    "host": "Host"
+  },
+  "credentials": {}
+}

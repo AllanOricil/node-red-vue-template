@@ -1,0 +1,18 @@
+{
+  "label": "Ihr Knoten",
+  "configs": {
+    "name": "Name",
+    "myProperty": "Meine Eigenschaft 1",
+    "myProperty2": "Meine Eigenschaft 2",
+    "remoteServer": "Remote-Server 1",
+    "anotherRemoteServer": "Remote-Server 2",
+    "country": "Land",
+    "fruit": "Frucht",
+    "number": "Nummer",
+    "Object": "Objekt",
+    "Array": "Array",
+    "jsontest": "JSON-Test",
+    "csstest": "CSS-Test"
+  },
+  "credentials": {}
+}

@@ -1,0 +1,18 @@
+{
+  "label": "seu nó",
+  "configs": {
+    "name": "Nome",
+    "myProperty": "Minha Propriedade 1",
+    "myProperty2": "Minha Propriedade 2",
+    "remoteServer": "Servidor Remoto 1",
+    "anotherRemoteServer": "Servidor Remoto 2",
+    "country": "País",
+    "fruit": "Fruta",
+    "number": "Número",
+    "Object": "Objeto",
+    "Array": "Array",
+    "jsontest": "Teste JSON",
+    "csstest": "Teste CSS"
+  },
+  "credentials": {}
+}

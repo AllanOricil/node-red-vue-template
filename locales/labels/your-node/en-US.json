@@ -1,0 +1,18 @@
+{
+  "label": "Your Node",
+  "configs": {
+    "name": "Name",
+    "myProperty": "My Property 1",
+    "myProperty2": "My Property 2",
+    "remoteServer": "Remote Server 1",
+    "anotherRemoteServer": "Remote Server 2",
+    "country": "Country",
+    "fruit": "Fruit",
+    "number": "Number",
+    "Object": "Object",
+    "Array": "Array",
+    "jsontest": "JSON Test",
+    "csstest": "CSS Test"
+  },
+  "credentials": {}
+}

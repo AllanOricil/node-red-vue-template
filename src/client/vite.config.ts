@@ -8,36 +8,6 @@ import { viteStaticCopy } from "vite-plugin-static-copy";
 import vue from "@vitejs/plugin-vue";
 import pkg from "../../package.json" assert { type: "json" };
 
-// TODO: add docs to .html
-// TODO: build locales and copy to dist/locales
-
-// TODO: maybe there is a more reliable way to generate these tags?
-function getHtmlTag(filePath: string, srcPath: string): string | null {
-  const mimeType = mime.lookup(filePath);
-
-  switch (mimeType) {
-    case "application/javascript":
-    case "text/javascript":
-      return `<script type="module" src="${srcPath}" defer></script>`;
-
-    case "text/css":
-      return `<link rel="stylesheet" href="${srcPath}">`;
-
-    case "font/woff":
-    case "font/woff2":
-    case "application/font-woff":
-    case "application/font-woff2":
-    case "application/x-font-ttf":
-    case "application/x-font-opentype":
-    case "font/ttf":
-    case "font/otf":
-      return `<link rel="preload" as="font" href="${srcPath}" type="${mimeType}">`;
-
-    default:
-      return null;
-  }
-}
-
 // NOTE: when minifying with esbuild, vite doesn't natively remove line breaks
 function minify(): Plugin {
   return {
@@ -57,9 +27,121 @@ function minify(): Plugin {
   };
 }
 
-function nodeRed(options: { licensePath: string }): Plugin {
+function nodeRedPrepareLocales() {
   return {
-    name: "vite-plugin-node-red-html",
+    name: "node-red-localization",
+    apply: "build",
+    enforce: "post",
+    async closeBundle() {
+      const SUPPORTED_LANGUAGES = [
+        "en-US",
+        "de",
+        "es-ES",
+        "fr",
+        "ko",
+        "pt-BR",
+        "ru",
+        "ja",
+        "zh-CN",
+        "zh-TW",
+      ];
+
+      function validateLanguage(lang, filePath) {
+        if (!SUPPORTED_LANGUAGES.includes(lang)) {
+          throw new Error(
+            `[node-red-localization] Invalid language code "${lang}" in file "${filePath}".\n` +
+              `Supported languages are: ${SUPPORTED_LANGUAGES.join(", ")}.`,
+          );
+        }
+      }
+
+      const rootDir = path.resolve(__dirname, "../../");
+      const docsDir = path.resolve(rootDir, "locales/docs");
+      const labelsDir = path.resolve(rootDir, "locales/labels");
+      const distDir = path.resolve(rootDir, "dist/locales");
+
+      const docLangs = new Map();
+      const labelLangs = new Map();
+
+      if (fs.existsSync(docsDir)) {
+        const nodeDirs = fs
+          .readdirSync(docsDir, { withFileTypes: true })
+          .filter((d) => d.isDirectory());
+
+        for (const nodeDir of nodeDirs) {
+          const nodeType = nodeDir.name;
+          const nodePath = path.join(docsDir, nodeType);
+          const files = fs.readdirSync(nodePath);
+
+          for (const file of files) {
+            const ext = path.extname(file);
+            const lang = path.basename(file, ext);
+            validateLanguage(lang, path.join(nodePath, file));
+            const type =
+              ext === ".html"
+                ? "text/html"
+                : ext === ".md"
+                  ? "text/markdown"
+                  : null;
+            if (!type) continue;
+
+            const content = fs.readFileSync(path.join(nodePath, file), "utf-8");
+            const tag = `<script type="${type}" data-help-name="${nodeType}">\n${content}\n</script>`;
+
+            if (!docLangs.has(lang)) docLangs.set(lang, []);
+            docLangs.get(lang).push(tag);
+          }
+        }
+      }
+
+      if (fs.existsSync(labelsDir)) {
+        const nodeDirs = fs
+          .readdirSync(labelsDir, { withFileTypes: true })
+          .filter((d) => d.isDirectory());
+
+        for (const nodeDir of nodeDirs) {
+          const nodeType = nodeDir.name;
+          const nodePath = path.join(labelsDir, nodeType);
+          const files = fs.readdirSync(nodePath);
+
+          for (const file of files) {
+            const ext = path.extname(file);
+            if (ext !== ".json") continue;
+
+            const lang = path.basename(file, ext);
+            validateLanguage(lang, path.join(nodePath, file));
+            const jsonPath = path.join(nodePath, file);
+            const json = JSON.parse(fs.readFileSync(jsonPath, "utf-8"));
+
+            if (!labelLangs.has(lang)) labelLangs.set(lang, {});
+            labelLangs.get(lang)[nodeType] = json;
+          }
+        }
+      }
+
+      const allLangs = new Set([...docLangs.keys(), ...labelLangs.keys()]);
+
+      for (const lang of allLangs) {
+        const outDir = path.join(distDir, lang);
+        fs.mkdirSync(outDir, { recursive: true });
+
+        const htmlContent = (docLangs.get(lang) || []).join("\n");
+        const jsonContent = JSON.stringify(labelLangs.get(lang) || {}, null, 2);
+
+        fs.writeFileSync(path.join(outDir, "index.html"), htmlContent, "utf-8");
+        fs.writeFileSync(path.join(outDir, "index.json"), jsonContent, "utf-8");
+      }
+
+      console.log(
+        `[node-red-localization] Generated help files in dist/locales/*`,
+      );
+    },
+  };
+}
+
+function nodeRedPrepareHtml(options: { licensePath: string }): Plugin {
+  return {
+    name: "node-red-html",
     apply: "build",
     enforce: "post",
     async generateBundle(_, bundle) {
@@ -80,6 +162,36 @@ function nodeRed(options: { licensePath: string }): Plugin {
                 : null;
           if (typeof content !== "string" && !(content instanceof Uint8Array))
             return null;
+
+          // TODO: maybe there is a more reliable way to generate these tags?
+          function getHtmlTag(
+            filePath: string,
+            srcPath: string,
+          ): string | null {
+            const mimeType = mime.lookup(filePath);
+
+            switch (mimeType) {
+              case "application/javascript":
+              case "text/javascript":
+                return `<script type="module" src="${srcPath}" defer></script>`;
+
+              case "text/css":
+                return `<link rel="stylesheet" href="${srcPath}">`;
+
+              case "font/woff":
+              case "font/woff2":
+              case "application/font-woff":
+              case "application/font-woff2":
+              case "application/x-font-ttf":
+              case "application/x-font-opentype":
+              case "font/ttf":
+              case "font/otf":
+                return `<link rel="preload" as="font" href="${srcPath}" type="${mimeType}">`;
+
+              default:
+                return null;
+            }
+          }
 
           return getHtmlTag(fileName, srcPath);
         })
@@ -114,7 +226,6 @@ export default defineConfig(({ mode }) => {
     },
     plugins: [
       vue(),
-      nodeRed({ licensePath: path.resolve(__dirname, "../../LICENSE") }),
       viteStaticCopy({
         targets: [
           {
@@ -135,6 +246,10 @@ export default defineConfig(({ mode }) => {
           },
         ],
       }),
+      nodeRedPrepareHtml({
+        licensePath: path.resolve(__dirname, "../../LICENSE"),
+      }),
+      nodeRedPrepareLocales(),
       ...(!isDev
         ? [minify()]
         : [

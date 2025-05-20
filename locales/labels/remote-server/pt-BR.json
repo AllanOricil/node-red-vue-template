@@ -1,0 +1,8 @@
+{
+  "label": "Servidor Remoto",
+  "configs": {
+    "name": "Nome",
+    "host": "Host"
+  },
+  "credentials": {}
+}
