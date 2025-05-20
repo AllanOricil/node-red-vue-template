@@ -6,7 +6,7 @@ import { defineConfig, Plugin } from "vite";
 import { visualizer } from "rollup-plugin-visualizer";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 import vue from "@vitejs/plugin-vue";
-import pkg from "../../package.json" assert { type: "json" };
+import pkg from "../../package.json";
 
 // NOTE: when minifying with esbuild, vite doesn't natively remove line breaks
 function minify(): Plugin {
