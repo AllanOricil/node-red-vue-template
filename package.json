@@ -9,6 +9,12 @@
   "engines": {
     "node": ">=18"
   },
+  "keywords": [
+    "nrg",
+    "template",
+    "vite",
+    "vue"
+  ],
   "workspaces": [
     "src/client",
     "src/server"

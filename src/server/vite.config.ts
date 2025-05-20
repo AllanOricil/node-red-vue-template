@@ -12,7 +12,9 @@ function createPackageJson(): Plugin {
     closeBundle: async () => {
       try {
         const rootPkgPath = path.resolve(__dirname, "../../package.json");
-        const rootPkg = JSON.parse(fs.readFileSync(rootPkgPath, "utf-8"));
+        const rootPkg = JSON.parse(
+          fs.readFileSync(rootPkgPath, "utf-8"),
+        ) as PackageJson;
 
         const _pkg = { ...pkg } as PackageJson;
         delete _pkg.type;
@@ -24,12 +26,15 @@ function createPackageJson(): Plugin {
             nodes: "index.js",
           },
         };
+        _pkg.keywords = [...(rootPkg.keywords ?? []), "node-red"];
 
         _pkg.name = rootPkg.name;
         _pkg.version = rootPkg.version;
         _pkg.description = rootPkg.description;
         _pkg.author = rootPkg.author;
         _pkg.license = rootPkg.license;
+        _pkg.engines = rootPkg.engines;
+        _pkg.private = rootPkg.private;
 
         await fs.promises.writeFile(
           path.join(__dirname, "../../dist/package.json"),
