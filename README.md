@@ -1,4 +1,4 @@
-# node-red-vue-inputs-experiments
+# node-red-vue-template
 
 Build Node-RED nodes using:
 
