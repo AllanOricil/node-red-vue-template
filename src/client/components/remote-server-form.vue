@@ -1,10 +1,7 @@
 <template>
   <div>
     <div class="form-row">
-      <label
-        ><i class="fa fa-tag"></i>
-        {{ $i18n("remote-server.configs.name") }}</label
-      >
+      <label><i class="fa fa-tag"></i> {{ $i18n("configs.name") }}</label>
       <NodeRedInput
         v-model:value="node.name"
         :error="errors['node.name']"
@@ -12,10 +9,7 @@
       />
     </div>
     <div class="form-row">
-      <label
-        ><i class="fa fa-tag"></i>
-        {{ $i18n("remote-server.configs.host") }}</label
-      >
+      <label><i class="fa fa-tag"></i> {{ $i18n("configs.host") }}</label>
       <NodeRedInput
         v-model:value="node.host"
         :error="errors['node.host']"
@@ -42,7 +36,7 @@ export default defineComponent({
   },
   methods: {
     test() {
-      console.log(this.$i18n("remote-server.configs.host"));
+      console.log(this.$i18n("configs.host"));
     },
   },
 });
