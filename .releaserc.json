@@ -8,7 +8,7 @@
     [
       "@semantic-release/exec",
       {
-        "prepareCmd": "npx rjp package.json version nextRelease.version"
+        "prepareCmd": "jq '.version=\"${nextRelease.version}\"' package.json > tmp.json && mv tmp.json package.json"
       }
     ],
     [
