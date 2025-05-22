@@ -1,3 +1,8 @@
+<p>
+<a href="https://www.npmjs.com/package/node-red-vue-template" style="margin-right: 10px;"><img alt="NPM Version" src="https://img.shields.io/npm/v/node-red-vue-template"></a>
+<a href="https://github.com/AllanOricil/node-red-vue-template/actions/workflows/ci.yaml"><img src="https://github.com/AllanOricil/node-red-vue-template/actions/workflows/ci.yaml/badge.svg?branch=main" alt="build status"/></a>
+</p>
+
 # node-red-vue-template
 
 Build Node-RED nodes using:
@@ -9,7 +14,7 @@ Build Node-RED nodes using:
 
 ![Image](https://github.com/user-attachments/assets/683d4377-371a-4f2a-8750-f93e0eb6649f)
 
-### Dev Environment
+## 💻 Dev Environment
 
 | Dependency | Version  |
 | ---------- | -------- |
@@ -17,14 +22,16 @@ Build Node-RED nodes using:
 | node-red   | v4.0.9   |
 | pnpm       | v10.11.0 |
 
-### How to build
+## 📖 Guides
+
+### 📚 How to build
 
 ```bash
 pnpm install
 pnpm build
 ```
 
-### How to test
+### 📚 How to test
 
 After building these nodes, install the `./dist` folder to your Node-RED instance:
 
@@ -33,7 +40,7 @@ cd ~/.node-red
 npm install $PACKAGE_PATH/dist
 ```
 
-### Class Diagram
+## 🏛️ Class Diagram
 
 ```mermaid
 classDiagram
@@ -87,3 +94,22 @@ class ConfigNode {
 IONode --|> Node
 ConfigNode --|> Node
 ```
+
+## 🤝 Contributing
+
+I welcome contributions! If you'd like to help improve this template, feel free to open issues or submit pull requests. Your feedback is appreciated.
+
+## 📜 License
+
+This project is licensed under the [MIT License](https://github.com/AllanOricil/node-red-vue-template/blob/main/LICENSE).
+
+## 💖 Become a Sponsor
+
+If this CLI has made your life easier, consider supporting its development by clicking the button below.
+
+<a href="https://www.buymeacoffee.com/allanoricil" target="_blank">
+  <img
+      src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+      alt="Buy Me A Coffee"
+      style="width: 217px;" />
+</a>
