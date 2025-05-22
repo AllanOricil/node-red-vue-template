@@ -247,7 +247,7 @@ export default defineConfig(({ mode }) => {
         targets: filterExistingTargets([
           { src: "public/*", dest: "resources" },
           { src: "../../icons", dest: "." },
-          { src: "../../example", dest: "." },
+          { src: "../../examples", dest: "." },
           { src: "../../LICENSE", dest: "." },
           { src: "../../README.md", dest: "." },
         ]),
