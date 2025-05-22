@@ -54,6 +54,9 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^8.32.1
         version: 8.32.1(eslint@9.27.0)(typescript@5.8.3)
+      esbuild:
+        specifier: ^0.25.4
+        version: 0.25.4
       eslint:
         specifier: ^9.27.0
         version: 9.27.0
