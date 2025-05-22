@@ -1,3 +1,10 @@
+## [1.0.3](https://github.com/AllanOricil/node-red-vue-template/compare/v1.0.2...v1.0.3) (2025-05-22)
+
+
+### Bug Fixes
+
+* fix typo that accidentaly removed the examples folder from the distro ([bc9c489](https://github.com/AllanOricil/node-red-vue-template/commit/bc9c489a911477280a93a5cf2bdb91aa7f547f17))
+
 ## [1.0.2](https://github.com/AllanOricil/node-red-vue-template/compare/v1.0.1...v1.0.2) (2025-05-22)
 
 
