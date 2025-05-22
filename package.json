@@ -5,7 +5,6 @@
   "author": "Allan Oricil <allanoricil@duck.com>",
   "license": "Apache-2.0",
   "type": "module",
-  "private": true,
   "engines": {
     "node": ">=22",
     "pnpm": ">=10.11.0",
