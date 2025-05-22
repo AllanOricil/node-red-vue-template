@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/AllanOricil/node-red-vue-template/compare/v1.0.1...v1.0.2) (2025-05-22)
+
+
+### Bug Fixes
+
+* labels and docs can be processed independently and some static files/folders will only be copied to distro if they exist ([96f8194](https://github.com/AllanOricil/node-red-vue-template/commit/96f8194812c5c81082249939dcc1462e5d8b30f9))
+
 ## [1.0.1](https://github.com/AllanOricil/node-red-vue-template/compare/v1.0.0...v1.0.1) (2025-05-22)
 
 
