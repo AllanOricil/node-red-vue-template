@@ -21,6 +21,7 @@ function createPackageJson(): Plugin {
         _distPackageJson.description = _rootPackage.description;
         _distPackageJson.author = _rootPackage.author;
         _distPackageJson.license = _rootPackage.license;
+        _distPackageJson.repository = _rootPackage.repository;
         _distPackageJson.engines = _rootPackage.engines;
         _distPackageJson.private = _rootPackage.private;
         _distPackageJson.publishConfig = _rootPackage.publishConfig;

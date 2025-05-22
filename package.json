@@ -5,6 +5,9 @@
   "author": "Allan Oricil <allanoricil@duck.com>",
   "license": "MIT",
   "type": "module",
+  "repository": {
+    "url": "https://github.com/AllanOricil/node-red-vue-template"
+  },
   "publishConfig": {
     "access": "public"
   },
