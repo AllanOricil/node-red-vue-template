@@ -6,7 +6,8 @@
   "license": "MIT",
   "type": "module",
   "repository": {
-    "url": "https://github.com/AllanOricil/node-red-vue-template"
+    "url": "https://github.com/AllanOricil/node-red-vue-template",
+    "type": "git"
   },
   "publishConfig": {
     "access": "public"
