@@ -3,42 +3,40 @@ import path from "path";
 import { defineConfig, Plugin } from "vite";
 import dts from "vite-plugin-dts";
 import nodeExternals from "rollup-plugin-node-externals";
-import pkg from "./package.json";
 import type { PackageJson } from "type-fest";
+
+import rootPackage from "../../package.json";
+import packageJson from "./package.json";
 
 function createPackageJson(): Plugin {
   return {
     name: "create-package-json",
     closeBundle: async () => {
       try {
-        const rootPkgPath = path.resolve(__dirname, "../../package.json");
-        const rootPkg = JSON.parse(
-          fs.readFileSync(rootPkgPath, "utf-8"),
-        ) as PackageJson;
-
-        const _pkg = { ...pkg } as PackageJson;
-        delete _pkg.type;
-        delete _pkg.scripts;
-        delete _pkg.devDependencies;
-
-        _pkg["node-red"] = {
+        const _distPackageJson = {} as PackageJson;
+        const _packageJson = packageJson as PackageJson;
+        const _rootPackage = rootPackage as PackageJson;
+        _distPackageJson.name = _rootPackage.name;
+        _distPackageJson.version = _rootPackage.version;
+        _distPackageJson.description = _rootPackage.description;
+        _distPackageJson.author = _rootPackage.author;
+        _distPackageJson.license = _rootPackage.license;
+        _distPackageJson.engines = _rootPackage.engines;
+        _distPackageJson.private = _rootPackage.private;
+        _distPackageJson.keywords = [
+          ...(_rootPackage.keywords ?? []),
+          "node-red",
+        ];
+        _distPackageJson.dependencies = _packageJson.dependencies;
+        _distPackageJson["node-red"] = {
           nodes: {
             nodes: "index.js",
           },
         };
-        _pkg.keywords = [...(rootPkg.keywords ?? []), "node-red"];
-
-        _pkg.name = rootPkg.name;
-        _pkg.version = rootPkg.version;
-        _pkg.description = rootPkg.description;
-        _pkg.author = rootPkg.author;
-        _pkg.license = rootPkg.license;
-        _pkg.engines = rootPkg.engines;
-        _pkg.private = rootPkg.private;
 
         await fs.promises.writeFile(
           path.join(__dirname, "../../dist/package.json"),
-          JSON.stringify(_pkg, null, 2),
+          JSON.stringify(_distPackageJson, null, 2),
           { encoding: "utf-8" },
         );
         console.log("[create-package-json-plugin] package created");
