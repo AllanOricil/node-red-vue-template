@@ -4,7 +4,7 @@ import mime from "mime-types";
 import path from "path";
 import { defineConfig, Plugin } from "vite";
 import { visualizer } from "rollup-plugin-visualizer";
-import { viteStaticCopy } from "vite-plugin-static-copy";
+import { viteStaticCopy, Target } from "vite-plugin-static-copy";
 import vue from "@vitejs/plugin-vue";
 import pkg from "../../package.json";
 
@@ -46,6 +46,9 @@ function nodeRedPrepareLocales() {
         "zh-TW",
       ];
 
+      const rootDir = path.resolve(__dirname, "../../");
+      const distDir = path.resolve(rootDir, "dist/locales");
+
       function validateLanguage(lang, filePath) {
         if (!SUPPORTED_LANGUAGES.includes(lang)) {
           throw new Error(
@@ -55,82 +58,86 @@ function nodeRedPrepareLocales() {
         }
       }
 
-      const rootDir = path.resolve(__dirname, "../../");
+      function readLocalizedFiles(baseDir, fileExts, processFile) {
+        const langMap = new Map();
+
+        if (!fs.existsSync(baseDir)) return langMap;
+
+        const nodeDirs = fs
+          .readdirSync(baseDir, { withFileTypes: true })
+          .filter((d) => d.isDirectory());
+
+        for (const nodeDir of nodeDirs) {
+          const nodeType = nodeDir.name;
+          const nodePath = path.join(baseDir, nodeType);
+          const files = fs.readdirSync(nodePath);
+
+          for (const file of files) {
+            const ext = path.extname(file);
+            if (!fileExts.includes(ext)) continue;
+
+            const lang = path.basename(file, ext);
+            const filePath = path.join(nodePath, file);
+            validateLanguage(lang, filePath);
+
+            const value = processFile({ ext, lang, filePath, nodeType });
+            if (value == null) continue;
+
+            if (!langMap.has(lang)) {
+              langMap.set(lang, Array.isArray(value) ? [] : {});
+            }
+
+            if (Array.isArray(value)) {
+              langMap.get(lang).push(...value);
+            } else {
+              langMap.get(lang)[nodeType] = value;
+            }
+          }
+        }
+
+        return langMap;
+      }
+
+      function writeOutput(langMap, fileName, serialize = (v) => v.join("\n")) {
+        for (const [lang, data] of langMap.entries()) {
+          const outDir = path.join(distDir, lang);
+          fs.mkdirSync(outDir, { recursive: true });
+
+          const content = serialize(data);
+          fs.writeFileSync(path.join(outDir, fileName), content, "utf-8");
+        }
+      }
+
       const docsDir = path.resolve(rootDir, "locales/docs");
+      const docLangs = readLocalizedFiles(
+        docsDir,
+        [".html", ".md"],
+        ({ ext, filePath, nodeType }) => {
+          const type =
+            ext === ".html"
+              ? "text/html"
+              : ext === ".md"
+                ? "text/markdown"
+                : null;
+          if (!type) return null;
+
+          const content = fs.readFileSync(filePath, "utf-8");
+          return [
+            `<script type="${type}" data-help-name="${nodeType}">\n${content}\n</script>`,
+          ];
+        },
+      );
+
+      writeOutput(docLangs, "index.html");
+
       const labelsDir = path.resolve(rootDir, "locales/labels");
-      const distDir = path.resolve(rootDir, "dist/locales");
+      const labelLangs = readLocalizedFiles(
+        labelsDir,
+        [".json"],
+        ({ filePath }) => JSON.parse(fs.readFileSync(filePath, "utf-8")),
+      );
 
-      const docLangs = new Map();
-      const labelLangs = new Map();
-
-      if (fs.existsSync(docsDir)) {
-        const nodeDirs = fs
-          .readdirSync(docsDir, { withFileTypes: true })
-          .filter((d) => d.isDirectory());
-
-        for (const nodeDir of nodeDirs) {
-          const nodeType = nodeDir.name;
-          const nodePath = path.join(docsDir, nodeType);
-          const files = fs.readdirSync(nodePath);
-
-          for (const file of files) {
-            const ext = path.extname(file);
-            const lang = path.basename(file, ext);
-            validateLanguage(lang, path.join(nodePath, file));
-            const type =
-              ext === ".html"
-                ? "text/html"
-                : ext === ".md"
-                  ? "text/markdown"
-                  : null;
-            if (!type) continue;
-
-            const content = fs.readFileSync(path.join(nodePath, file), "utf-8");
-            const tag = `<script type="${type}" data-help-name="${nodeType}">\n${content}\n</script>`;
-
-            if (!docLangs.has(lang)) docLangs.set(lang, []);
-            docLangs.get(lang).push(tag);
-          }
-        }
-      }
-
-      if (fs.existsSync(labelsDir)) {
-        const nodeDirs = fs
-          .readdirSync(labelsDir, { withFileTypes: true })
-          .filter((d) => d.isDirectory());
-
-        for (const nodeDir of nodeDirs) {
-          const nodeType = nodeDir.name;
-          const nodePath = path.join(labelsDir, nodeType);
-          const files = fs.readdirSync(nodePath);
-
-          for (const file of files) {
-            const ext = path.extname(file);
-            if (ext !== ".json") continue;
-
-            const lang = path.basename(file, ext);
-            validateLanguage(lang, path.join(nodePath, file));
-            const jsonPath = path.join(nodePath, file);
-            const json = JSON.parse(fs.readFileSync(jsonPath, "utf-8"));
-
-            if (!labelLangs.has(lang)) labelLangs.set(lang, {});
-            labelLangs.get(lang)[nodeType] = json;
-          }
-        }
-      }
-
-      const allLangs = new Set([...docLangs.keys(), ...labelLangs.keys()]);
-
-      for (const lang of allLangs) {
-        const outDir = path.join(distDir, lang);
-        fs.mkdirSync(outDir, { recursive: true });
-
-        const htmlContent = (docLangs.get(lang) || []).join("\n");
-        const jsonContent = JSON.stringify(labelLangs.get(lang) || {}, null, 2);
-
-        fs.writeFileSync(path.join(outDir, "index.html"), htmlContent, "utf-8");
-        fs.writeFileSync(path.join(outDir, "index.json"), jsonContent, "utf-8");
-      }
+      writeOutput(labelLangs, "index.json", (v) => JSON.stringify(v, null, 2));
 
       console.log(
         `[node-red-localization] Generated help files in dist/locales/*`,
@@ -217,6 +224,16 @@ export default defineConfig(({ mode }) => {
 
   console.log(`ISDEV: ${isDev}`);
 
+  function filterExistingTargets(targets: Target[]): Target[] {
+    return targets.filter(({ src }) => {
+      if (src.includes("*")) {
+        const dir = src.replace(/\/\*.*$/, "");
+        return fs.existsSync(dir) && fs.readdirSync(dir).length > 0;
+      }
+      return fs.existsSync(path.resolve(__dirname, src));
+    });
+  }
+
   return {
     base: `resources/${pkg.name}`,
     resolve: {
@@ -227,24 +244,13 @@ export default defineConfig(({ mode }) => {
     plugins: [
       vue(),
       viteStaticCopy({
-        targets: [
-          {
-            src: "public/*",
-            dest: "resources",
-          },
-          {
-            src: "../../icons",
-            dest: ".",
-          },
-          {
-            src: "../../examples",
-            dest: ".",
-          },
-          {
-            src: "../../LICENSE",
-            dest: ".",
-          },
-        ],
+        targets: filterExistingTargets([
+          { src: "public/*", dest: "resources" },
+          { src: "../../icons", dest: "." },
+          { src: "../../example", dest: "." },
+          { src: "../../LICENSE", dest: "." },
+          { src: "../../README.md", dest: "." },
+        ]),
       }),
       nodeRedPrepareHtml({
         licensePath: path.resolve(__dirname, "../../LICENSE"),
