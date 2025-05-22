@@ -5,6 +5,9 @@
   "author": "Allan Oricil <allanoricil@duck.com>",
   "license": "MIT",
   "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
   "engines": {
     "node": ">=22",
     "pnpm": ">=10.11.0",

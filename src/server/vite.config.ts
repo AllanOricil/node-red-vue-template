@@ -23,6 +23,7 @@ function createPackageJson(): Plugin {
         _distPackageJson.license = _rootPackage.license;
         _distPackageJson.engines = _rootPackage.engines;
         _distPackageJson.private = _rootPackage.private;
+        _distPackageJson.publishConfig = _rootPackage.publishConfig;
         _distPackageJson.keywords = [
           ...(_rootPackage.keywords ?? []),
           "node-red",
