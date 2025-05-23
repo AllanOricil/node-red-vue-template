@@ -114,7 +114,7 @@ This project is licensed under the [MIT License](https://github.com/AllanOricil/
 
 ## 💖 Become a Sponsor
 
-If this CLI has made your life easier, consider supporting its development by clicking the button below.
+If this template has made your life easier, consider supporting its development by clicking the button below.
 
 <a href="https://www.buymeacoffee.com/allanoricil" target="_blank">
   <img
