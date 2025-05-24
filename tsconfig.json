@@ -19,5 +19,6 @@
     "noImplicitReturns": true,
     "noImplicitOverride": true
   },
+  "include": ["build.ts"],
   "exclude": ["node_modules", "dist"]
 }

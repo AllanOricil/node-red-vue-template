@@ -61,7 +61,7 @@ interface Node {
   };
   _newState?: Node;
   _app?: App | null;
-  _?: (str: string) => string;
+  _: (str: string) => string;
   [key: string]: any;
 }
 

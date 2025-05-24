@@ -4,9 +4,11 @@ import mime from "mime-types";
 import path from "path";
 import { defineConfig, Plugin } from "vite";
 import { visualizer } from "rollup-plugin-visualizer";
-import { viteStaticCopy, Target } from "vite-plugin-static-copy";
 import vue from "@vitejs/plugin-vue";
 import pkg from "../../package.json";
+
+const ROOT_DIR = path.join(__dirname, "../../");
+const DIST_DIR = path.join(ROOT_DIR, "dist");
 
 // NOTE: when minifying with esbuild, vite doesn't natively remove line breaks
 function minify(): Plugin {
@@ -27,7 +29,11 @@ function minify(): Plugin {
   };
 }
 
-function nodeRedPrepareLocales() {
+function nodeRedPrepareLocales(options: {
+  outDir: string;
+  docsDir: string;
+  labelsDir: string;
+}): Plugin {
   return {
     name: "node-red-localization",
     apply: "build",
@@ -46,10 +52,7 @@ function nodeRedPrepareLocales() {
         "zh-TW",
       ];
 
-      const rootDir = path.resolve(__dirname, "../../");
-      const distDir = path.resolve(rootDir, "dist/locales");
-
-      function validateLanguage(lang, filePath) {
+      function validateLanguage(lang: string, filePath: string) {
         if (!SUPPORTED_LANGUAGES.includes(lang)) {
           throw new Error(
             `[node-red-localization] Invalid language code "${lang}" in file "${filePath}".\n` +
@@ -58,7 +61,15 @@ function nodeRedPrepareLocales() {
         }
       }
 
-      function readLocalizedFiles(baseDir, fileExts, processFile) {
+      function forEachFile(
+        baseDir: string,
+        fileExtensions: string[],
+        processFile: (params: {
+          ext: string;
+          filePath: string;
+          nodeType: string;
+        }) => string[] | string | null,
+      ) {
         const langMap = new Map();
 
         if (!fs.existsSync(baseDir)) return langMap;
@@ -74,13 +85,13 @@ function nodeRedPrepareLocales() {
 
           for (const file of files) {
             const ext = path.extname(file);
-            if (!fileExts.includes(ext)) continue;
+            if (!fileExtensions.includes(ext)) continue;
 
             const lang = path.basename(file, ext);
             const filePath = path.join(nodePath, file);
             validateLanguage(lang, filePath);
 
-            const value = processFile({ ext, lang, filePath, nodeType });
+            const value = processFile({ ext, filePath, nodeType });
             if (value == null) continue;
 
             if (!langMap.has(lang)) {
@@ -98,9 +109,13 @@ function nodeRedPrepareLocales() {
         return langMap;
       }
 
-      function writeOutput(langMap, fileName, serialize = (v) => v.join("\n")) {
+      function writeOutput<T>(
+        langMap: Map<string, T>,
+        fileName: string,
+        serialize: (value: T) => string,
+      ) {
         for (const [lang, data] of langMap.entries()) {
-          const outDir = path.join(distDir, lang);
+          const outDir = path.join(options.outDir, lang);
           fs.mkdirSync(outDir, { recursive: true });
 
           const content = serialize(data);
@@ -108,9 +123,8 @@ function nodeRedPrepareLocales() {
         }
       }
 
-      const docsDir = path.resolve(rootDir, "locales/docs");
-      const docLangs = readLocalizedFiles(
-        docsDir,
+      const docLangs = forEachFile(
+        options.docsDir,
         [".html", ".md"],
         ({ ext, filePath, nodeType }) => {
           const type =
@@ -128,16 +142,21 @@ function nodeRedPrepareLocales() {
         },
       );
 
-      writeOutput(docLangs, "index.html");
+      writeOutput(docLangs, "index.html", (value: string[]) =>
+        value.join("\n"),
+      );
 
-      const labelsDir = path.resolve(rootDir, "locales/labels");
-      const labelLangs = readLocalizedFiles(
-        labelsDir,
+      const labelLangs = forEachFile(
+        options.labelsDir,
         [".json"],
         ({ filePath }) => JSON.parse(fs.readFileSync(filePath, "utf-8")),
       );
 
-      writeOutput(labelLangs, "index.json", (v) => JSON.stringify(v, null, 2));
+      writeOutput(
+        labelLangs,
+        "index.json",
+        (value: { [key: string]: string }) => JSON.stringify(value, null, 2),
+      );
 
       console.log(
         `[node-red-localization] Generated help files in dist/locales/*`,
@@ -224,14 +243,29 @@ export default defineConfig(({ mode }) => {
 
   console.log(`ISDEV: ${isDev}`);
 
-  function filterExistingTargets(targets: Target[]): Target[] {
-    return targets.filter(({ src }) => {
-      if (src.includes("*")) {
-        const dir = src.replace(/\/\*.*$/, "");
-        return fs.existsSync(dir) && fs.readdirSync(dir).length > 0;
-      }
-      return fs.existsSync(path.resolve(__dirname, src));
-    });
+  const plugins = [
+    vue(),
+    nodeRedPrepareHtml({
+      licensePath: path.join(ROOT_DIR, "LICENSE"),
+    }),
+    nodeRedPrepareLocales({
+      outDir: path.join(DIST_DIR, "locales"),
+      docsDir: path.join(ROOT_DIR, "locales/docs"),
+      labelsDir: path.join(ROOT_DIR, "locales/labels"),
+    }),
+  ];
+
+  if (!isDev) {
+    plugins.push(minify());
+  } else {
+    plugins.push(
+      visualizer({
+        open: false,
+        gzipSize: true,
+        brotliSize: true,
+        template: "treemap",
+      }),
+    );
   }
 
   return {
@@ -241,38 +275,13 @@ export default defineConfig(({ mode }) => {
         "@": path.resolve(__dirname),
       },
     },
-    plugins: [
-      vue(),
-      viteStaticCopy({
-        targets: filterExistingTargets([
-          { src: "public/*", dest: "resources" },
-          { src: "../../icons", dest: "." },
-          { src: "../../examples", dest: "." },
-          { src: "../../LICENSE", dest: "." },
-          { src: "../../README.md", dest: "." },
-        ]),
-      }),
-      nodeRedPrepareHtml({
-        licensePath: path.resolve(__dirname, "../../LICENSE"),
-      }),
-      nodeRedPrepareLocales(),
-      ...(!isDev
-        ? [minify()]
-        : [
-            visualizer({
-              open: false,
-              gzipSize: true,
-              brotliSize: true,
-              template: "treemap",
-            }),
-          ]),
-    ],
+    plugins,
     css: {
       devSourcemap: isDev,
     },
     build: {
       lib: {
-        entry: "index.ts",
+        entry: path.resolve(ROOT_DIR, "src", "client", "index.ts"),
         name: "NRG",
         fileName: "index",
         formats: ["es"],
@@ -280,7 +289,7 @@ export default defineConfig(({ mode }) => {
       sourcemap: "inline",
       minify: !isDev,
       keepNames: isDev,
-      outDir: "../../dist",
+      outDir: DIST_DIR,
       emptyOutDir: false,
       copyPublicDir: false,
       rollupOptions: {
