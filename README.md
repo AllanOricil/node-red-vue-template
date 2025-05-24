@@ -5,6 +5,9 @@
 
 # node-red-vue-template
 
+> [!IMPORTANT]
+> The [nrg-cli](https://github.com/AllanOricil/nrg-cli) v3 is going to replace the build script in this repo once this template is fully functional.
+
 Build Node-RED nodes using:
 
 - Vue 3
@@ -44,10 +47,9 @@ npm install $PACKAGE_PATH/dist
 
 ### Why ajv + typebox instead of zod?
 
-Ajv is much faster than zod for types and data validations. 
+Ajv is much faster than zod for types and data validations.
 
 https://codetain.com/blog/benchmark-of-node-js-validators/#:~:text=Ajv%20turned%20to%20be%20the,2%20times%20faster%20than%20zod.
-
 
 ### Class Diagram
 
