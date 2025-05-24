@@ -42,9 +42,9 @@ async function generateDistPackageJson(options: {
 }) {
   console.log("Generating package.json...");
 
-  const rootPackageJson = fs.readFileSync(options.rootPackageJsonPath, {
-    encoding: "utf-8",
-  }) as PackageJson;
+  const rootPackageJson = JSON.parse(
+    fs.readFileSync(options.rootPackageJsonPath, { encoding: "utf-8" }),
+  ) as PackageJson;
 
   const distPackageJson: PackageJson = {
     name: rootPackageJson.name,
