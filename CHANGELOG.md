@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/AllanOricil/node-red-vue-template/compare/v1.0.3...v1.1.0) (2025-05-24)
+
+
+### Features
+
+* add esbuild to build the server part of the node ([7b514fe](https://github.com/AllanOricil/node-red-vue-template/commit/7b514fe2fea89dbde503c01820143cf964180b00))
+
 ## [1.0.3](https://github.com/AllanOricil/node-red-vue-template/compare/v1.0.2...v1.0.3) (2025-05-22)
 
 
