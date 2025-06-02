@@ -154,5 +154,6 @@ export default defineComponent({
 
 #app label {
   width: 100%;
+  cursor: default;
 }
 </style>
