@@ -22,7 +22,7 @@ export default defineComponent({
       type: Object,
       required: true,
       validator: function (obj) {
-        if (!typeof obj === "object") {
+        if (typeof obj !== "object" || obj === null) {
           console.warn(
             "[WARN] Invalid value for 'value' property. It must be an object.",
           );
