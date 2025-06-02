@@ -97,7 +97,7 @@ async function buildProject() {
         bundle: true,
         platform: "node",
         target: "node22",
-        format: "esm",
+        format: "cjs",
         plugins: [esbuildPluginTsc()],
         minify: !isDev,
         keepNames: true,

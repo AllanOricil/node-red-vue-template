@@ -4,7 +4,6 @@
   "description": "A template to build Node-RED nodes using Vue 3 and Typescript",
   "author": "Allan Oricil <allanoricil@duck.com>",
   "license": "MIT",
-  "type": "module",
   "repository": {
     "url": "https://github.com/AllanOricil/node-red-vue-template",
     "type": "git"
