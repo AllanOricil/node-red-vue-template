@@ -23,12 +23,18 @@ const SECRET_PATTERN = "*************";
 
 export default defineComponent({
   props: {
-    value: String,
+    value: {
+      type: String,
+      default: "",
+    },
     type: {
       type: String,
       default: "text",
     },
-    placeholder: String,
+    placeholder: {
+      type: String,
+      default: "",
+    },
     error: {
       type: String,
       default: "",

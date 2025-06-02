@@ -16,7 +16,10 @@
 import { defineComponent } from "vue";
 export default defineComponent({
   props: {
-    value: String | Array,
+    value: {
+      type: [String, Array],
+      default: () => "",
+    },
     options: {
       type: Array,
       required: true,
