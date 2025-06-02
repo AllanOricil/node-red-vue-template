@@ -1,10 +1,13 @@
 import esbuild, { BuildOptions } from "esbuild";
 import esbuildPluginTsc from "esbuild-plugin-tsc";
-import { nodeExternalsPlugin } from "esbuild-node-externals";
 import fs from "fs-extra";
 import * as path from "path";
 import type { PackageJson } from "type-fest";
 import { build, loadConfigFromFile } from "vite";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const ROOT_DIR = path.resolve(__dirname);
 const SRC_DIR = ROOT_DIR;
@@ -46,16 +49,12 @@ async function generateDistPackageJson(options: {
     fs.readFileSync(options.rootPackageJsonPath, { encoding: "utf-8" }),
   ) as PackageJson;
 
+  // NOTE: dependencies are removed because they are already bundled with esbuild and converted to esm
   const distPackageJson: PackageJson = {
-    name: rootPackageJson.name,
-    version: rootPackageJson.version,
-    description: rootPackageJson.description,
-    author: rootPackageJson.author,
-    license: rootPackageJson.license,
-    repository: rootPackageJson.repository,
-    engines: rootPackageJson.engines,
-    private: rootPackageJson.private,
-    publishConfig: rootPackageJson.publishConfig,
+    ...rootPackageJson,
+    devDependencies: undefined,
+    dependencies: undefined,
+    peerDependencies: undefined,
     keywords: [...(rootPackageJson.keywords ?? []), "node-red"],
     "node-red": {
       nodes: {
@@ -98,8 +97,8 @@ async function buildProject() {
         bundle: true,
         platform: "node",
         target: "node22",
-        format: "cjs",
-        plugins: [nodeExternalsPlugin(), esbuildPluginTsc()],
+        format: "esm",
+        plugins: [esbuildPluginTsc()],
         minify: !isDev,
         keepNames: true,
       });

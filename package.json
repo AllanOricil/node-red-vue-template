@@ -4,6 +4,7 @@
   "description": "A template to build Node-RED nodes using Vue 3 and Typescript",
   "author": "Allan Oricil <allanoricil@duck.com>",
   "license": "MIT",
+  "type": "module",
   "repository": {
     "url": "https://github.com/AllanOricil/node-red-vue-template",
     "type": "git"
@@ -49,7 +50,6 @@
     "@typescript-eslint/parser": "^8.32.1",
     "@vitejs/plugin-vue": "^5.2.3",
     "esbuild": "^0.25.4",
-    "esbuild-node-externals": "^1.18.0",
     "esbuild-plugin-tsc": "^0.5.0",
     "eslint": "^9.27.0",
     "eslint-config-prettier": "^10.1.5",
