@@ -204,9 +204,6 @@ export default defineComponent({
     },
     createExpandeEditorTray() {
       let expandedEditor;
-      const value = this.value;
-      const stateId = this.stateId;
-      const language = this.language;
 
       const onCancel = () => {
         setTimeout(() => {
@@ -242,7 +239,7 @@ export default defineComponent({
             click: onDone,
           },
         ],
-        open: function (tray) {
+        open: (tray) => {
           const dialogForm = $(
             '<form id="dialog-form" class="form-horizontal" autocomplete="off"></form>',
           ).appendTo(tray.find(".red-ui-tray-body"));
@@ -252,10 +249,10 @@ export default defineComponent({
 
           expandedEditor = RED.editor.createEditor({
             id: "expanded-editor-input",
-            stateId,
-            mode: language,
+            stateId: this.stateId,
+            mode: this.language,
             focus: true,
-            value,
+            value: this.value,
           });
           dialogForm.i18n();
         },
