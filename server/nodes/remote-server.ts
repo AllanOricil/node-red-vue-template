@@ -1,5 +1,5 @@
 import { Static } from "@sinclair/typebox";
-import { ConfigNode, ConfigNodeValidations } from "../../../core/server/nodes";
+import { ConfigNode, ConfigNodeValidations } from "../../core/server/nodes";
 import { ConfigsSchema } from "../../schemas/remote-server";
 
 export type RemoteServerConfigs = Static<typeof ConfigsSchema>;

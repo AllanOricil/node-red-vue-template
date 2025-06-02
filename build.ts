@@ -7,7 +7,7 @@ import type { PackageJson } from "type-fest";
 import { build, loadConfigFromFile } from "vite";
 
 const ROOT_DIR = path.resolve(__dirname);
-const SRC_DIR = path.join(ROOT_DIR, "/src");
+const SRC_DIR = ROOT_DIR;
 const DIST_DIR = path.join(ROOT_DIR, "/dist");
 
 async function copy(options: { targets: { src: string; dest: string } }) {

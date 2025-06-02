@@ -1,6 +1,6 @@
 import remoteServer from "./nodes/remote-server";
 import yourNode from "./nodes/your-node";
-import { registerType } from "../../core/client";
+import { registerType } from "../core/client";
 
 // TODO: is there a use case for controlling the order nodes in the editor are registered?
 async function main() {

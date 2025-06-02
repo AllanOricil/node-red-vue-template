@@ -5,9 +5,9 @@ import path from "path";
 import { defineConfig, Plugin } from "vite";
 import { visualizer } from "rollup-plugin-visualizer";
 import vue from "@vitejs/plugin-vue";
-import pkg from "../../package.json";
+import pkg from "../package.json";
 
-const ROOT_DIR = path.join(__dirname, "../../");
+const ROOT_DIR = path.join(__dirname, "../");
 const DIST_DIR = path.join(ROOT_DIR, "dist");
 
 // NOTE: when minifying with esbuild, vite doesn't natively remove line breaks
@@ -281,7 +281,7 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       lib: {
-        entry: path.resolve(ROOT_DIR, "src", "client", "index.ts"),
+        entry: path.resolve(ROOT_DIR, "client", "index.ts"),
         name: "NRG",
         fileName: "index",
         formats: ["es"],

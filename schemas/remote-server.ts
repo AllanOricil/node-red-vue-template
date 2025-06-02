@@ -1,5 +1,5 @@
 import { Type } from "@sinclair/typebox";
-import { ConfigNodeConfigsSchema } from "../../core/schemas";
+import { ConfigNodeConfigsSchema } from "../core/schemas";
 
 const ConfigsSchema = Type.Object(
   {
