@@ -51,6 +51,45 @@ Ajv is much faster than zod for types and data validations.
 
 https://codetain.com/blog/benchmark-of-node-js-validators/#:~:text=Ajv%20turned%20to%20be%20the,2%20times%20faster%20than%20zod.
 
+### Folder Structure
+
+```bash
+.
+├── client/
+│   ├── assets/
+│   │   └── image.png
+│   ├── components/
+│   │   └── node-type-form.ue
+│   ├── nodes/
+│   │   └── node-type.ts
+│   ├── index.ts
+│   └── tsconfig.json
+├── examples/
+│   └── flow.json
+├── icons/
+│   └── icon.png
+├── locales/
+│   ├── docs/
+│   │   └── node-type/
+│   │       ├── en-US.html
+│   │       └── pt-BR.md
+│   └── labels/
+│       └── node-type/
+│           ├── en-US.json
+│           └── pt-BR.json
+├── public/
+│   └── image.png
+├── schemas/
+│   └── node-type.ts
+├── server/
+│   ├── nodes/
+│   │   └── node-type.ts
+│   ├── index.ts
+│   └── tsconfig.json
+├── package.json
+└── tsconfig.json
+```
+
 ### Class Diagram
 
 ```mermaid
