@@ -30,16 +30,15 @@ export default defineComponent({
           );
           return false;
         }
-        const isValid = value.every((item) => {
-          const isObject = typeof item === "object" && item !== null;
-          if (!isObject) return false;
-          return (
-            item.hasOwnProperty("value") &&
-            item.hasOwnProperty("label") &&
+        const isValid = value.every(
+          (item) =>
+            typeof item === "object" &&
+            item !== null &&
             typeof item.value === "string" &&
-            typeof item.label === "string"
-          );
-        });
+            typeof item.label === "string" &&
+            Object.prototype.hasOwnProperty.call(item, "value") &&
+            Object.prototype.hasOwnProperty.call(item, "label"),
+        );
 
         if (!isValid) {
           console.warn(
