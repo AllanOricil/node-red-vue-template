@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/AllanOricil/node-red-vue-template/compare/v1.2.0...v1.2.1) (2025-06-02)
+
+
+### Bug Fixes
+
+* ensure language, stateId and value are updated with the latest value when editing and editor input ([1c3fdc8](https://github.com/AllanOricil/node-red-vue-template/commit/1c3fdc83c016b897faf0f39c8157f1ab67fe06d3))
+
 # [1.2.0](https://github.com/AllanOricil/node-red-vue-template/compare/v1.1.0...v1.2.0) (2025-06-02)
 
 
