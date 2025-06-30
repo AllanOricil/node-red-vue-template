@@ -100,7 +100,6 @@ class Node {
   +type: string
   +name: string
   +z: string
-  +g: string
   +configs: TConfigs
   +credentials: TCredentials
   +constructor(configs: TConfigs)
@@ -118,6 +117,7 @@ class IONode {
   +wires: string[][]
   +x: number
   +y: number
+  +g: string
   +constructor(configs: TConfigs)
   +onInput(msg, send, done): void | Promise<void>
   +onClose(removed, done): void | Promise<void>

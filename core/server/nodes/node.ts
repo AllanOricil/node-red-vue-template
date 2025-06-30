@@ -43,7 +43,6 @@ abstract class Node<
   public readonly type: string;
   public readonly name: string;
   public readonly z?: string;
-  public readonly g?: string;
 
   public readonly configs: TConfigs;
   public readonly credentials?: TCredentials;
@@ -55,7 +54,6 @@ abstract class Node<
     this.type = configs.type;
     this.name = configs.name;
     this.z = configs.z;
-    this.g = configs.g;
 
     if (Node.validations?.configs) {
       console.log("validating configs");

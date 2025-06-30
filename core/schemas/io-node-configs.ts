@@ -8,4 +8,5 @@ export default Type.Object({
   }),
   x: Type.Number(),
   y: Type.Number(),
+  g: Type.Optional(Type.String()),
 });

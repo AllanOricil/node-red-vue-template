@@ -52,15 +52,17 @@ abstract class IONode<
 > extends Node<TConfigs, TCredentials> {
   public static override readonly validations: IONodeValidations;
 
-  public readonly wires: string[][];
   public readonly x: number;
   public readonly y: number;
+  public readonly g?: string;
+  public readonly wires: string[][];
 
   constructor(configs: TConfigs) {
     super(configs);
 
     this.x = configs.x;
     this.y = configs.y;
+    this.g = configs.g;
     this.wires = configs.wires || [[]];
 
     console.log("SETUP EVENT HANDLERS");
