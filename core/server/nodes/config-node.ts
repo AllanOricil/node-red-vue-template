@@ -13,7 +13,6 @@ abstract class ConfigNode<
 
   constructor(configs: TConfigs) {
     super(configs);
-    this.users = configs._users || [];
   }
 }
 

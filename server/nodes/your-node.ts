@@ -74,7 +74,7 @@ export default class YourNode extends IONode<
     const server = IONode.getNode<RemoteServerConfigNode>(
       this.configs.remoteServer,
     );
-    console.log(server?.users);
+    console.log(server);
 
     const outputMsg: YourNodeOutputMessage = {
       originalType: "number",
