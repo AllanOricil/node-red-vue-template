@@ -3,7 +3,6 @@ import { MessageSchema, IONodeConfigsSchema } from "../../schemas";
 import { validatorService } from "../validator";
 import { Node, IONodeValidations } from "./node";
 
-type CloseDoneFunction = () => void;
 type InputDoneFunction = (error?: Error | string) => void;
 type IONodeConfigs = Static<typeof IONodeConfigsSchema>;
 type Message = Static<typeof MessageSchema>;
@@ -25,7 +24,6 @@ declare module "./io-node" {
     close(removed: boolean): Promise<void>;
     context(): Context;
     emit(event: string, ...args: any[]): void;
-    on(event: string, callback: (...args: any[]) => void): void;
     receive(msg: TInputMessage): void;
     removeAllListeners(name: string): void;
     removeListener(name: string): void;
@@ -120,7 +118,6 @@ abstract class IONode<
 }
 
 export {
-  CloseDoneFunction,
   Context,
   ContextStore,
   InputDoneFunction,

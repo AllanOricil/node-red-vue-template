@@ -4,9 +4,9 @@ export {
   NodeConfigs,
   NodeValidations,
   IONodeValidations,
+  CloseDoneFunction,
 } from "./node";
 export {
-  CloseDoneFunction,
   Context,
   ContextStore,
   InputDoneFunction,

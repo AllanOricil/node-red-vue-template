@@ -84,12 +84,12 @@ export default class YourNode extends IONode<
     done();
   }
 
-  override async onClose(
+  override onClose(
     removed: boolean,
     done: CloseDoneFunction,
-  ): Promise<void> {
-    console.log("removing node");
-    console.log(removed);
+  ): void | Promise<void> {
+    console.log("OVERRIDE");
+    console.log(`${this.type} - ${this.name}: removed ${removed}`);
     done();
   }
 }

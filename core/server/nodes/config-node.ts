@@ -9,7 +9,6 @@ abstract class ConfigNode<
   TCredentials = any,
 > extends Node<TConfigs, TCredentials> {
   public static override readonly validations: ConfigNodeValidations;
-  public readonly users: string[];
 
   constructor(configs: TConfigs) {
     super(configs);

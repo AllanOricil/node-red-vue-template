@@ -3,6 +3,7 @@ import { Static } from "@sinclair/typebox";
 import { NodeConfigsSchema } from "../../schemas";
 import { validatorService } from "../validator";
 
+type CloseDoneFunction = () => void;
 type NodeConfigs = Static<typeof NodeConfigsSchema>;
 
 interface ConfigNodeValidations {
@@ -22,6 +23,7 @@ type NodeValidations = ConfigNodeValidations | IONodeValidations;
 // NOTE: these methods are implemented and defined by Node-RED runtime. They were added here to provide intelisense only.
 declare module "./node" {
   interface Node<TConfigs, TCredentials> {
+    on(event: string, callback: (...args: any[]) => void): void;
     error(logMessage: string, msg: any): void;
     debug(msg: any): void;
     trace(msg: any): void;
@@ -90,12 +92,20 @@ abstract class Node<
     this.registerOnCloseEventHandler();
   }
 
-  abstract onClose(): void | Promise<void>;
-  abstract onClose(
-    removed: boolean,
-    done: CloseDoneFunction,
-  ): void | Promise<void>;
-  abstract onClose(done: CloseDoneFunction): void | Promise<void>;
+  // TODO: why is method overloading enforcing subclasses to implement all possible ones even the base class has implementation for all methods
+  onClose(
+    param1?: boolean | CloseDoneFunction,
+    param2?: CloseDoneFunction,
+  ): void {
+    const removed = typeof param1 === "boolean" ? param1 : undefined;
+    const done = typeof param1 === "function" ? param1 : param2;
+
+    if (removed !== undefined) {
+      console.log(`${this.type} - ${this.name}: removed ${removed}`);
+    }
+
+    done?.();
+  }
 
   static init(): void | Promise<void> {
     console.log("not implemented");
@@ -120,4 +130,5 @@ export {
   NodeConfigs,
   NodeValidations,
   IONodeValidations,
+  CloseDoneFunction,
 };
