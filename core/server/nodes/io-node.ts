@@ -19,9 +19,9 @@ interface Context {
 }
 
 // NOTE: these methods are implemented and defined by Node-RED runtime. They were added here to provide intelisense only.
+// NOTE: config nodes don't need these methods
 declare module "./io-node" {
   interface IONode<TConfigs, TCredentials, TInputMessage, TOutputMessage> {
-    close(removed: boolean): Promise<void>;
     context(): Context;
     emit(event: string, ...args: any[]): void;
     receive(msg: TInputMessage): void;

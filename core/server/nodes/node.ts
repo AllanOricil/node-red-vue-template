@@ -21,8 +21,10 @@ interface IONodeValidations {
 type NodeValidations = ConfigNodeValidations | IONodeValidations;
 
 // NOTE: these methods are implemented and defined by Node-RED runtime. They were added here to provide intelisense only.
+// TODO: on is declared here but config nodes shouldn't have it
 declare module "./node" {
   interface Node<TConfigs, TCredentials> {
+    close(removed: boolean): Promise<void>;
     on(event: string, callback: (...args: any[]) => void): void;
     error(logMessage: string, msg: any): void;
     debug(msg: any): void;
