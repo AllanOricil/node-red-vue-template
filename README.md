@@ -103,6 +103,9 @@ class Node {
   +configs: TConfigs
   +credentials: TCredentials
   +constructor(configs: TConfigs)
+  +close(removed: boolean): Promise<void>
+  +on(event: string, callback: (...args: any[]) => void): void
+  +onClose(removed, done): void | Promise<void>
   +static init(): void | Promise<void>
   +static getNode<T>(id: string): T | undefined
   +error(logMessage: string, msg: any): void
@@ -110,6 +113,7 @@ class Node {
   +trace(msg: any): void
   +log(msg: any): void
   +warn(msg: any): void
+  - registerOnCloseEventHandler(): void
 }
 
 class IONode {
@@ -119,12 +123,9 @@ class IONode {
   +y: number
   +g: string
   +constructor(configs: TConfigs)
-  +onInput(msg, send, done): void | Promise<void>
-  +onClose(removed, done): void | Promise<void>
-  +close(removed: boolean): Promise<void>
+  *onInput(msg, send, done): void | Promise<void>*
   +context(): Context
   +emit(event: string, ...args: any[]): void
-  +on(event: string, callback: (...args: any[]) => void): void
   +receive(msg: TInputMessage): void
   +removeAllListeners(name: string): void
   +removeListener(name: string): void
@@ -132,12 +133,11 @@ class IONode {
   +updateWires(wires: string[][]): void
   +metric(eventName: string, msg: Message, metricValue: number): boolean | void
   +status(status: object | string): void
-  -setupEventHandlers()
+  -registerOnInputEventHandler() : void
 }
 
 class ConfigNode {
   <<abstract>>
-  +users: string[]
   +constructor(configs: TConfigs)
 }
 
