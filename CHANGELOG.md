@@ -1,3 +1,24 @@
+# [1.3.0](https://github.com/AllanOricil/node-red-vue-template/compare/v1.2.1...v1.3.0) (2025-07-01)
+
+
+### Bug Fixes
+
+* move close to base Node class ([d861d1a](https://github.com/AllanOricil/node-red-vue-template/commit/d861d1af252459ca7165d771248ad2cf6b323548))
+* remove g property from config node schema ([21cadb5](https://github.com/AllanOricil/node-red-vue-template/commit/21cadb5f3c4c7cd8fd990389ec692179a9f76906))
+* remove users from config node at runtime ([49cc227](https://github.com/AllanOricil/node-red-vue-template/commit/49cc22780fbac3ad203dda1e518a7f8057968ee0))
+* set default value for _users to fix validation issues ([6d3d858](https://github.com/AllanOricil/node-red-vue-template/commit/6d3d858f8fd9ecf84b0d31c395c2a8d2bea444f6))
+* tsc:server errors ([3a23faf](https://github.com/AllanOricil/node-red-vue-template/commit/3a23faf39613ff80c2c5d9e69d5df41c1bd28b7c))
+
+
+### Features
+
+* add onClose to config nodes ([621906b](https://github.com/AllanOricil/node-red-vue-template/commit/621906be94da0ce459f887e030d7c3ae51e9c67a))
+
+
+### Reverts
+
+* fix: remove users from config node at runtime ([7c35092](https://github.com/AllanOricil/node-red-vue-template/commit/7c35092276fdd45cde5bcca47ae6d7342402e430))
+
 ## [1.2.1](https://github.com/AllanOricil/node-red-vue-template/compare/v1.2.0...v1.2.1) (2025-06-02)
 
 
