@@ -86,7 +86,16 @@ abstract class Node<
         console.error(errors);
       }
     }
+
+    this.registerOnCloseEventHandler();
   }
+
+  abstract onClose(): void | Promise<void>;
+  abstract onClose(
+    removed: boolean,
+    done: CloseDoneFunction,
+  ): void | Promise<void>;
+  abstract onClose(done: CloseDoneFunction): void | Promise<void>;
 
   static init(): void | Promise<void> {
     console.log("not implemented");
@@ -94,6 +103,14 @@ abstract class Node<
 
   static getNode<T>(id: string): T | undefined {
     return this.RED.nodes.getNode(id) as T;
+  }
+
+  /**
+   * NOTE: register onClose event handler
+   */
+  private registerOnCloseEventHandler() {
+    if (!this.onClose) return;
+    this.on("close", this.onClose);
   }
 }
 

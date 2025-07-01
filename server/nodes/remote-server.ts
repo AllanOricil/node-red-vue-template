@@ -1,5 +1,9 @@
 import { Static } from "@sinclair/typebox";
-import { ConfigNode, ConfigNodeValidations } from "../../core/server/nodes";
+import {
+  ConfigNode,
+  ConfigNodeValidations,
+  CloseDoneFunction,
+} from "../../core/server/nodes";
 import { ConfigsSchema } from "../../schemas/remote-server";
 
 export type RemoteServerConfigs = Static<typeof ConfigsSchema>;
@@ -28,5 +32,9 @@ export default class RemoteServerConfigNode extends ConfigNode<RemoteServerConfi
         console.error("Unknown error occurred: ", error);
       }
     }
+  }
+
+  override onClose(): void | Promise<void> {
+    console.log("closing remote server");
   }
 }

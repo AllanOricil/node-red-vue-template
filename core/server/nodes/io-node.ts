@@ -65,8 +65,7 @@ abstract class IONode<
     this.g = configs.g;
     this.wires = configs.wires || [[]];
 
-    console.log("SETUP EVENT HANDLERS");
-    this.setupEventHandlers();
+    this.registerOnInputEventHandler();
   }
 
   abstract onInput(
@@ -75,62 +74,48 @@ abstract class IONode<
     done: InputDoneFunction,
   ): void | Promise<void>;
 
-  abstract onClose(
-    removed: boolean,
-    done: CloseDoneFunction,
-  ): void | Promise<void>;
-
   /**
-   * Sets up event handlers for the node. Automatically binds methods starting with "on" from the base class
-   * to their corresponding events.
+   * NOTE: register onInput event handler
    */
-  private setupEventHandlers() {
-    console.log("INSIDE SETUPTEVENTHANDLERS");
-    if (this.onInput) {
-      console.log("REGISTERING ON INPUT");
-      this.on(
-        "input",
-        async (
-          msg: TInputMessage,
-          send: SendFunction<TOutputMessage>,
-          done: InputDoneFunction,
-        ) => {
-          try {
-            const inputSchema = IONode.validations?.input;
-            if (inputSchema) {
-              console.log("validating message");
-              const messageValidator =
-                validatorService.createValidator(inputSchema);
-              const isValid = messageValidator(msg);
-              if (!isValid) {
-                const errors = validatorService.errors(
-                  messageValidator.errors,
-                  {
-                    separator: "\n",
-                    dataVar: "- message",
-                  },
-                );
-                console.error(errors);
-                return done(errors);
-              }
-            }
+  private registerOnInputEventHandler() {
+    if (!this.onInput) return;
 
-            await Promise.resolve(this.onInput(msg, send, done));
-          } catch (error) {
-            if (error instanceof Error) {
-              this.error("Error while processing input: " + error.message, msg);
-              done(error);
-            } else {
-              this.error("Unknown error occurred during input handling", msg);
-              done("Unknown error occurred during input handling");
+    this.on(
+      "input",
+      async (
+        msg: TInputMessage,
+        send: SendFunction<TOutputMessage>,
+        done: InputDoneFunction,
+      ) => {
+        try {
+          const inputSchema = IONode.validations?.input;
+          if (inputSchema) {
+            console.log("validating message");
+            const messageValidator =
+              validatorService.createValidator(inputSchema);
+            const isValid = messageValidator(msg);
+            if (!isValid) {
+              const errors = validatorService.errors(messageValidator.errors, {
+                separator: "\n",
+                dataVar: "- message",
+              });
+              console.error(errors);
+              return done(errors);
             }
           }
-        },
-      );
-    }
-    if (this.onClose) {
-      this.on("close", this.onClose);
-    }
+
+          await Promise.resolve(this.onInput(msg, send, done));
+        } catch (error) {
+          if (error instanceof Error) {
+            this.error("Error while processing input: " + error.message, msg);
+            done(error);
+          } else {
+            this.error("Unknown error occurred during input handling", msg);
+            done("Unknown error occurred during input handling");
+          }
+        }
+      },
+    );
   }
 }
 
