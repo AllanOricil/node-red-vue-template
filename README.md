@@ -138,6 +138,7 @@ class IONode {
 
 class ConfigNode {
   <<abstract>>
+  +users: string[]
   +constructor(configs: TConfigs)
 }
 
