@@ -146,6 +146,9 @@ IONode --|> Node
 ConfigNode --|> Node
 ```
 
+> [!NOTE]
+> Both `ConfigNode` and `IONode` inherit from the `Node` class, which extends an event emitter. However, the diagram above omits some commonly inherited methods from `ConfigNode`. These methods are also not shown in IntelliSense, but they are available at runtime since the framework does not alter the core `Node` class.
+
 ## 🤝 Contributing
 
 I welcome contributions! If you'd like to help improve this template, feel free to open issues or submit pull requests. Your feedback is appreciated.
