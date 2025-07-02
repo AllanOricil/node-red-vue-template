@@ -1,3 +1,19 @@
+# [2.0.0](https://github.com/AllanOricil/node-red-vue-template/compare/v1.3.0...v2.0.0) (2025-07-02)
+
+
+### Features
+
+* move icons and public folders to client ([a5da5bb](https://github.com/AllanOricil/node-red-vue-template/commit/a5da5bb5efcc0ef0b3fad758911b62404f4386a7))
+
+
+### BREAKING CHANGES
+
+* because icons and public folders are used by client code only
+it makes more sense to put both under the client folder
+
+locales, examples and schemas can be used by client and server code
+so they stay on the root of the project structure
+
 # [1.3.0](https://github.com/AllanOricil/node-red-vue-template/compare/v1.2.1...v1.3.0) (2025-07-01)
 
 
