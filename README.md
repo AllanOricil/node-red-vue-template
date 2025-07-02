@@ -60,14 +60,17 @@ https://codetain.com/blog/benchmark-of-node-js-validators/#:~:text=Ajv%20turned%
 │   │   └── image.png
 │   ├── components/
 │   │   └── node-type-form.ue
+│   ├── icons/
+│   │   └── icon.png
 │   ├── nodes/
 │   │   └── node-type.ts
+│   ├── public/
+│   │   └── image.png
 │   ├── index.ts
 │   └── tsconfig.json
 ├── examples/
 │   └── flow.json
-├── icons/
-│   └── icon.png
+
 ├── locales/
 │   ├── docs/
 │   │   └── node-type/
@@ -77,8 +80,6 @@ https://codetain.com/blog/benchmark-of-node-js-validators/#:~:text=Ajv%20turned%
 │       └── node-type/
 │           ├── en-US.json
 │           └── pt-BR.json
-├── public/
-│   └── image.png
 ├── schemas/
 │   └── node-type.ts
 ├── server/

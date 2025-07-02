@@ -4,6 +4,7 @@ import mime from "mime-types";
 import path from "path";
 import { defineConfig, Plugin } from "vite";
 import { visualizer } from "rollup-plugin-visualizer";
+import { viteStaticCopy } from "vite-plugin-static-copy";
 import vue from "@vitejs/plugin-vue";
 import pkg from "../package.json";
 
@@ -253,6 +254,19 @@ export default defineConfig(({ mode }) => {
       docsDir: path.join(ROOT_DIR, "locales/docs"),
       labelsDir: path.join(ROOT_DIR, "locales/labels"),
     }),
+    viteStaticCopy({
+      targets: [
+        {
+          // NOTE: node-red uses a folder called resources instead of public
+          src: path.join(__dirname, "public", "*"),
+          dest: path.join(DIST_DIR, "resources"),
+        },
+        {
+          src: path.join(__dirname, "icons", "*"),
+          dest: path.join(DIST_DIR, "icons"),
+        },
+      ],
+    }),
   ];
 
   if (!isDev) {
@@ -269,7 +283,8 @@ export default defineConfig(({ mode }) => {
   }
 
   return {
-    base: `resources/${pkg.name}`,
+    base: path.join("resources", pkg.name),
+    publicDir: path.join(__dirname, "public"),
     resolve: {
       alias: {
         "@": path.resolve(__dirname),
@@ -297,9 +312,9 @@ export default defineConfig(({ mode }) => {
         external: ["jquery", "node-red"],
         treeshake: true,
         output: {
-          entryFileNames: "resources/index.[hash].js",
-          chunkFileNames: "resources/vendor.[hash].js",
-          assetFileNames: "resources/[name].[hash].[ext]",
+          entryFileNames: path.join("resources", "index.[hash].js"),
+          chunkFileNames: path.join("resources", "vendor.[hash].js"),
+          assetFileNames: path.join("resources", "[name].[hash].[ext]"),
           globals: {
             vue: "Vue",
             jquery: "$",

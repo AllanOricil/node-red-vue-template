@@ -111,14 +111,6 @@ async function buildProject() {
     await copy({
       targets: [
         {
-          src: path.join(ROOT_DIR, "public"),
-          dest: path.join(DIST_DIR, "resources"),
-        },
-        {
-          src: path.join(ROOT_DIR, "icons"),
-          dest: path.join(DIST_DIR, "icons"),
-        },
-        {
           src: path.join(ROOT_DIR, "examples"),
           dest: path.join(DIST_DIR, "examples"),
         },
