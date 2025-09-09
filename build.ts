@@ -1,10 +1,10 @@
+import * as fs from "fs-extra";
+import * as path from "node:path";
 import esbuild, { BuildOptions } from "esbuild";
 import esbuildPluginTsc from "esbuild-plugin-tsc";
-import fs from "fs-extra";
-import * as path from "path";
 import type { PackageJson } from "type-fest";
-import { build, loadConfigFromFile } from "vite";
 import { fileURLToPath } from "url";
+import { build, loadConfigFromFile } from "vite";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -19,11 +19,14 @@ async function copy(options: { targets: { src: string; dest: string } }) {
   }
 }
 
-async function buildClient(options: { viteConfigFilePath: string }) {
+async function buildClient(options: {
+  viteConfigFilePath: string;
+  viteMode: string;
+}) {
   console.log("Building client...");
 
   const configFile = await loadConfigFromFile(
-    { mode: process.env.NODE_ENV || "production " },
+    { mode: options.viteMode },
     options.viteConfigFilePath,
   );
 
@@ -75,57 +78,94 @@ async function generateDistPackageJson(options: {
 }
 
 async function buildProject() {
-  const target = process.env.TARGET?.toLowerCase() || "both";
-
   try {
-    await fs.remove(DIST_DIR);
+    const jobs = {
+      clean: async () => {
+        console.log("Cleaning dist dir...");
+        const dirExists = await fs.exists(DIST_DIR);
+        if (dirExists) await fs.remove(DIST_DIR);
+        await fs.ensureDir(DIST_DIR);
+      },
+      buildServer: async () => {
+        const isDev = process.env.NODE_ENV === "development";
+        buildServer({
+          entryPoints: [path.resolve(SRC_DIR, "server", "index.ts")],
+          outfile: path.join(DIST_DIR, "index.js"),
+          sourcemap: isDev ? "external" : false,
+          treeShaking: !isDev,
+          bundle: true,
+          platform: "node",
+          target: "node22",
+          format: "cjs",
+          plugins: [esbuildPluginTsc()],
+          minify: !isDev,
+          keepNames: true,
+        });
+      },
+      buildClient: async () => {
+        await buildClient({
+          viteConfigFilePath: path.resolve(SRC_DIR, "client", "vite.config.ts"),
+          viteMode: process.env.NODE_ENV || "production",
+        });
+      },
+      generateDistPackageJson: async () => {
+        await generateDistPackageJson({
+          distDir: DIST_DIR,
+          rootPackageJsonPath: path.resolve(ROOT_DIR, "package.json"),
+        });
+      },
+      copyFiles: async () => {
+        await copy({
+          targets: [
+            {
+              src: path.join(ROOT_DIR, "examples"),
+              dest: path.join(DIST_DIR, "examples"),
+            },
+            {
+              src: path.join(ROOT_DIR, "LICENSE"),
+              dest: path.join(DIST_DIR, "LICENSE"),
+            },
+            {
+              src: path.join(ROOT_DIR, "README.md"),
+              dest: path.join(DIST_DIR, "README.md"),
+            },
+          ],
+        });
+      },
+    };
 
-    if (target === "client" || target === "both") {
-      await buildClient({
-        viteConfigFilePath: path.resolve(SRC_DIR, "client", "vite.config.ts"),
-      });
-    }
-
-    if (target === "server" || target === "both") {
-      const isDev = process.env.NODE_ENV === "development";
-
-      await buildServer({
-        entryPoints: [path.resolve(SRC_DIR, "server", "index.ts")],
-        outfile: path.join(DIST_DIR, "index.js"),
-        sourcemap: isDev ? "external" : false,
-        treeShaking: !isDev,
-        bundle: true,
-        platform: "node",
-        target: "node22",
-        format: "cjs",
-        plugins: [esbuildPluginTsc()],
-        minify: !isDev,
-        keepNames: true,
-      });
-    }
-
-    await generateDistPackageJson({
-      distDir: DIST_DIR,
-      rootPackageJsonPath: path.resolve(ROOT_DIR, "package.json"),
-    });
-    await copy({
-      targets: [
-        {
-          src: path.join(ROOT_DIR, "examples"),
-          dest: path.join(DIST_DIR, "examples"),
-        },
-        {
-          src: path.join(ROOT_DIR, "LICENSE"),
-          dest: path.join(DIST_DIR, "LICENSE"),
-        },
-        {
-          src: path.join(ROOT_DIR, "README.md"),
-          dest: path.join(DIST_DIR, "README.md"),
-        },
+    const jobGroups = {
+      default: [
+        jobs.clean,
+        jobs.buildServer,
+        jobs.buildClient,
+        jobs.generateDistPackageJson,
+        jobs.copyFiles,
       ],
-    });
+      server: [
+        jobs.clean,
+        jobs.buildServer,
+        jobs.generateDistPackageJson,
+        jobs.copyFiles,
+      ],
+      client: [
+        jobs.clean,
+        jobs.buildClient,
+        jobs.generateDistPackageJson,
+        jobs.copyFiles,
+      ],
+    };
 
-    console.log("All builds completed successfully.");
+    const target = process.env.NRG_TARGET ?? "default";
+    if (!Object.keys(jobGroups).includes(target)) {
+      throw new Error("job group not available");
+    }
+
+    for (const job of jobGroups[target]) {
+      await job();
+    }
+
+    console.log("Build completed successfully.");
   } catch (error) {
     console.error("Build failed:", error);
     process.exit(1);
