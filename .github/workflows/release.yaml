@@ -40,8 +40,11 @@ jobs:
       - name: tsc server
         run: pnpm tsc:server
 
-      # - name: Lint
-      #   run: pnpm lint
+      - name: Lint
+        run: pnpm lint
+
+      - name: Format Check
+        run: pnpm format:check
 
       # - name: Test
       #   run: pnpm test

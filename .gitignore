@@ -1,4 +1,9 @@
+.node-red
+.claude
 node_modules
 stats.html
 stats.json
 dist
+build
+node-red-3
+test-types.ts

@@ -1,0 +1,7 @@
+{
+  "extends": "@bonsae/nrg/tsconfig/client.json",
+  "compilerOptions": {
+    "rootDir": "."
+  },
+  "include": ["**/*.ts", "**/*.vue"]
+}
