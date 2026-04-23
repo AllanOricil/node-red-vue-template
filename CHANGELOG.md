@@ -1,3 +1,22 @@
+# [3.0.0](https://github.com/AllanOricil/node-red-vue-template/compare/v2.0.0...v3.0.0) (2026-04-23)
+
+
+* feat!: migrate to @bonsae/nrg framework ([1d47a39](https://github.com/AllanOricil/node-red-vue-template/commit/1d47a397340714b6bbcb7a29bd9dbfcef45ed35b))
+
+
+### BREAKING CHANGES
+
+* Complete rewrite using the NRG framework.
+
+- Replace custom build system with @bonsae/nrg/vite plugin
+- Move source to src/ directory layout
+- Server nodes use IONode/ConfigNode classes with TypeBox schemas
+- Client forms use Vue 3 components with auto-wiring
+- AJV validation on both server and client
+- ESM server build with CJS bridge for Node-RED
+- Add test nodes: auto-wired-node, dynamic-outputs, splitter
+- Rewrite README with full framework documentation
+
 # [2.0.0](https://github.com/AllanOricil/node-red-vue-template/compare/v1.3.0...v2.0.0) (2025-07-02)
 
 
