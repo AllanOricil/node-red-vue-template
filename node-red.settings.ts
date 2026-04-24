@@ -1,4 +1,4 @@
-import { defineRuntimeSettings } from "@bonsae/nrg/vite/utils";
+import { defineRuntimeSettings } from "@bonsae/nrg";
 import moment from "moment";
 import os from "os";
 import path from "path";

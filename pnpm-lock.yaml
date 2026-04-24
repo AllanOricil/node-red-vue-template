@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@bonsae/nrg':
-        specifier: ^0.1.0
-        version: 0.1.0(@sinclair/typebox@0.34.49)(@types/node@22.19.17)(rollup@4.60.2)(vite@6.4.2(@types/node@22.19.17))(vue@3.5.33(typescript@5.9.3))
+        specifier: ^0.3.0
+        version: 0.3.0(@sinclair/typebox@0.34.49)(@types/node@22.19.17)(rollup@4.60.2)(vite@6.4.2(@types/node@22.19.17))(vue@3.5.33(typescript@5.9.3))
       '@sinclair/typebox':
         specifier: ^0.34.49
         version: 0.34.49
@@ -93,8 +93,8 @@ packages:
     resolution: {integrity: sha512-LwdZHpScM4Qz8Xw2iKSzS+cfglZzJGvofQICy7W7v4caru4EaAmyUuO6BGrbyQ2mYV11W0U8j5mBhd14dd3B0A==}
     engines: {node: '>=6.9.0'}
 
-  '@bonsae/nrg@0.1.0':
-    resolution: {integrity: sha512-NxZQjwh5T+z0pjqSGvTqWjNQcvdoWuylHK67YqaYWiMZI6VValD6k0PPqvBBZkEEo+puOq6rRnDobcwFFewp1A==}
+  '@bonsae/nrg@0.3.0':
+    resolution: {integrity: sha512-tvN0KT53bm4fr4/P+NhTBeUzsuP5ioIlXjYFiw5+rXbB4oLuflQf/8h3qy+PPOHWVeVL2H6Hzr2XhNr0HdQP4A==}
     engines: {node: '>=22', pnpm: '>=10.11.0'}
     peerDependencies:
       '@sinclair/typebox': ^0.34.33
@@ -824,6 +824,9 @@ packages:
 
   ajv@8.18.0:
     resolution: {integrity: sha512-PlXPeEWMXMZ7sPYOHqmDyCJzcfNrUr3fGNKtezX14ykXOEIvyK81d+qydx89KY5O71FKMPaQ2vBfBFI5NHR63A==}
+
+  ajv@8.20.0:
+    resolution: {integrity: sha512-Thbli+OlOj+iMPYFBVBfJ3OmCAnaSyNn4M1vz9T6Gka5Jt9ba/HIR56joy65tY6kx/FCF5VXNB819Y7/GUrBGA==}
 
   alien-signals@0.4.14:
     resolution: {integrity: sha512-itUAVzhczTmP2U5yX67xVpsbbOiquusbWVyA9N+sy6+r6YVbFkahXvNCeEPWEOMhwDYwbVbGHFkVL03N9I5g+Q==}
@@ -2472,14 +2475,14 @@ snapshots:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.28.5
 
-  '@bonsae/nrg@0.1.0(@sinclair/typebox@0.34.49)(@types/node@22.19.17)(rollup@4.60.2)(vite@6.4.2(@types/node@22.19.17))(vue@3.5.33(typescript@5.9.3))':
+  '@bonsae/nrg@0.3.0(@sinclair/typebox@0.34.49)(@types/node@22.19.17)(rollup@4.60.2)(vite@6.4.2(@types/node@22.19.17))(vue@3.5.33(typescript@5.9.3))':
     dependencies:
       '@clack/prompts': 1.2.0
       '@sinclair/typebox': 0.34.49
       '@vitejs/plugin-vue': 5.2.4(vite@6.4.2(@types/node@22.19.17))(vue@3.5.33(typescript@5.9.3))
-      ajv: 8.18.0
-      ajv-errors: 3.0.0(ajv@8.18.0)
-      ajv-formats: 3.0.1(ajv@8.18.0)
+      ajv: 8.20.0
+      ajv-errors: 3.0.0(ajv@8.20.0)
+      ajv-formats: 3.0.1(ajv@8.20.0)
       chokidar: 5.0.0
       detect-port: 2.1.0
       es-toolkit: 1.46.0
@@ -3225,13 +3228,17 @@ snapshots:
     optionalDependencies:
       ajv: 8.18.0
 
-  ajv-errors@3.0.0(ajv@8.18.0):
+  ajv-errors@3.0.0(ajv@8.20.0):
     dependencies:
-      ajv: 8.18.0
+      ajv: 8.20.0
 
   ajv-formats@3.0.1(ajv@8.18.0):
     optionalDependencies:
       ajv: 8.18.0
+
+  ajv-formats@3.0.1(ajv@8.20.0):
+    optionalDependencies:
+      ajv: 8.20.0
 
   ajv@6.14.0:
     dependencies:
@@ -3241,6 +3248,13 @@ snapshots:
       uri-js: 4.4.1
 
   ajv@8.18.0:
+    dependencies:
+      fast-deep-equal: 3.1.3
+      fast-uri: 3.1.0
+      json-schema-traverse: 1.0.0
+      require-from-string: 2.0.2
+
+  ajv@8.20.0:
     dependencies:
       fast-deep-equal: 3.1.3
       fast-uri: 3.1.0
