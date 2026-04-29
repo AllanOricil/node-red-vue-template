@@ -64,75 +64,80 @@ export default class YourNode extends IONode<
   }
 
   public override async input(msg: Input): Promise<void> {
+    // --- Test 1: Schema-driven node ref resolution ---
+    // remoteServer has x-nrg-node-type so it should resolve to the config node instance
     const server = this.config.remoteServer;
     if (server instanceof RemoteServerConfigNode) {
-      this.log("server is an instance of RemoteServerConfigNode");
+      this.log("[PASS] remoteServer resolved to RemoteServerConfigNode instance");
+    } else {
+      this.warn("[FAIL] remoteServer was NOT resolved to a node instance");
     }
 
-    await this.context.node.set("server", server);
-    await this.context.flow.set("abc", server);
-    await this.context.global.set("abc", server);
-    await this.context.global.set("foo", "bar");
-    await this.context("node", "file").set("foo", "bar");
-    console.log(await this.context("node", "file").get("foo"));
-    console.log(await this.context.node.keys());
-
-    const server2 =
-      await this.context.node.get<RemoteServerConfigNode>("server");
-    if (server2 instanceof RemoteServerConfigNode) {
-      this.log("server2 is an instance of RemoteServerConfigNode");
+    // --- Test 2: Plain strings should NOT be resolved as node refs ---
+    // name, country, number are plain strings — they must stay as strings
+    const name = this.config.name;
+    if (typeof name === "string") {
+      this.log(`[PASS] config.name is a string: "${name}"`);
+    } else {
+      this.warn(`[FAIL] config.name was resolved as something else: ${typeof name}`);
     }
 
-    const server3 = (await this.context.node.get(
-      "server",
-    )) as RemoteServerConfigNode;
-    if (server3 instanceof RemoteServerConfigNode) {
-      this.log("server3 is an instance of RemoteServerConfigNode");
+    const country = this.config.country;
+    if (typeof country === "string") {
+      this.log(`[PASS] config.country is a string: "${country}"`);
+    } else {
+      this.warn(`[FAIL] config.country was resolved as something else: ${typeof country}`);
     }
 
-    // NOTE: testing server side access to labels with placeholders
-    console.log(this.i18n("errors.invalid", { field: "name" }));
+    // --- Test 3: Reference equality (WeakMap cache) ---
+    const server1 = this.config.remoteServer;
+    const server2 = this.config.remoteServer;
+    if (server1 === server2) {
+      this.log("[PASS] config.remoteServer === config.remoteServer (identity preserved)");
+    } else {
+      this.warn("[FAIL] config.remoteServer !== config.remoteServer (identity broken)");
+    }
 
+    // --- Test 4: Array identity ---
+    const fruit1 = this.config.fruit;
+    const fruit2 = this.config.fruit;
+    if (fruit1 === fruit2) {
+      this.log("[PASS] config.fruit === config.fruit (array identity preserved)");
+    } else {
+      this.warn("[FAIL] config.fruit !== config.fruit (array identity broken)");
+    }
+
+    // --- Test 5: Read-only config (set trap) ---
+    try {
+      (this.config as any).name = "should-fail";
+      this.warn("[FAIL] config mutation did NOT throw");
+    } catch (e: any) {
+      this.log(`[PASS] config mutation threw: ${e.message}`);
+    }
+
+    // --- Test 6: TypedInput values should NOT be resolved as node refs ---
+    const myProperty = this.config.myProperty;
+    if (myProperty && typeof myProperty === "object" && "value" in myProperty) {
+      this.log(`[PASS] config.myProperty is a TypedInput object: ${JSON.stringify(myProperty)}`);
+    } else {
+      this.warn(`[FAIL] config.myProperty was unexpectedly resolved`);
+    }
+
+    // --- Test 7: Config node users ---
     const firstUser = server.users[0];
     if (firstUser instanceof YourNode) {
-      this.log("firstUser is an instance of YourNode");
+      this.log("[PASS] server.users[0] is a YourNode instance");
     }
 
-    // NOTE: testing typed inputs that can be resolved to another node reference
-    const myProperty = await this.resolveTypedInput<YourNode>(
-      this.config.myProperty,
-    );
-    if (myProperty instanceof YourNode) {
-      this.log("myProperty is an instance of YourNode");
-      console.log(`myProperty: ${myProperty.config.remoteServer}`);
-      if (myProperty.config.remoteServer instanceof RemoteServerConfigNode) {
-        this.log(
-          "myProperty.config.remoteServer  is an instance of RemoteServerConfigNode",
-        );
-      }
-    }
-
-    const myProperty2 = await this.resolveTypedInput<string>(
-      this.config.myProperty2,
-    );
-    console.log(`myProperty2: ${myProperty2}`);
-
-    // NOTE: to avoid mem duplication, this.settings is a reference to settings that were resolved during validation
-    // NOTE: testing settings. It should return the value from settings.ts or the default one from the schema
+    // --- Original functionality ---
+    this.log(`credentials username: ${this.credentials?.username}`);
     console.log(`settings: ${this.settings.test}`);
-
-    // NOTE: testing settings with functions
     console.log(`transform function: ${this.settings.transform("FoO")}`);
 
     const outputMsg = {
       originalType: "number" as const,
       processedTime: 1,
       inputMsg: msg,
-      serverId: server.config.id,
-      server: server,
-      serverUserIds: server.userIds,
-      serverUsers: server.users,
-      self: this,
       settings: this.settings,
     };
     this.send(outputMsg as unknown as Output);
