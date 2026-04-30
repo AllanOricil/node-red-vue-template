@@ -56,7 +56,6 @@
     "vue": "^3.5.14"
   },
   "dependencies": {
-    "@bonsae/nrg": "^0.6.1",
-    "@sinclair/typebox": "^0.34.49"
+    "@bonsae/nrg": "^0.6.1"
   }
 }
