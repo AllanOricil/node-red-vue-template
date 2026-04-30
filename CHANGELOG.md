@@ -1,3 +1,21 @@
+# [3.1.0](https://github.com/AllanOricil/node-red-vue-template/compare/v3.0.0...v3.1.0) (2026-04-30)
+
+
+### Bug Fixes
+
+* fix lint errors and update README to use defineModule ([2166177](https://github.com/AllanOricil/node-red-vue-template/commit/216617792507a07579b3acb5e7d1fc0f37c60ab0))
+* format source files with prettier ([f21b9d8](https://github.com/AllanOricil/node-red-vue-template/commit/f21b9d8e824f1b5391051f62118164df18175145))
+* import defineRuntimeSettings from @bonsae/nrg ([85c8633](https://github.com/AllanOricil/node-red-vue-template/commit/85c8633e6976afa5209add52b5fd66bbd2baf13f))
+* remove @sinclair/typebox dependency ([5941994](https://github.com/AllanOricil/node-red-vue-template/commit/5941994aba850e17c689c3597e92c14064e3182b))
+* remove pnpm workspace override and use registry @bonsae/nrg ([9647b7d](https://github.com/AllanOricil/node-red-vue-template/commit/9647b7d32b31b14f44058aee50ed881cc435bb64))
+* restore client entry filename and update @bonsae/nrg to ^0.6.0 ([fe29b50](https://github.com/AllanOricil/node-red-vue-template/commit/fe29b50630fdaefde03d57f8a52dab801a34a01f))
+* update @bonsae/nrg to ^0.6.3 and remove typebox dependency ([8acb0fd](https://github.com/AllanOricil/node-red-vue-template/commit/8acb0fd90fdc5f1df4702c79fd01205bc06a4597))
+
+
+### Features
+
+* add factory-based nodes, defineModule, and new test nodes ([f66829c](https://github.com/AllanOricil/node-red-vue-template/commit/f66829c9b211741b497858b241d5b729543aa15b))
+
 # [3.0.0](https://github.com/AllanOricil/node-red-vue-template/compare/v2.0.0...v3.0.0) (2026-04-23)
 
 
