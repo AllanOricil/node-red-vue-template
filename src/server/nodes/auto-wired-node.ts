@@ -35,7 +35,10 @@ export default class AutoWiredNode extends IONode<
     this.log(`Server: ${server.config.name}`);
     this.send({
       statusCode: 200,
-      body: JSON.stringify({ config: configWithoutRefs, credentials: this.credentials }),
+      body: JSON.stringify({
+        config: configWithoutRefs,
+        credentials: this.credentials,
+      }),
     });
   }
 }

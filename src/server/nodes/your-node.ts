@@ -68,7 +68,9 @@ export default class YourNode extends IONode<
     // remoteServer has x-nrg-node-type so it should resolve to the config node instance
     const server = this.config.remoteServer;
     if (server instanceof RemoteServerConfigNode) {
-      this.log("[PASS] remoteServer resolved to RemoteServerConfigNode instance");
+      this.log(
+        "[PASS] remoteServer resolved to RemoteServerConfigNode instance",
+      );
     } else {
       this.warn("[FAIL] remoteServer was NOT resolved to a node instance");
     }
@@ -79,30 +81,40 @@ export default class YourNode extends IONode<
     if (typeof name === "string") {
       this.log(`[PASS] config.name is a string: "${name}"`);
     } else {
-      this.warn(`[FAIL] config.name was resolved as something else: ${typeof name}`);
+      this.warn(
+        `[FAIL] config.name was resolved as something else: ${typeof name}`,
+      );
     }
 
     const country = this.config.country;
     if (typeof country === "string") {
       this.log(`[PASS] config.country is a string: "${country}"`);
     } else {
-      this.warn(`[FAIL] config.country was resolved as something else: ${typeof country}`);
+      this.warn(
+        `[FAIL] config.country was resolved as something else: ${typeof country}`,
+      );
     }
 
     // --- Test 3: Reference equality (WeakMap cache) ---
     const server1 = this.config.remoteServer;
     const server2 = this.config.remoteServer;
     if (server1 === server2) {
-      this.log("[PASS] config.remoteServer === config.remoteServer (identity preserved)");
+      this.log(
+        "[PASS] config.remoteServer === config.remoteServer (identity preserved)",
+      );
     } else {
-      this.warn("[FAIL] config.remoteServer !== config.remoteServer (identity broken)");
+      this.warn(
+        "[FAIL] config.remoteServer !== config.remoteServer (identity broken)",
+      );
     }
 
     // --- Test 4: Array identity ---
     const fruit1 = this.config.fruit;
     const fruit2 = this.config.fruit;
     if (fruit1 === fruit2) {
-      this.log("[PASS] config.fruit === config.fruit (array identity preserved)");
+      this.log(
+        "[PASS] config.fruit === config.fruit (array identity preserved)",
+      );
     } else {
       this.warn("[FAIL] config.fruit !== config.fruit (array identity broken)");
     }
@@ -118,7 +130,9 @@ export default class YourNode extends IONode<
     // --- Test 6: TypedInput values should NOT be resolved as node refs ---
     const myProperty = this.config.myProperty;
     if (myProperty && typeof myProperty === "object" && "value" in myProperty) {
-      this.log(`[PASS] config.myProperty is a TypedInput object: ${JSON.stringify(myProperty)}`);
+      this.log(
+        `[PASS] config.myProperty is a TypedInput object: ${JSON.stringify(myProperty)}`,
+      );
     } else {
       this.warn(`[FAIL] config.myProperty was unexpectedly resolved`);
     }
