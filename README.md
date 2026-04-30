@@ -86,15 +86,16 @@ The server directory contains your node logic. This is the only required part of
 
 #### `server/index.ts`
 
-The entry point exports your node classes:
+The entry point exports your node module:
 
 ```typescript
+import { defineModule } from "@bonsae/nrg/server";
 import YourNode from "./nodes/your-node";
 import RemoteServer from "./nodes/remote-server";
 
-export default {
+export default defineModule({
   nodes: [YourNode, RemoteServer],
-};
+});
 ```
 
 #### `server/nodes/{type}.ts`
@@ -615,7 +616,7 @@ Input/output validation toggles appear automatically in the editor form when `in
 ```typescript
 // vite.config.ts
 import { defineConfig } from "vite";
-import { nodeRed } from "@bonsae/vite";
+import { nodeRed } from "@bonsae/nrg/vite";
 
 export default defineConfig({
   plugins: [

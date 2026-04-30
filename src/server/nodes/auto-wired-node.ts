@@ -29,8 +29,10 @@ export default class AutoWiredNode extends IONode<
   public static override readonly inputSchema: Schema = InputSchema;
   public static override readonly outputsSchema: Schema = OutputSchema;
 
-  public override async input(_msg: Input): Promise<void> {
+  public override async input(msg: Input): Promise<void> {
+    this.log(`Received: ${JSON.stringify(msg)}`);
     const { server, ...configWithoutRefs } = this.config;
+    this.log(`Server: ${server.config.name}`);
     this.send({
       statusCode: 200,
       body: JSON.stringify({ config: configWithoutRefs, credentials: this.credentials }),
