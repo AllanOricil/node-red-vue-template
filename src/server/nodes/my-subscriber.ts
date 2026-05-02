@@ -14,7 +14,7 @@ export default defineIONode({
   created() {
     this.log(`Class name: ${this.constructor.name}`);
     const broker = this.config.broker;
-    if (broker) {
+    if (broker?.config) {
       this.log(
         `Subscribing to ${this.config.topic} via ${broker.config.host}:${broker.config.port}`,
       );

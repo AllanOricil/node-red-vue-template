@@ -32,7 +32,7 @@ export default class AutoWiredNode extends IONode<
   public override async input(msg: Input): Promise<void> {
     this.log(`Received: ${JSON.stringify(msg)}`);
     const { server, ...configWithoutRefs } = this.config;
-    this.log(`Server: ${server.config.name}`);
+    this.log(`Server: ${server?.config?.name}`);
     this.send({
       statusCode: 200,
       body: JSON.stringify({

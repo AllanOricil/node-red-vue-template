@@ -4,8 +4,8 @@ import RemoteServerConfigNode from "../nodes/remote-server";
 const ConfigsSchema = defineSchema(
   {
     name: SchemaType.String({ default: "your-node" }),
-    myProperty: SchemaType.TypedInput(),
-    myProperty2: SchemaType.TypedInput(),
+    myProperty: SchemaType.TypedInput<string>(),
+    myProperty2: SchemaType.TypedInput<number>(),
     remoteServer: SchemaType.NodeRef(RemoteServerConfigNode),
     anotherRemoteServer: SchemaType.NodeRef(RemoteServerConfigNode),
     country: SchemaType.String({ default: "brazil" }),
