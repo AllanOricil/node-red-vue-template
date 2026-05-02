@@ -7,7 +7,7 @@ export default defineConfig({
       nodeRedLauncherOptions: {
         runtime: {
           settingsFilepath: "./node-red.settings.ts",
-          version: "5.0.0-beta.5",
+          version: "5.0.0-beta.6",
         },
       },
     }),

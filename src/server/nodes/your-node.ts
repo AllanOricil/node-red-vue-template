@@ -86,11 +86,11 @@ export default class YourNode extends IONode<
     // resolve() return type is inferred from SchemaType.TypedInput<T>()
     const myProperty = this.config.myProperty;
     this.log(`TypedInput type: ${myProperty.type}, value: ${myProperty.value}`);
-    const str = await myProperty.resolve(msg);
-    this.log(`myProperty resolved: ${str?.toUpperCase()}`);
+    const resolved = await myProperty.resolve(msg);
+    this.log(`myProperty resolved: node ${resolved.id} (${resolved.name})`);
 
-    const num = await this.config.myProperty2.resolve(msg);
-    this.log(`myProperty2 resolved: ${num?.toFixed(2)}`);
+    const resolved2 = await this.config.myProperty2.resolve(msg);
+    this.log(`myProperty2 resolved: ${resolved2}`);
 
     // --- Plain config values stay as-is ---
     this.log(`Name: ${this.config.name}`);

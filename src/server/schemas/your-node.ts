@@ -1,11 +1,14 @@
 import { SchemaType, defineSchema } from "@bonsae/nrg/server";
 import RemoteServerConfigNode from "../nodes/remote-server";
+import type YourNode from "../nodes/your-node";
 
 const ConfigsSchema = defineSchema(
   {
     name: SchemaType.String({ default: "your-node" }),
-    myProperty: SchemaType.TypedInput<string>(),
-    myProperty2: SchemaType.TypedInput<number>(),
+    myProperty: SchemaType.TypedInput<YourNode>({
+      "x-nrg-form": { typedInputTypes: ["node"] },
+    }),
+    myProperty2: SchemaType.TypedInput(),
     remoteServer: SchemaType.NodeRef(RemoteServerConfigNode),
     anotherRemoteServer: SchemaType.NodeRef(RemoteServerConfigNode),
     country: SchemaType.String({ default: "brazil" }),
