@@ -6,6 +6,8 @@ export type Config = Infer<typeof ConfigsSchema>;
 
 export default class DynamicOutputs extends IONode<Config> {
   public static override readonly type: string = "dynamic-outputs";
+  public static override readonly description =
+    "Routes messages to a configurable number of outputs using round-robin or broadcast mode.";
   public static override readonly category: string = "function";
   public static override readonly color: `#${string}` = "#e2d96e";
   public static override readonly inputs: number = 1;

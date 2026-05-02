@@ -3,6 +3,8 @@ import { ConfigsSchema, OutputSchema } from "../schemas/my-subscriber";
 
 export default defineIONode({
   type: "my-subscriber",
+  description:
+    "Subscribes to a topic on a broker and outputs received messages.",
   category: "network",
   color: "#d8bfd8",
   inputs: 0,

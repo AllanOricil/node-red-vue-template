@@ -5,7 +5,9 @@
 
 # node-red-vue-template
 
-Build Node-RED nodes using Vue 3, TypeScript, and JSON Schema validation.
+Build Node-RED nodes using Vue 3, TypeScript, and JSON Schema validation. Powered by [NRG](https://bonsaedev.github.io/nrg/).
+
+> **Note:** This repository contains example nodes that are not meant for production use. They exist to demonstrate NRG features and serve as a test bench for framework development. See the [NRG documentation](https://bonsaedev.github.io/nrg/) for the full guide.
 
 ![Image](https://github.com/user-attachments/assets/683d4377-371a-4f2a-8750-f93e0eb6649f)
 

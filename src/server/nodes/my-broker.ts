@@ -3,6 +3,8 @@ import { ConfigsSchema, CredentialsSchema } from "../schemas/my-broker";
 
 export default defineConfigNode({
   type: "my-broker",
+  description:
+    "Configuration node for a message broker connection with host, port, and TLS settings.",
   configSchema: ConfigsSchema,
   credentialsSchema: CredentialsSchema,
 
