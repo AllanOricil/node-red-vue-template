@@ -1,0 +1,17 @@
+{
+  "$schema": "https://unpkg.com/@bonsae/nrg/schemas/labels.schema.json",
+  "label": "Requisição HTTP",
+  "description": "Realiza requisições HTTP com método, URL, autenticação e tentativas configuráveis.",
+  "configs": {
+    "method": "Método",
+    "url": "URL",
+    "body": "Corpo",
+    "authType": "Tipo de Autenticação",
+    "username": "Nome de Usuário",
+    "password": "Senha",
+    "token": "Token",
+    "timeout": "Tempo Limite",
+    "retries": "Tentativas",
+    "retryDelay": "Atraso entre Tentativas"
+  }
+}

@@ -1,5 +1,9 @@
 {
-  "dynamic-outputs": {
-    "label": "dynamic-outputs"
+  "$schema": "https://unpkg.com/@bonsae/nrg/schemas/labels.schema.json",
+  "label": "Dynamic Outputs",
+  "description": "Routes messages to a configurable number of outputs using round-robin or broadcast mode.",
+  "configs": {
+    "outputs": "Outputs",
+    "routingMode": "Routing Mode"
   }
 }

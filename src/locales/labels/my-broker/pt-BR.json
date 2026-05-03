@@ -1,0 +1,7 @@
+{
+  "$schema": "https://unpkg.com/@bonsae/nrg/schemas/labels.schema.json",
+  "label": "Meu Broker",
+  "description": "Nó de configuração para conexão com broker com host, porta e TLS.",
+  "configs": { "host": "Hostname", "port": "Porta", "useTls": "Usar TLS" },
+  "credentials": { "username": "Nome de Usuário", "password": "Senha" }
+}

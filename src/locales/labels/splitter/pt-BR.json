@@ -1,0 +1,11 @@
+{
+  "$schema": "https://unpkg.com/@bonsae/nrg/schemas/labels.schema.json",
+  "label": "Divisor",
+  "description": "Divide mensagens em duas saídas com base em um limite numérico.",
+  "configs": { "threshold": "Limite" },
+  "input": { "payload": "Payload" },
+  "outputs": [
+    { "payload": "Valor", "label": "Rótulo" },
+    { "payload": "Valor", "label": "Rótulo" }
+  ]
+}

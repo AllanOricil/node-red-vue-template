@@ -1,0 +1,17 @@
+{
+  "$schema": "https://unpkg.com/@bonsae/nrg/schemas/labels.schema.json",
+  "label": "HTTP Request",
+  "description": "Makes HTTP requests with configurable method, URL, authentication, retries, and timeout. Demonstrates conditional schema validation.",
+  "configs": {
+    "method": "Method",
+    "url": "URL",
+    "body": "Body",
+    "authType": "Auth Type",
+    "username": "Username",
+    "password": "Password",
+    "token": "Token",
+    "timeout": "Timeout",
+    "retries": "Retries",
+    "retryDelay": "Retry Delay"
+  }
+}

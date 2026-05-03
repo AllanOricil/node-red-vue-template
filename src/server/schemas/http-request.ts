@@ -4,50 +4,60 @@ const ConfigsSchema = defineSchema(
   {
     name: SchemaType.String({ default: "http-request-custom" }),
     method: SchemaType.String({
+      description: 'HTTP method',
       default: "GET",
       enum: ["GET", "POST", "PUT", "PATCH", "DELETE"],
       "x-nrg-form": { icon: "random" },
     }),
     url: SchemaType.String({
+      description: 'Request URL',
       default: "",
       minLength: 1,
       "x-nrg-form": { icon: "globe" },
     }),
     body: SchemaType.String({
+      description: 'Request body (JSON)',
       default: "",
       "x-nrg-form": { icon: "code", editorLanguage: "json" },
     }),
     authType: SchemaType.String({
+      description: 'Authentication method',
       default: "none",
       enum: ["none", "basic", "bearer"],
       "x-nrg-form": { icon: "lock" },
     }),
     username: SchemaType.String({
+      description: 'Username for basic auth',
       default: "",
       "x-nrg-form": { icon: "user" },
     }),
     password: SchemaType.String({
+      description: 'Password for basic auth',
       default: "",
       format: "password",
       "x-nrg-form": { icon: "key" },
     }),
     token: SchemaType.String({
+      description: 'Bearer token',
       default: "",
       format: "password",
       "x-nrg-form": { icon: "key" },
     }),
     timeout: SchemaType.Number({
+      description: 'Request timeout in milliseconds',
       default: 5000,
       minimum: 0,
       "x-nrg-form": { icon: "clock-o" },
     }),
     retries: SchemaType.Number({
+      description: 'Number of retry attempts',
       default: 0,
       minimum: 0,
       maximum: 10,
       "x-nrg-form": { icon: "repeat" },
     }),
     retryDelay: SchemaType.Number({
+      description: 'Delay between retries in milliseconds',
       default: 1000,
       minimum: 100,
       "x-nrg-form": { icon: "hourglass" },

@@ -6,8 +6,6 @@ export type Config = Infer<typeof ConfigsSchema>;
 
 export default class HttpRequest extends IONode<Config> {
   public static override readonly type: string = "http-request-custom";
-  public static override readonly description =
-    "Makes HTTP requests with configurable method, URL, authentication, retries, and timeout. Demonstrates conditional schema validation.";
   public static override readonly category: string = "network";
   public static override readonly color: `#${string}` = "#e8d44d";
   public static override readonly inputs: number = 1;

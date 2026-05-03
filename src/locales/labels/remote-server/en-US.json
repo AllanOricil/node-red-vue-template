@@ -1,8 +1,8 @@
 {
+  "$schema": "https://unpkg.com/@bonsae/nrg/schemas/labels.schema.json",
   "label": "Remote Server",
+  "description": "Configuration node representing a remote server connection.",
   "configs": {
-    "name": "Name",
-    "host": "host"
-  },
-  "credentials": {}
+    "host": "Hostname"
+  }
 }

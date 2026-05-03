@@ -1,5 +1,7 @@
 {
-  "label": "seu nó",
+  "$schema": "https://unpkg.com/@bonsae/nrg/schemas/labels.schema.json",
+  "label": "Seu Nó",
+  "description": "Nó de exemplo demonstrando resolução de NodeRef, TypedInput, credenciais, configurações e todos os hooks de ciclo de vida",
   "configs": {
     "name": "Nome",
     "myProperty": "Minha Propriedade 1",
@@ -18,5 +20,14 @@
     "username": "Nome de Usuário",
     "password": "Senha",
     "password2": "Senha 2"
-  }
+  },
+  "input": {
+    "myVariable": "Variável"
+  },
+  "outputs": [
+    {
+      "originalType": "Tipo Original",
+      "processedTime": "Hora de Processamento"
+    }
+  ]
 }

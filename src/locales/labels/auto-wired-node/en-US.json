@@ -1,5 +1,30 @@
 {
-  "auto-wired-node": {
-    "label": "auto-wired-node"
-  }
+  "$schema": "https://unpkg.com/@bonsae/nrg/schemas/labels.schema.json",
+  "label": "Auto Wired Node",
+  "description": "Echoes back node config and credentials as a JSON response. Demonstrates config node references, credentials, and schema validation.",
+  "configs": {
+    "url": "URL",
+    "method": "Method",
+    "timeout": "Timeout",
+    "retries": "Retries",
+    "followRedirects": "Follow Redirects",
+    "verbose": "Verbose",
+    "tags": "Tags",
+    "server": "Server",
+    "endpoint": "Endpoint",
+    "payload": "Payload"
+  },
+  "credentials": {
+    "apiKey": "API Key",
+    "username": "Username"
+  },
+  "input": {
+    "payload": "Payload"
+  },
+  "outputs": [
+    {
+      "statusCode": "Status Code",
+      "body": "Body"
+    }
+  ]
 }

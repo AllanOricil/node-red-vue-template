@@ -21,8 +21,6 @@ export default class YourNode extends IONode<
   Settings
 > {
   public static override readonly type: string = "your-node";
-  public static override readonly description =
-    "Example node demonstrating NodeRef resolution, TypedInput, credentials, settings, and all lifecycle hooks.";
   public static override readonly category: string = "function";
   public static override readonly color: `#${string}` = "#ffffff";
   public static override readonly inputs: number = 1;

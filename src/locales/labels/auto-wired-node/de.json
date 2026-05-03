@@ -1,0 +1,23 @@
+{
+  "$schema": "https://unpkg.com/@bonsae/nrg/schemas/labels.schema.json",
+  "label": "Auto-verdrahteter Knoten",
+  "description": "Gibt die Knotenkonfiguration und Anmeldedaten als JSON-Antwort zurueck.",
+  "configs": {
+    "url": "URL",
+    "method": "Methode",
+    "timeout": "Zeitlimit",
+    "retries": "Wiederholungen",
+    "followRedirects": "Weiterleitungen folgen",
+    "verbose": "Ausfuehrlich",
+    "tags": "Tags",
+    "server": "Server",
+    "endpoint": "Endpunkt",
+    "payload": "Nutzlast"
+  },
+  "credentials": {
+    "apiKey": "API-Schluessel",
+    "username": "Benutzername"
+  },
+  "input": { "payload": "Nutzlast" },
+  "outputs": [{ "statusCode": "Statuscode", "body": "Koerper" }]
+}

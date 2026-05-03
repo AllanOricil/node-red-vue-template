@@ -170,7 +170,7 @@ export default defineComponent({
   data() {
     return {
       logo,
-      types: ["node"],
+      types: ["node", "str"],
       countries: [
         { value: "usa", label: "usa" },
         { value: "argentina", label: "argentina" },

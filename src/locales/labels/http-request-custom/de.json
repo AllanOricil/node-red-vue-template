@@ -1,0 +1,17 @@
+{
+  "$schema": "https://unpkg.com/@bonsae/nrg/schemas/labels.schema.json",
+  "label": "HTTP-Anfrage",
+  "description": "Fuehrt HTTP-Anfragen mit konfigurierbarer Methode, URL, Authentifizierung und Wiederholungen durch.",
+  "configs": {
+    "method": "Methode",
+    "url": "URL",
+    "body": "Koerper",
+    "authType": "Auth-Typ",
+    "username": "Benutzername",
+    "password": "Passwort",
+    "token": "Token",
+    "timeout": "Zeitlimit",
+    "retries": "Wiederholungen",
+    "retryDelay": "Wiederholungsverzoegerung"
+  }
+}

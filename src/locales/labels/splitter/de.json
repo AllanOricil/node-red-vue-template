@@ -1,0 +1,11 @@
+{
+  "$schema": "https://unpkg.com/@bonsae/nrg/schemas/labels.schema.json",
+  "label": "Splitter",
+  "description": "Teilt Nachrichten in zwei Ausgaenge basierend auf einem numerischen Schwellenwert.",
+  "configs": { "threshold": "Schwellenwert" },
+  "input": { "payload": "Nutzlast" },
+  "outputs": [
+    { "payload": "Wert", "label": "Bezeichnung" },
+    { "payload": "Wert", "label": "Bezeichnung" }
+  ]
+}

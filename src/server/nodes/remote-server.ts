@@ -8,8 +8,6 @@ export type Config = Infer<typeof ConfigsSchema>;
 // NOTE: category doesn't need to be set because all config nodes are set with "config"
 export default class RemoteServerConfigNode extends ConfigNode<Config> {
   public static override readonly type: string = "remote-server";
-  public static override readonly description =
-    "Configuration node representing a remote server connection.";
   public static override readonly configSchema: Schema = ConfigsSchema;
 
   // NOTE: run only once when node type is registered

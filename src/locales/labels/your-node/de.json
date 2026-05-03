@@ -1,5 +1,7 @@
 {
+  "$schema": "https://unpkg.com/@bonsae/nrg/schemas/labels.schema.json",
   "label": "Ihr Knoten",
+  "description": "Beispielknoten mit NodeRef, TypedInput, Anmeldedaten, Einstellungen und allen Lebenszyklus-Hooks",
   "configs": {
     "name": "Name",
     "myProperty": "Meine Eigenschaft 1",
@@ -18,5 +20,14 @@
     "username": "Benutzername",
     "password": "Passwort",
     "password2": "Passwort 2"
-  }
+  },
+  "input": {
+    "myVariable": "Variable"
+  },
+  "outputs": [
+    {
+      "originalType": "Originaltyp",
+      "processedTime": "Verarbeitungszeit"
+    }
+  ]
 }

@@ -16,8 +16,6 @@ type Output = [Output1 | null, Output2 | null];
 
 export default class Splitter extends IONode<Config, any, Input, Output> {
   public static override readonly type: string = "splitter";
-  public static override readonly description =
-    "Splits messages into two outputs based on a numeric threshold. Values above go to output 1, values at or below go to output 2.";
   public static override readonly category: string = "function";
   public static override readonly color: `#${string}` = "#c2e5a0";
   public static override readonly inputs: number = 1;

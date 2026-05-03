@@ -1,0 +1,16 @@
+{
+  "$schema": "https://unpkg.com/@bonsae/nrg/schemas/labels.schema.json",
+  "label": "My Subscriber",
+  "description": "Subscribes to a topic on a broker and outputs received messages.",
+  "configs": {
+    "broker": "Broker",
+    "topic": "Topic",
+    "qos": "QoS"
+  },
+  "outputs": [
+    {
+      "payload": "Payload",
+      "topic": "Topic"
+    }
+  ]
+}

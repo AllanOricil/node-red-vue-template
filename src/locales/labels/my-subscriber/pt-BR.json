@@ -1,0 +1,7 @@
+{
+  "$schema": "https://unpkg.com/@bonsae/nrg/schemas/labels.schema.json",
+  "label": "Meu Assinante",
+  "description": "Assina um tópico em um broker e envia mensagens recebidas.",
+  "configs": { "broker": "Broker", "topic": "Tópico", "qos": "QoS" },
+  "outputs": [{ "payload": "Payload", "topic": "Tópico" }]
+}

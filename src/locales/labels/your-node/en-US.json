@@ -1,7 +1,8 @@
 {
+  "$schema": "https://unpkg.com/@bonsae/nrg/schemas/labels.schema.json",
   "label": "Your Node",
+  "description": "Example node demonstrating NodeRef resolution, TypedInput, credentials, settings, and all lifecycle hooks.",
   "configs": {
-    "name": "Name",
     "myProperty": "My Property 1",
     "myProperty2": "My Property 2",
     "remoteServer": "Remote Server 1",
@@ -19,6 +20,15 @@
     "password": "Password",
     "password2": "Password 2"
   },
+  "input": {
+    "myVariable": "Variable"
+  },
+  "outputs": [
+    {
+      "originalType": "Original Type",
+      "processedTime": "Processed Time"
+    }
+  ],
   "errors": {
     "invalid": "Invalid __field__"
   }

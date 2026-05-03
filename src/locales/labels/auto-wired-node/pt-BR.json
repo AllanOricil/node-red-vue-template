@@ -1,0 +1,23 @@
+{
+  "$schema": "https://unpkg.com/@bonsae/nrg/schemas/labels.schema.json",
+  "label": "Nó Auto Conectado",
+  "description": "Retorna a configuração e credenciais do nó como resposta JSON.",
+  "configs": {
+    "url": "URL",
+    "method": "Método",
+    "timeout": "Tempo Limite",
+    "retries": "Tentativas",
+    "followRedirects": "Seguir Redirecionamentos",
+    "verbose": "Detalhado",
+    "tags": "Tags",
+    "server": "Servidor",
+    "endpoint": "Endpoint",
+    "payload": "Payload"
+  },
+  "credentials": {
+    "apiKey": "Chave API",
+    "username": "Nome de Usuário"
+  },
+  "input": { "payload": "Payload" },
+  "outputs": [{ "statusCode": "Código de Status", "body": "Corpo" }]
+}

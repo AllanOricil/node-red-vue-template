@@ -3,7 +3,7 @@ import { SchemaType, defineSchema } from "@bonsae/nrg/server";
 const ConfigsSchema = defineSchema(
   {
     name: SchemaType.String({ default: "splitter" }),
-    threshold: SchemaType.Number({ default: 50 }),
+    threshold: SchemaType.Number({ description: 'Numeric threshold for splitting', default: 50 }),
   },
   {
     $id: "SplitterConfigsSchema",
@@ -12,7 +12,7 @@ const ConfigsSchema = defineSchema(
 
 const InputSchema = defineSchema(
   {
-    payload: SchemaType.Number(),
+    payload: SchemaType.Number({ description: 'Numeric value to compare against threshold' }),
   },
   {
     $id: "SplitterInputSchema",
@@ -21,8 +21,8 @@ const InputSchema = defineSchema(
 
 const Output1Schema = defineSchema(
   {
-    payload: SchemaType.Number(),
-    label: SchemaType.String(),
+    payload: SchemaType.Number({ description: 'Original value (above threshold)' }),
+    label: SchemaType.String({ description: 'Output label' }),
   },
   {
     $id: "SplitterOutput1Schema",
@@ -31,8 +31,8 @@ const Output1Schema = defineSchema(
 
 const Output2Schema = defineSchema(
   {
-    payload: SchemaType.Number(),
-    label: SchemaType.String(),
+    payload: SchemaType.Number({ description: 'Original value (at or below threshold)' }),
+    label: SchemaType.String({ description: 'Output label' }),
   },
   {
     $id: "SplitterOutput2Schema",

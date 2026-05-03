@@ -1,0 +1,6 @@
+{
+  "$schema": "https://unpkg.com/@bonsae/nrg/schemas/labels.schema.json",
+  "label": "Dynamische Ausgaenge",
+  "description": "Leitet Nachrichten an eine konfigurierbare Anzahl von Ausgaengen weiter.",
+  "configs": { "outputs": "Ausgaenge", "routingMode": "Routing-Modus" }
+}

@@ -1,0 +1,6 @@
+{
+  "$schema": "https://unpkg.com/@bonsae/nrg/schemas/labels.schema.json",
+  "label": "Saídas Dinâmicas",
+  "description": "Roteia mensagens para um número configurável de saídas.",
+  "configs": { "outputs": "Saídas", "routingMode": "Modo de Roteamento" }
+}
