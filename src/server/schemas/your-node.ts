@@ -6,28 +6,46 @@ const ConfigsSchema = defineSchema(
   {
     name: SchemaType.String({ default: "your-node" }),
     myProperty: SchemaType.TypedInput<YourNode>({
-      description: 'Node reference resolved via TypedInput',
+      description: "Node reference resolved via TypedInput",
       "x-nrg-form": { typedInputTypes: ["node", "str"] },
     }),
-    myProperty2: SchemaType.TypedInput({ description: 'Generic TypedInput value' }),
-    remoteServer: SchemaType.NodeRef(RemoteServerConfigNode, { description: 'Primary remote server connection' }),
-    anotherRemoteServer: SchemaType.NodeRef(RemoteServerConfigNode, { description: 'Secondary remote server connection' }),
-    country: SchemaType.String({ description: 'Selected country', default: "brazil" }),
+    myProperty2: SchemaType.TypedInput({
+      description: "Generic TypedInput value",
+    }),
+    remoteServer: SchemaType.NodeRef(RemoteServerConfigNode, {
+      description: "Primary remote server connection",
+    }),
+    anotherRemoteServer: SchemaType.NodeRef(RemoteServerConfigNode, {
+      description: "Secondary remote server connection",
+    }),
+    country: SchemaType.String({
+      description: "Selected country",
+      default: "brazil",
+    }),
     fruit: SchemaType.Array(SchemaType.String(), {
-      description: 'Selected fruits',
+      description: "Selected fruits",
       default: ["apple", "melon"],
     }),
-    number: SchemaType.String({ description: 'Numeric string value', default: "1" }),
+    number: SchemaType.String({
+      description: "Numeric string value",
+      default: "1",
+    }),
     object: SchemaType.Array(SchemaType.String(), {
-      description: 'Array of JSON object strings',
+      description: "Array of JSON object strings",
       default: [JSON.stringify({ test: "a" }), JSON.stringify({ test: "b" })],
     }),
     array: SchemaType.String({
-      description: 'JSON array as string',
+      description: "JSON array as string",
       default: '["a"]',
     }),
-    jsontest: SchemaType.String({ description: 'JSON editor test field', default: "" }),
-    csstest: SchemaType.String({ description: 'CSS editor test field', default: "" }),
+    jsontest: SchemaType.String({
+      description: "JSON editor test field",
+      default: "",
+    }),
+    csstest: SchemaType.String({
+      description: "CSS editor test field",
+      default: "",
+    }),
   },
   {
     $id: "YourNodeConfigsSchema",
@@ -38,7 +56,7 @@ const CredentialsSchema = defineSchema(
   {
     password: SchemaType.Optional(
       SchemaType.String({
-        description: 'Primary password with alphanumeric pattern',
+        description: "Primary password with alphanumeric pattern",
         default: "",
         minLength: 8,
         maxLength: 20,
@@ -48,7 +66,7 @@ const CredentialsSchema = defineSchema(
     ),
     password2: SchemaType.Optional(
       SchemaType.String({
-        description: 'Secondary password with complex pattern',
+        description: "Secondary password with complex pattern",
         default: "",
         pattern:
           /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
@@ -57,7 +75,12 @@ const CredentialsSchema = defineSchema(
       }),
     ),
     username: SchemaType.Optional(
-      SchemaType.String({ description: 'Account username', default: "", maxLength: 10, minLength: 5 }),
+      SchemaType.String({
+        description: "Account username",
+        default: "",
+        maxLength: 10,
+        minLength: 5,
+      }),
     ),
   },
   {
@@ -67,7 +90,9 @@ const CredentialsSchema = defineSchema(
 
 const InputSchema = defineSchema(
   {
-    myVariable: SchemaType.Optional(SchemaType.String({ description: 'Optional input variable' })),
+    myVariable: SchemaType.Optional(
+      SchemaType.String({ description: "Optional input variable" }),
+    ),
   },
   {
     $id: "YourNodeInputSchema",
@@ -76,11 +101,13 @@ const InputSchema = defineSchema(
 
 const OutputSchema = defineSchema(
   {
-    originalType: SchemaType.Union([
-      SchemaType.Literal("string"),
-      SchemaType.Literal("number"),
-    ], { description: 'Type of the original value' }),
-    processedTime: SchemaType.Number({ description: 'Timestamp when the message was processed' }),
+    originalType: SchemaType.Union(
+      [SchemaType.Literal("string"), SchemaType.Literal("number")],
+      { description: "Type of the original value" },
+    ),
+    processedTime: SchemaType.Number({
+      description: "Timestamp when the message was processed",
+    }),
   },
   {
     $id: "YourNodeOutputSchema",
@@ -89,9 +116,13 @@ const OutputSchema = defineSchema(
 
 const SettingsSchema = defineSchema(
   {
-    test: SchemaType.Number({ description: 'Test setting value', default: 5000, exportable: true }),
+    test: SchemaType.Number({
+      description: "Test setting value",
+      default: 5000,
+      exportable: true,
+    }),
     transform: SchemaType.Function([SchemaType.String()], SchemaType.String(), {
-      description: 'Transform function applied to string data',
+      description: "Transform function applied to string data",
       default: (data: string) => data.toLowerCase(),
       exportable: true,
     }),
