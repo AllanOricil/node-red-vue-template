@@ -4,9 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  '@bonsae/nrg': link:../bonsae-nrg
-
 importers:
 
   .:

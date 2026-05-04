@@ -7,3 +7,4 @@ dist
 build
 node-red-3
 test-types.ts
+pnpm-workspace.yaml
