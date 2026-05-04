@@ -1,3 +1,21 @@
+# [3.2.0](https://github.com/AllanOricil/node-red-vue-template/compare/v3.1.0...v3.2.0) (2026-05-04)
+
+
+### Bug Fixes
+
+* format schema files with prettier ([3646add](https://github.com/AllanOricil/node-red-vue-template/commit/3646add6b76b6f4959d21b4cf1f6263c7fb056d3))
+* remove pnpm-workspace.yaml from repo and regenerate lockfile ([aa695af](https://github.com/AllanOricil/node-red-vue-template/commit/aa695af8297503046f979603b461afb5dac0cf6a))
+* update @bonsae/nrg to ^0.10.0 ([f4f694e](https://github.com/AllanOricil/node-red-vue-template/commit/f4f694ea592b8b2a849e18194f67fe4679b91897))
+* update @bonsae/nrg to ^0.10.1 ([ae37fa8](https://github.com/AllanOricil/node-red-vue-template/commit/ae37fa8446ca77bd0f832b97452e4da79f0c843b))
+* update @bonsae/nrg to ^0.8.0 and use new TypedInput proxy API ([f92f973](https://github.com/AllanOricil/node-red-vue-template/commit/f92f973530546e66f905456bfa329a20156f2629))
+* update @bonsae/nrg to ^0.8.1 and restrict myProperty to node type ([ca7abf8](https://github.com/AllanOricil/node-red-vue-template/commit/ca7abf8f449c2395af7b6041b42b015fcbc00cf0))
+* update lockfile for @bonsae/nrg ^0.9.0 ([7c37f0f](https://github.com/AllanOricil/node-red-vue-template/commit/7c37f0fe67b6c8bf95f9145584ae725a37455155))
+
+
+### Features
+
+* add i18n labels for all nodes in en-US, de, and pt-BR ([ec0cc64](https://github.com/AllanOricil/node-red-vue-template/commit/ec0cc6470cd8ce30b525350dc45d6f14251b2572))
+
 # [3.1.0](https://github.com/AllanOricil/node-red-vue-template/compare/v3.0.0...v3.1.0) (2026-04-30)
 
 
