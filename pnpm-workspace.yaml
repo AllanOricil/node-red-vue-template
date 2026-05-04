@@ -1,0 +1,2 @@
+overrides:
+  '@bonsae/nrg': link:../bonsae-nrg
