@@ -7,7 +7,6 @@ export default defineIONode({
   color: "#d8bfd8",
   inputs: 0,
   outputs: 1,
-  outputLabels: "message",
   configSchema: ConfigsSchema,
   outputsSchema: OutputSchema,
 

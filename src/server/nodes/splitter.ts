@@ -20,7 +20,6 @@ export default class Splitter extends IONode<Config, any, Input, Output> {
   public static override readonly color: `#${string}` = "#c2e5a0";
   public static override readonly inputs: number = 1;
   public static override readonly outputs: number = 2;
-  public static override readonly outputLabels: string[] = ["above", "below"];
 
   public static override readonly configSchema: Schema = ConfigsSchema;
   public static override readonly inputSchema: Schema = InputSchema;

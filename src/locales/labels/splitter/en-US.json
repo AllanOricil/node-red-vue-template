@@ -2,6 +2,7 @@
   "$schema": "https://unpkg.com/@bonsae/nrg/schemas/labels.schema.json",
   "label": "Splitter",
   "description": "Splits messages into two outputs based on a numeric threshold. Values above go to output 1, values at or below go to output 2.",
+  "outputLabels": ["above", "below"],
   "configs": {
     "threshold": "Threshold"
   },
