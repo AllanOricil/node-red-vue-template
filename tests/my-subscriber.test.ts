@@ -11,8 +11,7 @@ describe("my-subscriber", () => {
     });
 
     const { node } = await createNode(MySubscriber, {
-      config: { broker: "broker-1", topic: "test/topic", qos: 0 },
-      configNodes: { "broker-1": broker },
+      config: { broker: broker, topic: "test/topic", qos: 0 },
     });
 
     expect(node.statuses()).toContainEqual({
