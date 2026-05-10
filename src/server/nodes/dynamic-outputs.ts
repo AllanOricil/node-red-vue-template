@@ -1,5 +1,5 @@
 import type { Schema, Infer } from "@bonsae/nrg/server";
-import { IONode } from "@bonsae/nrg/server";
+import { IONode, SchemaType } from "@bonsae/nrg/server";
 import { ConfigsSchema } from "../schemas/dynamic-outputs";
 
 export type Config = Infer<typeof ConfigsSchema>;
@@ -8,10 +8,10 @@ export default class DynamicOutputs extends IONode<Config> {
   public static override readonly type: string = "dynamic-outputs";
   public static override readonly category: string = "function";
   public static override readonly color: `#${string}` = "#e2d96e";
-  public static override readonly inputs: number = 1;
-  public static override readonly outputs: number = 1;
 
   public static override readonly configSchema: Schema = ConfigsSchema;
+  public static override readonly inputSchema: Schema = SchemaType.Object({});
+  public static override readonly outputsSchema: Schema = SchemaType.Object({});
 
   public override async input(msg: any): Promise<void> {
     const outputCount = this.config.outputs;

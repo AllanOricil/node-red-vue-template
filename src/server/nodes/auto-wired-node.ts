@@ -21,9 +21,6 @@ export default class AutoWiredNode extends IONode<
   public static override readonly type: string = "auto-wired-node";
   public static override readonly category: string = "network";
   public static override readonly color: `#${string}` = "#7fc7ff";
-  public static override readonly inputs: number = 1;
-  public static override readonly outputs: number = 1;
-
   public static override readonly configSchema: Schema = ConfigsSchema;
   public static override readonly credentialsSchema: Schema = CredentialsSchema;
   public static override readonly inputSchema: Schema = InputSchema;

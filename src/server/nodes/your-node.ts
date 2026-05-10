@@ -23,9 +23,6 @@ export default class YourNode extends IONode<
   public static override readonly type: string = "your-node";
   public static override readonly category: string = "function";
   public static override readonly color: `#${string}` = "#ffffff";
-  public static override readonly inputs: number = 1;
-  public static override readonly outputs: number = 1;
-
   public static override readonly configSchema: Schema = ConfigsSchema;
   public static override readonly credentialsSchema: Schema = CredentialsSchema;
   public static override readonly inputSchema: Schema = InputSchema;

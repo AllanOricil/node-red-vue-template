@@ -5,8 +5,6 @@ export default defineIONode({
   type: "my-subscriber",
   category: "network",
   color: "#d8bfd8",
-  inputs: 0,
-  outputs: 1,
   configSchema: ConfigsSchema,
   outputsSchema: OutputSchema,
 
