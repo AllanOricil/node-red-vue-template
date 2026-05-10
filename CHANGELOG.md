@@ -1,3 +1,16 @@
+# [3.3.0](https://github.com/AllanOricil/node-red-vue-template/compare/v3.2.0...v3.3.0) (2026-05-10)
+
+
+### Bug Fixes
+
+* migrate test to use config node auto-detection ([a3eb04f](https://github.com/AllanOricil/node-red-vue-template/commit/a3eb04f1a1398e111cc33753e1801a7a3a628019))
+
+
+### Features
+
+* update @bonsae/nrg to 0.11.0 ([50e314a](https://github.com/AllanOricil/node-red-vue-template/commit/50e314a2244b62258bd24643687579a1e1e4bf06))
+* upgrade to @bonsae/nrg 0.13.0 and use schema-driven ports ([57381cd](https://github.com/AllanOricil/node-red-vue-template/commit/57381cdb70e2f057da3544a5c28a6e890125185d))
+
 # [3.2.0](https://github.com/AllanOricil/node-red-vue-template/compare/v3.1.0...v3.2.0) (2026-05-04)
 
 
