@@ -1,3 +1,10 @@
+## [3.3.1](https://github.com/AllanOricil/node-red-vue-template/compare/v3.3.0...v3.3.1) (2026-05-20)
+
+
+### Bug Fixes
+
+* remove hardcoded outputs from your-node client definition ([6fab46e](https://github.com/AllanOricil/node-red-vue-template/commit/6fab46e37a7659eec9534cf577f550a001b33181))
+
 # [3.3.0](https://github.com/AllanOricil/node-red-vue-template/compare/v3.2.0...v3.3.0) (2026-05-10)
 
 
