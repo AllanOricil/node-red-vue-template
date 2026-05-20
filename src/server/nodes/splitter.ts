@@ -1,4 +1,4 @@
-import type { Schema, Infer, InferPortMap } from "@bonsae/nrg/server";
+import type { Schema, Infer } from "@bonsae/nrg/server";
 import { IONode } from "@bonsae/nrg/server";
 import {
   ConfigsSchema,
@@ -17,7 +17,7 @@ const outputsSchema = {
   below: Output2Schema,
 };
 
-type Output = InferPortMap<typeof outputsSchema>;
+type Output = Infer<typeof outputsSchema>;
 
 export default class Splitter extends IONode<Config, any, Input, Output> {
   public static override readonly type: string = "splitter";
