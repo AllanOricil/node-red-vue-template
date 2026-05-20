@@ -14,6 +14,9 @@ const ConfigsSchema = defineSchema(
       default: "round-robin",
       enum: ["round-robin", "broadcast", "conditional"],
     }),
+    errorPort: SchemaType.Boolean({ default: false }),
+    completePort: SchemaType.Boolean({ default: false }),
+    statusPort: SchemaType.Boolean({ default: false }),
   },
   {
     $id: "DynamicOutputsConfigsSchema",

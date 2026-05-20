@@ -57,6 +57,9 @@ const ConfigsSchema = defineSchema(
         typedInputTypes: ["str", "num", "msg", "json"],
       },
     }),
+    errorPort: SchemaType.Boolean({ default: false }),
+    completePort: SchemaType.Boolean({ default: false }),
+    statusPort: SchemaType.Boolean({ default: false }),
   },
   {
     $id: "AutoWiredNodeConfigsSchema",

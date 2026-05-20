@@ -62,6 +62,9 @@ const ConfigsSchema = defineSchema(
       minimum: 100,
       "x-nrg-form": { icon: "hourglass" },
     }),
+    errorPort: SchemaType.Boolean({ default: false }),
+    completePort: SchemaType.Boolean({ default: false }),
+    statusPort: SchemaType.Boolean({ default: false }),
   },
   {
     $id: "HttpRequestConfigsSchema",

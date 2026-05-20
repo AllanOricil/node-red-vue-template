@@ -46,6 +46,9 @@ const ConfigsSchema = defineSchema(
       description: "CSS editor test field",
       default: "",
     }),
+    errorPort: SchemaType.Boolean({ default: false }),
+    completePort: SchemaType.Boolean({ default: false }),
+    statusPort: SchemaType.Boolean({ default: false }),
   },
   {
     $id: "YourNodeConfigsSchema",

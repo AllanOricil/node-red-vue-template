@@ -18,6 +18,9 @@ const ConfigsSchema = defineSchema(
       default: 0,
       enum: [0, 1, 2],
     }),
+    errorPort: SchemaType.Boolean({ default: false }),
+    completePort: SchemaType.Boolean({ default: false }),
+    statusPort: SchemaType.Boolean({ default: false }),
   },
   { $id: "my-subscriber:configs" },
 );

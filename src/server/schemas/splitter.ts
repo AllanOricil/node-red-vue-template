@@ -7,6 +7,9 @@ const ConfigsSchema = defineSchema(
       description: "Numeric threshold for splitting",
       default: 50,
     }),
+    errorPort: SchemaType.Boolean({ default: false }),
+    completePort: SchemaType.Boolean({ default: false }),
+    statusPort: SchemaType.Boolean({ default: false }),
   },
   {
     $id: "SplitterConfigsSchema",
