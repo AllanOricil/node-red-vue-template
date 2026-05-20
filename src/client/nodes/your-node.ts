@@ -7,7 +7,6 @@ export default defineNode({
   category: "function",
   color: "#FFFFFF",
   inputs: 1,
-  outputs: 3,
   form: {
     component,
   },
