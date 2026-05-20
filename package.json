@@ -59,6 +59,6 @@
     "vue": "^3.5.34"
   },
   "dependencies": {
-    "@bonsae/nrg": "0.15.0"
+    "@bonsae/nrg": "0.15.1"
   }
 }
